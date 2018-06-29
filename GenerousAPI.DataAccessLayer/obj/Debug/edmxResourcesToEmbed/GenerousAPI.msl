@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="GenerousAPIModelStoreContainer" CdmEntityContainer="GenerousAPIEntities">
+    <EntitySetMapping Name="CardTypes">
+      <EntityTypeMapping TypeName="GenerousAPIModel.CardType">
+        <MappingFragment StoreEntitySet="CardType">
+          <ScalarProperty Name="Type" ColumnName="Type" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PaymentMethods">
+      <EntityTypeMapping TypeName="GenerousAPIModel.PaymentMethod">
+        <MappingFragment StoreEntitySet="PaymentMethod">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Method" ColumnName="Method" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TransactionModes">
+      <EntityTypeMapping TypeName="GenerousAPIModel.TransactionMode">
+        <MappingFragment StoreEntitySet="TransactionMode">
+          <ScalarProperty Name="TransactionMode1" ColumnName="TransactionMode" />
+          <ScalarProperty Name="TransactionModeId" ColumnName="TransactionModeId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PaymentGatewayConfigs">
+      <EntityTypeMapping TypeName="GenerousAPIModel.PaymentGatewayConfig">
+        <MappingFragment StoreEntitySet="PaymentGatewayConfig">
+          <ScalarProperty Name="GenerousDefaultGateway" ColumnName="GenerousDefaultGateway" />
+          <ScalarProperty Name="SystemDefault" ColumnName="SystemDefault" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="GatewayConfig" ColumnName="GatewayConfig" />
+          <ScalarProperty Name="GatewayTypeId" ColumnName="GatewayTypeId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PaymentGatewayTypes">
+      <EntityTypeMapping TypeName="GenerousAPIModel.PaymentGatewayType">
+        <MappingFragment StoreEntitySet="PaymentGatewayType">
+          <ScalarProperty Name="GatewayConfig" ColumnName="GatewayConfig" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BankAccounts">
+      <EntityTypeMapping TypeName="GenerousAPIModel.BankAccount">
+        <MappingFragment StoreEntitySet="BankAccount">
+          <ScalarProperty Name="BankAccountTokenId" ColumnName="BankAccountTokenId" />
+          <ScalarProperty Name="FundId" ColumnName="FundId" />
+          <ScalarProperty Name="BankAccountBSB" ColumnName="BankAccountBSB" />
+          <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
+          <ScalarProperty Name="BankAcountName" ColumnName="BankAcountName" />
+          <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PaymentProfiles">
+      <EntityTypeMapping TypeName="GenerousAPIModel.PaymentProfile">
+        <MappingFragment StoreEntitySet="PaymentProfile">
+          <ScalarProperty Name="CardSerurityNumber" ColumnName="CardSerurityNumber" />
+          <ScalarProperty Name="AccountType" ColumnName="AccountType" />
+          <ScalarProperty Name="TransactionMode" ColumnName="TransactionMode" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="BillingState" ColumnName="BillingState" />
+          <ScalarProperty Name="BillingCity" ColumnName="BillingCity" />
+          <ScalarProperty Name="BillingAddress" ColumnName="BillingAddress" />
+          <ScalarProperty Name="CustomerLastName" ColumnName="CustomerLastName" />
+          <ScalarProperty Name="CustomerFirstName" ColumnName="CustomerFirstName" />
+          <ScalarProperty Name="LastNotifiedDateTime" ColumnName="LastNotifiedDateTime" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+          <ScalarProperty Name="LastModifiedDateTime" ColumnName="LastModifiedDateTime" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreateDateTime" ColumnName="CreateDateTime" />
+          <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+          <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="BankAccountName" ColumnName="BankAccountName" />
+          <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
+          <ScalarProperty Name="BSBNumber" ColumnName="BSBNumber" />
+          <ScalarProperty Name="BankName" ColumnName="BankName" />
+          <ScalarProperty Name="NameOnCard" ColumnName="NameOnCard" />
+          <ScalarProperty Name="CardExpiryYear" ColumnName="CardExpiryYear" />
+          <ScalarProperty Name="CardExpiryMonth" ColumnName="CardExpiryMonth" />
+          <ScalarProperty Name="CardNumber" ColumnName="CardNumber" />
+          <ScalarProperty Name="CardType" ColumnName="CardType" />
+          <ScalarProperty Name="PaymentMethodId" ColumnName="PaymentMethodId" />
+          <ScalarProperty Name="TokenId" ColumnName="TokenId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

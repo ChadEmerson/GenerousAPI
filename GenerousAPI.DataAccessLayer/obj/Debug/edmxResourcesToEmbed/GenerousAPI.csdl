@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="GenerousAPIModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="CardType">
+    <Key>
+      <PropertyRef Name="Type" />
+    </Key>
+    <Property Name="Type" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="PaymentProfiles" Relationship="GenerousAPIModel.FK_PaymentProfile_CardType" FromRole="CardType" ToRole="PaymentProfile" />
+  </EntityType>
+  <EntityType Name="PaymentMethod">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Byte" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Method" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="PaymentProfiles" Relationship="GenerousAPIModel.FK_PaymentProfile_PaymentMethod" FromRole="PaymentMethod" ToRole="PaymentProfile" />
+  </EntityType>
+  <EntityContainer Name="GenerousAPIEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="CardTypes" EntityType="Self.CardType" />
+    <EntitySet Name="PaymentMethods" EntityType="Self.PaymentMethod" />
+    <EntitySet Name="TransactionModes" EntityType="GenerousAPIModel.TransactionMode" />
+    <EntitySet Name="PaymentGatewayConfigs" EntityType="GenerousAPIModel.PaymentGatewayConfig" />
+    <EntitySet Name="PaymentGatewayTypes" EntityType="GenerousAPIModel.PaymentGatewayType" />
+    <AssociationSet Name="FK_PaymentGateway_PaymentGateway" Association="GenerousAPIModel.FK_PaymentGateway_PaymentGateway">
+      <End Role="PaymentGatewayType" EntitySet="PaymentGatewayTypes" />
+      <End Role="PaymentGatewayConfig" EntitySet="PaymentGatewayConfigs" />
+    </AssociationSet>
+    <EntitySet Name="BankAccounts" EntityType="GenerousAPIModel.BankAccount" />
+    <EntitySet Name="PaymentProfiles" EntityType="GenerousAPIModel.PaymentProfile" />
+    <AssociationSet Name="FK_PaymentProfile_CardType" Association="GenerousAPIModel.FK_PaymentProfile_CardType">
+      <End Role="CardType" EntitySet="CardTypes" />
+      <End Role="PaymentProfile" EntitySet="PaymentProfiles" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentProfile_PaymentMethod" Association="GenerousAPIModel.FK_PaymentProfile_PaymentMethod">
+      <End Role="PaymentMethod" EntitySet="PaymentMethods" />
+      <End Role="PaymentProfile" EntitySet="PaymentProfiles" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentProfile_TransactionMode" Association="GenerousAPIModel.FK_PaymentProfile_TransactionMode">
+      <End Role="TransactionMode" EntitySet="TransactionModes" />
+      <End Role="PaymentProfile" EntitySet="PaymentProfiles" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="TransactionMode">
+    <Key>
+      <PropertyRef Name="TransactionModeId" />
+    </Key>
+    <Property Name="TransactionModeId" Type="Int32" Nullable="false" />
+    <Property Name="TransactionMode1" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="PaymentProfiles" Relationship="GenerousAPIModel.FK_PaymentProfile_TransactionMode" FromRole="TransactionMode" ToRole="PaymentProfile" />
+  </EntityType>
+  <EntityType Name="PaymentGatewayConfig">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Guid" Nullable="false" />
+    <Property Name="GatewayTypeId" Type="Byte" Nullable="false" />
+    <Property Name="GatewayConfig" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <Property Name="SystemDefault" Type="Boolean" />
+    <Property Name="GenerousDefaultGateway" Type="Boolean" />
+    <NavigationProperty Name="PaymentGatewayType" Relationship="GenerousAPIModel.FK_PaymentGateway_PaymentGateway" FromRole="PaymentGatewayConfig" ToRole="PaymentGatewayType" />
+  </EntityType>
+  <EntityType Name="PaymentGatewayType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Byte" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Type" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="GatewayConfig" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="PaymentGatewayConfigs" Relationship="GenerousAPIModel.FK_PaymentGateway_PaymentGateway" FromRole="PaymentGatewayType" ToRole="PaymentGatewayConfig" />
+  </EntityType>
+  <Association Name="FK_PaymentGateway_PaymentGateway">
+    <End Type="GenerousAPIModel.PaymentGatewayType" Role="PaymentGatewayType" Multiplicity="1" />
+    <End Type="GenerousAPIModel.PaymentGatewayConfig" Role="PaymentGatewayConfig" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentGatewayType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PaymentGatewayConfig">
+        <PropertyRef Name="GatewayTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="BankAccount">
+    <Key>
+      <PropertyRef Name="BankAccountId" />
+    </Key>
+    <Property Name="BankAccountId" Type="Guid" Nullable="false" />
+    <Property Name="BankAcountName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="BankAccountNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="BankAccountBSB" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="FundId" Type="Int32" />
+    <Property Name="BankAccountTokenId" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="PaymentProfile">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Guid" Nullable="false" />
+    <Property Name="TokenId" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="PaymentMethodId" Type="Byte" Nullable="false" />
+    <Property Name="CardType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="CardNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="CardExpiryMonth" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="CardExpiryYear" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="NameOnCard" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="BankName" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+    <Property Name="BSBNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="BankAccountNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="BankAccountName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <Property Name="StartDate" Type="DateTime" Precision="0" />
+    <Property Name="EndDate" Type="DateTime" Precision="0" />
+    <Property Name="CreateDateTime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="80" FixedLength="false" Unicode="true" />
+    <Property Name="LastModifiedDateTime" Type="DateTime" Precision="3" />
+    <Property Name="LastModifiedBy" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+    <Property Name="LastNotifiedDateTime" Type="DateTime" Precision="3" />
+    <Property Name="CustomerFirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerLastName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="BillingAddress" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="BillingCity" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="BillingState" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="PostalCode" Type="String" MaxLength="6" FixedLength="false" Unicode="true" />
+    <Property Name="TransactionMode" Type="Int32" />
+    <Property Name="AccountType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="CardType1" Relationship="GenerousAPIModel.FK_PaymentProfile_CardType" FromRole="PaymentProfile" ToRole="CardType" />
+    <NavigationProperty Name="PaymentMethod" Relationship="GenerousAPIModel.FK_PaymentProfile_PaymentMethod" FromRole="PaymentProfile" ToRole="PaymentMethod" />
+    <NavigationProperty Name="TransactionMode1" Relationship="GenerousAPIModel.FK_PaymentProfile_TransactionMode" FromRole="PaymentProfile" ToRole="TransactionMode" />
+    <Property Name="CardSerurityNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <Association Name="FK_PaymentProfile_CardType">
+    <End Type="GenerousAPIModel.CardType" Role="CardType" Multiplicity="0..1" />
+    <End Type="GenerousAPIModel.PaymentProfile" Role="PaymentProfile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CardType">
+        <PropertyRef Name="Type" />
+      </Principal>
+      <Dependent Role="PaymentProfile">
+        <PropertyRef Name="CardType" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentProfile_PaymentMethod">
+    <End Type="GenerousAPIModel.PaymentMethod" Role="PaymentMethod" Multiplicity="1" />
+    <End Type="GenerousAPIModel.PaymentProfile" Role="PaymentProfile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentMethod">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PaymentProfile">
+        <PropertyRef Name="PaymentMethodId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentProfile_TransactionMode">
+    <End Type="GenerousAPIModel.TransactionMode" Role="TransactionMode" Multiplicity="0..1" />
+    <End Type="GenerousAPIModel.PaymentProfile" Role="PaymentProfile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TransactionMode">
+        <PropertyRef Name="TransactionModeId" />
+      </Principal>
+      <Dependent Role="PaymentProfile">
+        <PropertyRef Name="TransactionMode" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

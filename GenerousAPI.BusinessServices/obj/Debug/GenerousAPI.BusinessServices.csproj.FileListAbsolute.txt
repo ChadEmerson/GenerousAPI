@@ -1,0 +1,11 @@
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\bin\Debug\GenerousAPI.BusinessServices.dll
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\bin\Debug\GenerousAPI.BusinessServices.pdb
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\bin\Debug\GenerousAPI.BusinessEntities.dll
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\bin\Debug\GenerousAPI.DataAccessLayer.dll
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\bin\Debug\EntityFramework.dll
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\bin\Debug\GenerousAPI.BusinessEntities.pdb
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\bin\Debug\GenerousAPI.DataAccessLayer.pdb
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\bin\Debug\EntityFramework.xml
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\obj\Debug\GenerousAPI.BusinessServices.csprojResolveAssemblyReference.cache
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\obj\Debug\GenerousAPI.BusinessServices.dll
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\obj\Debug\GenerousAPI.BusinessServices.pdb

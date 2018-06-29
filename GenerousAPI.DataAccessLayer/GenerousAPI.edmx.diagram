@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="0dae8ff400204692b34bffb77ea60a18" Name="Diagram1">
+        <EntityTypeShape EntityType="GenerousAPIModel.CardType" Width="1.5" PointX="0.75" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="GenerousAPIModel.PaymentMethod" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GenerousAPIModel.TransactionMode" Width="1.5" PointX="5.375" PointY="0.875" />
+        <EntityTypeShape EntityType="GenerousAPIModel.PaymentGatewayConfig" Width="1.5" PointX="3" PointY="7" />
+        <EntityTypeShape EntityType="GenerousAPIModel.PaymentGatewayType" Width="1.5" PointX="0.75" PointY="7.25" />
+        <AssociationConnector Association="GenerousAPIModel.FK_PaymentGateway_PaymentGateway" />
+        <EntityTypeShape EntityType="GenerousAPIModel.BankAccount" Width="1.5" PointX="3.375" PointY="4.125" />
+        <EntityTypeShape EntityType="GenerousAPIModel.PaymentProfile" Width="1.5" PointX="7.625" PointY="0.75" />
+        <AssociationConnector Association="GenerousAPIModel.FK_PaymentProfile_CardType" />
+        <AssociationConnector Association="GenerousAPIModel.FK_PaymentProfile_PaymentMethod" />
+        <AssociationConnector Association="GenerousAPIModel.FK_PaymentProfile_TransactionMode" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

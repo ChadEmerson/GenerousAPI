@@ -1,0 +1,12 @@
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\obj\Debug\GenerousAPI.DataAccessLayer.csprojResolveAssemblyReference.cache
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\GenerousAPI.DataAccessLayer.dll.config
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\GenerousAPI.DataAccessLayer.dll
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\GenerousAPI.DataAccessLayer.pdb
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\EntityFramework.dll
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\EntityFramework.SqlServer.dll
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\EntityFramework.xml
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\EntityFramework.SqlServer.xml
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\obj\Debug\GenerousAPI.DataAccessLayer.dll
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\obj\Debug\GenerousAPI.DataAccessLayer.pdb
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\GenerousAPI.BusinessEntities.dll
+c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\GenerousAPI.BusinessEntities.pdb
