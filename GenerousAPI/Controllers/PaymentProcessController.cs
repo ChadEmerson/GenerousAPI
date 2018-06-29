@@ -91,7 +91,7 @@ namespace GenerousAPI.Controllers
         /// <param name="transactionDetails">Collection of transaction details</param>
         /// <returns>Collection of responses for each payment</returns>
         [HttpPost]
-        public IEnumerable<ProcessorResponse> ProcessPayment(IEnumerable<TransactionDetails> transactionDetails)
+        public IEnumerable<PaymentResponse> ProcessPayment(IEnumerable<TransactionDetails> transactionDetails)
         {
             PaymentGatewayProcessing.PaymentGatewayProcessing paymentGatewayProcessing = null;
             NameValueCollection collection = PaymentGatewayConfigXMLParser.ParseConfigXML(GetGenerousPaymentGatewayDetails((byte)Enums.PaymentGatewayType.GENEROUS).GatewayConfig);
@@ -99,7 +99,7 @@ namespace GenerousAPI.Controllers
 
             PaymentGatewayProcessing.Helpers.PaymentRequestDetails cardAccessRequest = new PaymentGatewayProcessing.Helpers.PaymentRequestDetails();
 
-            var paymentResponses = new List<ProcessorResponse>();
+            var paymentResponses = new List<PaymentResponse>();
 
             // Get payment profile details for each transaction and process           
             foreach (var transaction in transactionDetails)
@@ -117,7 +117,7 @@ namespace GenerousAPI.Controllers
 
                         if (!string.IsNullOrEmpty(auditId))
                         {
-                            var paymentResponse = new ProcessorResponse();
+                            var paymentResponse = new PaymentResponse();
                             paymentResponse.IsSuccess = true;
                             paymentResponse.Message = "Test successful";
                             paymentResponse.Amount = transaction.Amount;
@@ -142,7 +142,7 @@ namespace GenerousAPI.Controllers
 
                         var cardAccessResponse = paymentGatewayProcessing.ProcessCreditCardDonation(cardAccessRequest);
 
-                        var paymentResponse = new ProcessorResponse();
+                        var paymentResponse = new PaymentResponse();
                         paymentResponse.IsSuccess = cardAccessResponse.TransactionSuccessful;
                         paymentResponse.Message = cardAccessResponse.ResponseMessage + " " + cardAccessResponse.ResponseText;
                         paymentResponse.Amount = transaction.Amount;
@@ -154,7 +154,7 @@ namespace GenerousAPI.Controllers
                 }
                 catch (Exception ex)
                 {
-                    var paymentResponse = new ProcessorResponse();
+                    var paymentResponse = new PaymentResponse();
                     paymentResponse.IsSuccess = false;
                     paymentResponse.Message = ex.Message;
                     paymentResponse.Amount = transaction.Amount;
