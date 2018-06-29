@@ -121,7 +121,7 @@ namespace GenerousAPI.Controllers
                             paymentResponse.IsSuccess = true;
                             paymentResponse.Message = "Test successful";
                             paymentResponse.Amount = transaction.Amount;
-                            transaction.FundId = transaction.FundId;
+                            paymentResponse.FundId = transaction.FundId;
 
                             paymentResponses.Add(paymentResponse);
                         }
@@ -146,7 +146,7 @@ namespace GenerousAPI.Controllers
                         paymentResponse.IsSuccess = cardAccessResponse.TransactionSuccessful;
                         paymentResponse.Message = cardAccessResponse.ResponseMessage + " " + cardAccessResponse.ResponseText;
                         paymentResponse.Amount = transaction.Amount;
-                        transaction.FundId = transaction.FundId;
+                        paymentResponse.FundId = transaction.FundId;
 
                         paymentResponses.Add(paymentResponse);
                     }
