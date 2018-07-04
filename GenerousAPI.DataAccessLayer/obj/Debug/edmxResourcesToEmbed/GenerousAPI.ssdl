@@ -54,8 +54,8 @@ warning 6002: The table/view 'GenerousAPI.dbo.BankAccount' does not have a prima
     <Property Name="PaymentMethodId" Type="tinyint" Nullable="false" />
     <Property Name="CardType" Type="varchar" MaxLength="20" />
     <Property Name="CardNumber" Type="nvarchar" MaxLength="100" />
-    <Property Name="CardExpiryMonth" Type="nvarchar" MaxLength="100" Nullable="false" />
-    <Property Name="CardExpiryYear" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="CardExpiryMonth" Type="varchar" MaxLength="4" />
+    <Property Name="CardExpiryYear" Type="varchar" MaxLength="4" />
     <Property Name="NameOnCard" Type="nvarchar" MaxLength="100" />
     <Property Name="BankName" Type="nvarchar" MaxLength="80" />
     <Property Name="BSBNumber" Type="nvarchar" MaxLength="100" />

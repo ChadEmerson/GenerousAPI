@@ -31,7 +31,7 @@ namespace GenerousAPI.DataAccessLayer
             catch (Exception ex)
             {
                 response.IsSuccess = false;
-                response.Message = ex.Message;
+                response.Message = ex.Message +  ex.InnerException;
             }
 
             return response;

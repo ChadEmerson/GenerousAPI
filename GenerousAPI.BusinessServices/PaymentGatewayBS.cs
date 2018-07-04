@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GenerousAPI.BusinessServices
 {
-    public class PaymentGatewayBS
+    public class PaymentGatewayBS : IPaymentGatewayBS
     {
         /// <summary>
         /// Reference to the donation interface

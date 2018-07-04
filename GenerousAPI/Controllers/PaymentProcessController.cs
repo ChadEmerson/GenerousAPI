@@ -30,59 +30,110 @@ namespace GenerousAPI.Controllers
             };
         }
 
+        [AcceptVerbs("POST")]
         [HttpPost]
-        public ProcessorResponse CreatePaymentProfile(PaymentProfileDTO paymentProfileDTO)
+        public ProcessorResponse CreatePaymentProfile([FromBody]PaymentProfileDTO paymentProfileDTO)
         {
-            // Create the new token
-            var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            try
+            {
+                // Create the new token
+                var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
-            // Create Data Access object 
-            var paymentProfile = DataTransformPaymentProfile(paymentProfileDTO);
-            paymentProfile.TokenId = token;
+                // Create Data Access object 
+                var paymentProfile = DataTransformPaymentProfile(paymentProfileDTO);
 
-            // Save the payment profile
-            var response = _IPaymentProfileBS.CreatePaymentProfile(paymentProfile);
-                      
-            // Return a token id
-            return response;
+                if (!string.IsNullOrEmpty(paymentProfileDTO.CardNumber) && 
+                    !string.IsNullOrEmpty(paymentProfileDTO.ExpirationMonth) && 
+                    !string.IsNullOrEmpty(paymentProfileDTO.ExpirationYear))
+                {
+                    paymentProfile.PaymentMethodId = (byte)Enums.PaymentMethod.CreditCard;
+                }
+                else
+                {
+                    paymentProfile.PaymentMethodId = (byte)Enums.PaymentMethod.DirectDebit;
+                }
+
+                paymentProfile.TokenId = token;
+
+                _IPaymentProfileBS = new PaymentProfileBS();
+                // Save the payment profile
+                var response = _IPaymentProfileBS.CreatePaymentProfile(paymentProfile);
+
+                // Return a token id
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
+        [AcceptVerbs("POST")]
         [HttpPost]
-
-        public ProcessorResponse CreateBankAccount(BankAccountDTO bankAccountDTO)
+        public ProcessorResponse CreateBankAccount([FromBody]BankAccountDTO bankAccountDTO)
         {
-            // Create the new token
-            var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            try
+            {
+                // Create the new token
+                var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
-            // Create Data Access object 
-            var bankAccount = DataTransformBankAccountDTO(bankAccountDTO);
-            bankAccount.BankAccountTokenId = token;
+                // Create Data Access object 
+                var bankAccount = DataTransformBankAccountDTO(bankAccountDTO);
+                bankAccount.BankAccountTokenId = token;
 
-            // Save the bank account
-            var response = _IBankAccountBS.CreateBankAccount(bankAccount);
+                _IBankAccountBS = new BankAccountBS();
 
-            // Return a token id
-            return response;
+                // Save the bank account
+                var response = _IBankAccountBS.CreateBankAccount(bankAccount);
+
+                // Return a token id
+                return response;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
+        [AcceptVerbs("POST")]
         [HttpPost]
-        public ProcessorResponse DeletePaymentProfile(string token)
+        public ProcessorResponse DeletePaymentProfile([FromBody]string token)
         {
-            // Delete the payment profile
-            var response = _IPaymentProfileBS.DeletePaymentProfile(token);
+            try
+            {
+                _IPaymentProfileBS = new PaymentProfileBS();
 
-            // Return response
-            return response;
+                // Delete the payment profile
+                var response = _IPaymentProfileBS.DeletePaymentProfile(token);
+
+                // Return response
+                return response;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
         }
 
+        [AcceptVerbs("POST")]
         [HttpPost]
-        public ProcessorResponse DeleteBankAccount(string token)
+        public ProcessorResponse DeleteBankAccount([FromBody]string token)
         {
-            // Delete the bank account
-            var response = _IBankAccountBS.DeleteBankAccount(token);
+            try
+            {
+                _IBankAccountBS = new BankAccountBS();
+                
+                // Delete the bank account
+                var response = _IBankAccountBS.DeleteBankAccount(token);
 
-            // Return response
-            return response;
+                // Return response
+                return response;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -91,7 +142,8 @@ namespace GenerousAPI.Controllers
         /// <param name="transactionDetails">Collection of transaction details</param>
         /// <returns>Collection of responses for each payment</returns>
         [HttpPost]
-        public IEnumerable<PaymentResponse> ProcessPayment(IEnumerable<TransactionDetails> transactionDetails)
+        [AcceptVerbs("POST")]
+        public IEnumerable<PaymentResponse> ProcessPayment([FromBody]IEnumerable<TransactionDetails> transactionDetails)
         {
             PaymentGatewayProcessing.PaymentGatewayProcessing paymentGatewayProcessing = null;
             NameValueCollection collection = PaymentGatewayConfigXMLParser.ParseConfigXML(GetGenerousPaymentGatewayDetails((byte)Enums.PaymentGatewayType.GENEROUS).GatewayConfig);
@@ -171,9 +223,11 @@ namespace GenerousAPI.Controllers
         /// Get the payment profile details based on the token
         /// </summary>
         /// <param name="paymentProfiletokenID">Token Id</param>
-        /// <returns>payment profile details</returns>
+        /// <returns>payment profile details</returns>        
         private PaymentProfileDTO GetPaymentProfileDetails(string paymentProfiletokenID)
         {
+            _IPaymentProfileBS = new PaymentProfileBS();
+
             var paymentProfileDTO = _IPaymentProfileBS.GetPaymentProfile(paymentProfiletokenID);
 
             paymentProfileDTO.RoutingNumber = EncryptionService.Decrypt(paymentProfileDTO.RoutingNumber);
@@ -192,6 +246,8 @@ namespace GenerousAPI.Controllers
         /// <returns></returns>
         private PaymentGatewayDTO GetGenerousPaymentGatewayDetails(byte paymentGatewayType)
         {
+            _IPaymentGatewayBS = new PaymentGatewayBS();
+
             var paymentGateways = _IPaymentGatewayBS.GetPaymentGatewayDetails(paymentGatewayType);
 
             return paymentGateways.FirstOrDefault();
@@ -206,6 +262,7 @@ namespace GenerousAPI.Controllers
         {
             var paymentProfile = new DataAccessLayer.PaymentProfile
             {
+                Id = Guid.NewGuid(),
                 CustomerFirstName = paymentProfileDTO.CustomerFirstName,
                 CustomerLastName = paymentProfileDTO.CustomerLastName,
                 BillingAddress = paymentProfileDTO.BillingAddress,
@@ -216,12 +273,14 @@ namespace GenerousAPI.Controllers
                 BankAccountNumber = EncryptionService.Encrypt(paymentProfileDTO.AccountNumber),
                 CardType = paymentProfileDTO.CardType,
                 CardNumber = EncryptionService.Encrypt(paymentProfileDTO.CardNumber),
-                CardExpiryMonth = EncryptionService.Encrypt(paymentProfileDTO.ExpirationMonth.ToString()),
-                CardExpiryYear = EncryptionService.Encrypt(paymentProfileDTO.ExpirationYear.ToString()),
-                CardSerurityNumber = EncryptionService.Encrypt(paymentProfileDTO.SecurityCode.ToString()),
+                CardExpiryMonth = EncryptionService.Encrypt(paymentProfileDTO.ExpirationMonth),
+                CardExpiryYear = EncryptionService.Encrypt(paymentProfileDTO.ExpirationYear),
+                CardSerurityNumber = EncryptionService.Encrypt(paymentProfileDTO.SecurityCode),
                 BankName = paymentProfileDTO.BankName,
                 TransactionMode = (byte)paymentProfileDTO.TransactionMode,
-                AccountType = paymentProfileDTO.AccountType
+                AccountType = paymentProfileDTO.AccountType,
+                CreatedBy = System.Configuration.ConfigurationManager.AppSettings["SystemAddedName"],
+                CreateDateTime = DateTime.Now                
             };
 
             return paymentProfile;

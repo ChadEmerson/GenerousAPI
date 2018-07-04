@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenerousAPI.BusinessServices.Interfaces
+namespace GenerousAPI.BusinessServices
 {
-    public class BankAccountBS
+    public class BankAccountBS : IBankAccountBS
     {
         private IBankAccountDAL _IBankAccountDAL = null;
 

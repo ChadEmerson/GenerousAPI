@@ -59,8 +59,8 @@ warning 6002: The table/view 'GenerousAPI.dbo.BankAccount' does not have a prima
           <Property Name="PaymentMethodId" Type="tinyint" Nullable="false" />
           <Property Name="CardType" Type="varchar" MaxLength="20" />
           <Property Name="CardNumber" Type="nvarchar" MaxLength="100" />
-          <Property Name="CardExpiryMonth" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="CardExpiryYear" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="CardExpiryMonth" Type="varchar" MaxLength="4" />
+          <Property Name="CardExpiryYear" Type="varchar" MaxLength="4" />
           <Property Name="NameOnCard" Type="nvarchar" MaxLength="100" />
           <Property Name="BankName" Type="nvarchar" MaxLength="80" />
           <Property Name="BSBNumber" Type="nvarchar" MaxLength="100" />
@@ -278,8 +278,8 @@ warning 6002: The table/view 'GenerousAPI.dbo.BankAccount' does not have a prima
           <Property Name="PaymentMethodId" Type="Byte" Nullable="false" />
           <Property Name="CardType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="CardNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="CardExpiryMonth" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="CardExpiryYear" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CardExpiryMonth" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
+          <Property Name="CardExpiryYear" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
           <Property Name="NameOnCard" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="BankName" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
           <Property Name="BSBNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
