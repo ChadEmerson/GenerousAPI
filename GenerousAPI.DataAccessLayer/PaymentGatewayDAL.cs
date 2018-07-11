@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace GenerousAPI.DataAccessLayer.Interfaces
 {
-    public class PaymentGatewayDAL
+    public class PaymentGatewayDAL : IPaymentGatewayDAL
     {
         /// <summary>
         /// Gets payment gateway details for an organisation

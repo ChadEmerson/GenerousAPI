@@ -1,4 +1,5 @@
 ﻿using GenerousAPI.BusinessEntities;
+using System;
 using System.Collections.Generic;
 
 namespace GenerousAPI.DataAccessLayer.Interfaces
@@ -11,6 +12,6 @@ namespace GenerousAPI.DataAccessLayer.Interfaces
         /// <param name="organisationId">Organisation ID</param>
         /// <param name="gatewayType">Gateway type</param>
         /// <returns>Payment gateway details for an organisation</returns>
-        IEnumerable<PaymentGatewayDTO> GetPaymentGatewayDetails(byte gatewayType);
+        IEnumerable<PaymentGatewayDTO> GetPaymentGatewayDetails(Guid organisationId, byte gatewayType);
     }
 }

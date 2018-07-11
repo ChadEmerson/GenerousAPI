@@ -244,11 +244,11 @@ namespace GenerousAPI.Controllers
         /// </summary>
         /// <param name="paymentGatewayType"></param>
         /// <returns></returns>
-        private PaymentGatewayDTO GetGenerousPaymentGatewayDetails(byte paymentGatewayType)
+        private PaymentGatewayDTO GetGenerousPaymentGatewayDetails(byte paymentGatewayType, Guid organisationId = new Guid())
         {
             _IPaymentGatewayBS = new PaymentGatewayBS();
 
-            var paymentGateways = _IPaymentGatewayBS.GetPaymentGatewayDetails(paymentGatewayType);
+            var paymentGateways = _IPaymentGatewayBS.GetPaymentGatewayDetails(organisationId, paymentGatewayType);
 
             return paymentGateways.FirstOrDefault();
         }

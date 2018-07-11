@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="GenerousAPIModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-  <!--Errors Found During Generation:
-warning 6002: The table/view 'GenerousAPI.dbo.BankAccount' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
   <EntityType Name="BankAccount">
     <Key>
       <PropertyRef Name="BankAccountId" />
@@ -54,8 +52,8 @@ warning 6002: The table/view 'GenerousAPI.dbo.BankAccount' does not have a prima
     <Property Name="PaymentMethodId" Type="tinyint" Nullable="false" />
     <Property Name="CardType" Type="varchar" MaxLength="20" />
     <Property Name="CardNumber" Type="nvarchar" MaxLength="100" />
-    <Property Name="CardExpiryMonth" Type="varchar" MaxLength="4" />
-    <Property Name="CardExpiryYear" Type="varchar" MaxLength="4" />
+    <Property Name="CardExpiryMonth" Type="nvarchar" MaxLength="100" />
+    <Property Name="CardExpiryYear" Type="nvarchar" MaxLength="100" />
     <Property Name="NameOnCard" Type="nvarchar" MaxLength="100" />
     <Property Name="BankName" Type="nvarchar" MaxLength="80" />
     <Property Name="BSBNumber" Type="nvarchar" MaxLength="100" />
@@ -135,22 +133,13 @@ warning 6002: The table/view 'GenerousAPI.dbo.BankAccount' does not have a prima
     </ReferentialConstraint>
   </Association>
   <EntityContainer Name="GenerousAPIModelStoreContainer">
+    <EntitySet Name="BankAccount" EntityType="Self.BankAccount" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CardType" EntityType="Self.CardType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentGatewayConfig" EntityType="Self.PaymentGatewayConfig" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentGatewayType" EntityType="Self.PaymentGatewayType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentMethod" EntityType="Self.PaymentMethod" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentProfile" EntityType="Self.PaymentProfile" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TransactionMode" EntityType="Self.TransactionMode" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="BankAccount" EntityType="Self.BankAccount" store:Type="Tables" store:Schema="dbo">
-      <DefiningQuery>SELECT 
-    [BankAccount].[BankAccountId] AS [BankAccountId], 
-    [BankAccount].[BankAcountName] AS [BankAcountName], 
-    [BankAccount].[BankAccountNumber] AS [BankAccountNumber], 
-    [BankAccount].[BankAccountBSB] AS [BankAccountBSB], 
-    [BankAccount].[FundId] AS [FundId], 
-    [BankAccount].[BankAccountTokenId] AS [BankAccountTokenId]
-    FROM [dbo].[BankAccount] AS [BankAccount]</DefiningQuery>
-    </EntitySet>
     <AssociationSet Name="FK_PaymentGateway_PaymentGateway" Association="Self.FK_PaymentGateway_PaymentGateway">
       <End Role="PaymentGatewayType" EntitySet="PaymentGatewayType" />
       <End Role="PaymentGatewayConfig" EntitySet="PaymentGatewayConfig" />
