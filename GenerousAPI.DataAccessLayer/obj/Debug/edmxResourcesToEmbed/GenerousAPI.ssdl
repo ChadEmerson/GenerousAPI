@@ -8,7 +8,6 @@
     <Property Name="BankAcountName" Type="nvarchar" MaxLength="500" />
     <Property Name="BankAccountNumber" Type="nvarchar" MaxLength="500" />
     <Property Name="BankAccountBSB" Type="nvarchar" MaxLength="500" />
-    <Property Name="FundId" Type="int" />
     <Property Name="BankAccountTokenId" Type="nvarchar" MaxLength="500" />
   </EntityType>
   <EntityType Name="CardType">

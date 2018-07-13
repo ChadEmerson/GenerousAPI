@@ -88,8 +88,7 @@ namespace GenerousAPI.DataAccessLayer
                             BankAccountTokenId = bankAccount.BankAccountTokenId,
                             BankAccountBSB = bankAccount.BankAccountBSB,
                             BankAccountNumber = bankAccount.BankAccountNumber,
-                            BankAcountName = bankAccount.BankAcountName,
-                            FundId = bankAccount.FundId
+                            BankAcountName = bankAccount.BankAcountName
                         }).SingleOrDefault();
             }
         }

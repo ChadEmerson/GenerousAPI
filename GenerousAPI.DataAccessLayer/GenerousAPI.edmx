@@ -13,7 +13,6 @@
           <Property Name="BankAcountName" Type="nvarchar" MaxLength="500" />
           <Property Name="BankAccountNumber" Type="nvarchar" MaxLength="500" />
           <Property Name="BankAccountBSB" Type="nvarchar" MaxLength="500" />
-          <Property Name="FundId" Type="int" />
           <Property Name="BankAccountTokenId" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="CardType">
@@ -191,7 +190,6 @@
             <End Role="PaymentGatewayType" EntitySet="PaymentGatewayTypes" />
             <End Role="PaymentGatewayConfig" EntitySet="PaymentGatewayConfigs" />
           </AssociationSet>
-          <EntitySet Name="BankAccounts" EntityType="GenerousAPIModel.BankAccount" />
           <EntitySet Name="PaymentProfiles" EntityType="GenerousAPIModel.PaymentProfile" />
           <AssociationSet Name="FK_PaymentProfile_CardType" Association="GenerousAPIModel.FK_PaymentProfile_CardType">
             <End Role="CardType" EntitySet="CardTypes" />
@@ -205,6 +203,7 @@
             <End Role="TransactionMode" EntitySet="TransactionModes" />
             <End Role="PaymentProfile" EntitySet="PaymentProfiles" />
           </AssociationSet>
+          <EntitySet Name="BankAccounts" EntityType="GenerousAPIModel.BankAccount" />
           </EntityContainer>
         <EntityType Name="TransactionMode">
           <Key>
@@ -247,17 +246,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="BankAccount">
-          <Key>
-            <PropertyRef Name="BankAccountId" />
-          </Key>
-          <Property Name="BankAccountId" Type="Guid" Nullable="false" />
-          <Property Name="BankAcountName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="BankAccountNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="BankAccountBSB" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="FundId" Type="Int32" />
-          <Property Name="BankAccountTokenId" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="PaymentProfile">
           <Key>
             <PropertyRef Name="Id" />
@@ -331,6 +319,16 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="BankAccount">
+          <Key>
+            <PropertyRef Name="BankAccountId" />
+          </Key>
+          <Property Name="BankAccountId" Type="Guid" Nullable="false" />
+          <Property Name="BankAcountName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="BankAccountNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="BankAccountBSB" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="BankAccountTokenId" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -381,18 +379,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="BankAccounts">
-            <EntityTypeMapping TypeName="GenerousAPIModel.BankAccount">
-              <MappingFragment StoreEntitySet="BankAccount">
-                <ScalarProperty Name="BankAccountTokenId" ColumnName="BankAccountTokenId" />
-                <ScalarProperty Name="FundId" ColumnName="FundId" />
-                <ScalarProperty Name="BankAccountBSB" ColumnName="BankAccountBSB" />
-                <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
-                <ScalarProperty Name="BankAcountName" ColumnName="BankAcountName" />
-                <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="PaymentProfiles">
             <EntityTypeMapping TypeName="GenerousAPIModel.PaymentProfile">
               <MappingFragment StoreEntitySet="PaymentProfile">
@@ -425,6 +411,17 @@
                 <ScalarProperty Name="PaymentMethodId" ColumnName="PaymentMethodId" />
                 <ScalarProperty Name="TokenId" ColumnName="TokenId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BankAccounts">
+            <EntityTypeMapping TypeName="GenerousAPIModel.BankAccount">
+              <MappingFragment StoreEntitySet="BankAccount">
+                <ScalarProperty Name="BankAccountTokenId" ColumnName="BankAccountTokenId" />
+                <ScalarProperty Name="BankAccountBSB" ColumnName="BankAccountBSB" />
+                <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
+                <ScalarProperty Name="BankAcountName" ColumnName="BankAcountName" />
+                <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

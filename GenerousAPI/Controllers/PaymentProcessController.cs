@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace GenerousAPI.Controllers
@@ -97,11 +98,14 @@ namespace GenerousAPI.Controllers
 
         [AcceptVerbs("POST")]
         [HttpPost]
-        public ProcessorResponse DeletePaymentProfile([FromBody]string token)
+        public ProcessorResponse DeletePaymentProfile(HttpRequestMessage request)
         {
             try
             {
                 _IPaymentProfileBS = new PaymentProfileBS();
+
+                // Now pull out the body from the request
+                string token = request.Content.ReadAsStringAsync().Result;
 
                 // Delete the payment profile
                 var response = _IPaymentProfileBS.DeletePaymentProfile(token);
@@ -118,12 +122,15 @@ namespace GenerousAPI.Controllers
 
         [AcceptVerbs("POST")]
         [HttpPost]
-        public ProcessorResponse DeleteBankAccount([FromBody]string token)
+        public ProcessorResponse DeleteBankAccount(HttpRequestMessage request)
         {
             try
             {
                 _IBankAccountBS = new BankAccountBS();
-                
+
+                // Now pull out the body from the request 
+                string token = request.Content.ReadAsStringAsync().Result;
+
                 // Delete the bank account
                 var response = _IBankAccountBS.DeleteBankAccount(token);
 
@@ -173,7 +180,6 @@ namespace GenerousAPI.Controllers
                             paymentResponse.IsSuccess = true;
                             paymentResponse.Message = "Test successful";
                             paymentResponse.Amount = transaction.Amount;
-                            paymentResponse.FundId = transaction.FundId;
 
                             paymentResponses.Add(paymentResponse);
                         }
@@ -185,7 +191,7 @@ namespace GenerousAPI.Controllers
                         // Convert to cents
                         cardAccessRequest.Amount = transaction.Amount * 100;
                         cardAccessRequest.CardType = paymentProfile.CardType;
-                        cardAccessRequest.CardNumber = paymentProfile.CardNumber;
+                        cardAccessRequest.CardNumber = String.IsNullOrEmpty(paymentProfile.CardNumber) ? paymentProfile.AccountNumber : paymentProfile.CardNumber;
                         cardAccessRequest.CardExpiryMonth = paymentProfile.ExpirationMonth;
                         cardAccessRequest.CardExpiryYear = paymentProfile.ExpirationYear;
                         cardAccessRequest.CCV = paymentProfile.SecurityCode;
@@ -198,7 +204,6 @@ namespace GenerousAPI.Controllers
                         paymentResponse.IsSuccess = cardAccessResponse.TransactionSuccessful;
                         paymentResponse.Message = cardAccessResponse.ResponseMessage + " " + cardAccessResponse.ResponseText;
                         paymentResponse.Amount = transaction.Amount;
-                        paymentResponse.FundId = transaction.FundId;
 
                         paymentResponses.Add(paymentResponse);
                     }
@@ -210,7 +215,6 @@ namespace GenerousAPI.Controllers
                     paymentResponse.IsSuccess = false;
                     paymentResponse.Message = ex.Message;
                     paymentResponse.Amount = transaction.Amount;
-                    transaction.FundId = transaction.FundId;
 
                     paymentResponses.Add(paymentResponse);
                 }
@@ -233,9 +237,9 @@ namespace GenerousAPI.Controllers
             paymentProfileDTO.RoutingNumber = EncryptionService.Decrypt(paymentProfileDTO.RoutingNumber);
             paymentProfileDTO.AccountNumber = EncryptionService.Decrypt(paymentProfileDTO.AccountNumber);
             paymentProfileDTO.CardNumber = EncryptionService.Decrypt(paymentProfileDTO.CardNumber);
-            paymentProfileDTO.ExpirationMonth = EncryptionService.Decrypt(paymentProfileDTO.ExpirationMonth.ToString());
-            paymentProfileDTO.ExpirationYear = EncryptionService.Decrypt(paymentProfileDTO.ExpirationYear.ToString());
-            paymentProfileDTO.SecurityCode = EncryptionService.Decrypt(paymentProfileDTO.SecurityCode.ToString());
+            paymentProfileDTO.ExpirationMonth = EncryptionService.Decrypt(paymentProfileDTO.ExpirationMonth);
+            paymentProfileDTO.ExpirationYear = EncryptionService.Decrypt(paymentProfileDTO.ExpirationYear);
+            paymentProfileDTO.SecurityCode = EncryptionService.Decrypt(paymentProfileDTO.SecurityCode);
             return paymentProfileDTO;
         }
 
@@ -298,8 +302,7 @@ namespace GenerousAPI.Controllers
                 BankAccountNumber = EncryptionService.Encrypt(bankAccountDTO.BankAccountNumber),
                 BankAccountBSB = EncryptionService.Encrypt(bankAccountDTO.BankAccountBSB),
                 BankAccountId = Guid.NewGuid(),
-                BankAcountName = bankAccountDTO.BankAcountName,
-                FundId = bankAccountDTO.FundId
+                BankAcountName = bankAccountDTO.BankAcountName
             };
 
             return bankAccount;

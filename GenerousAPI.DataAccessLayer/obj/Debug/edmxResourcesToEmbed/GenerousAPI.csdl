@@ -25,7 +25,6 @@
       <End Role="PaymentGatewayType" EntitySet="PaymentGatewayTypes" />
       <End Role="PaymentGatewayConfig" EntitySet="PaymentGatewayConfigs" />
     </AssociationSet>
-    <EntitySet Name="BankAccounts" EntityType="GenerousAPIModel.BankAccount" />
     <EntitySet Name="PaymentProfiles" EntityType="GenerousAPIModel.PaymentProfile" />
     <AssociationSet Name="FK_PaymentProfile_CardType" Association="GenerousAPIModel.FK_PaymentProfile_CardType">
       <End Role="CardType" EntitySet="CardTypes" />
@@ -39,6 +38,7 @@
       <End Role="TransactionMode" EntitySet="TransactionModes" />
       <End Role="PaymentProfile" EntitySet="PaymentProfiles" />
     </AssociationSet>
+    <EntitySet Name="BankAccounts" EntityType="GenerousAPIModel.BankAccount" />
   </EntityContainer>
   <EntityType Name="TransactionMode">
     <Key>
@@ -81,17 +81,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <EntityType Name="BankAccount">
-    <Key>
-      <PropertyRef Name="BankAccountId" />
-    </Key>
-    <Property Name="BankAccountId" Type="Guid" Nullable="false" />
-    <Property Name="BankAcountName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="BankAccountNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="BankAccountBSB" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="FundId" Type="Int32" />
-    <Property Name="BankAccountTokenId" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-  </EntityType>
   <EntityType Name="PaymentProfile">
     <Key>
       <PropertyRef Name="Id" />
@@ -165,4 +154,14 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="BankAccount">
+    <Key>
+      <PropertyRef Name="BankAccountId" />
+    </Key>
+    <Property Name="BankAccountId" Type="Guid" Nullable="false" />
+    <Property Name="BankAcountName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="BankAccountNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="BankAccountBSB" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="BankAccountTokenId" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+  </EntityType>
 </Schema>

@@ -14,7 +14,6 @@ namespace GenerousAPI.BusinessEntities
         }
 
         public bool IsSuccess { get; set; }
-        public int FundId { get; set; }
         public string AuthToken { get; set; }
         public string Message { get; set; }
         public decimal Amount { get; set; }

@@ -11,11 +11,11 @@
         <EntityTypeShape EntityType="GenerousAPIModel.PaymentGatewayConfig" Width="1.5" PointX="3" PointY="7" />
         <EntityTypeShape EntityType="GenerousAPIModel.PaymentGatewayType" Width="1.5" PointX="0.75" PointY="7.25" />
         <AssociationConnector Association="GenerousAPIModel.FK_PaymentGateway_PaymentGateway" />
-        <EntityTypeShape EntityType="GenerousAPIModel.BankAccount" Width="1.5" PointX="3.375" PointY="4.125" />
         <EntityTypeShape EntityType="GenerousAPIModel.PaymentProfile" Width="1.5" PointX="7.625" PointY="0.75" />
         <AssociationConnector Association="GenerousAPIModel.FK_PaymentProfile_CardType" />
         <AssociationConnector Association="GenerousAPIModel.FK_PaymentProfile_PaymentMethod" />
         <AssociationConnector Association="GenerousAPIModel.FK_PaymentProfile_TransactionMode" />
+        <EntityTypeShape EntityType="GenerousAPIModel.BankAccount" Width="1.5" PointX="3.375" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -45,18 +45,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="BankAccounts">
-      <EntityTypeMapping TypeName="GenerousAPIModel.BankAccount">
-        <MappingFragment StoreEntitySet="BankAccount">
-          <ScalarProperty Name="BankAccountTokenId" ColumnName="BankAccountTokenId" />
-          <ScalarProperty Name="FundId" ColumnName="FundId" />
-          <ScalarProperty Name="BankAccountBSB" ColumnName="BankAccountBSB" />
-          <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
-          <ScalarProperty Name="BankAcountName" ColumnName="BankAcountName" />
-          <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="PaymentProfiles">
       <EntityTypeMapping TypeName="GenerousAPIModel.PaymentProfile">
         <MappingFragment StoreEntitySet="PaymentProfile">
@@ -89,6 +77,17 @@
           <ScalarProperty Name="PaymentMethodId" ColumnName="PaymentMethodId" />
           <ScalarProperty Name="TokenId" ColumnName="TokenId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BankAccounts">
+      <EntityTypeMapping TypeName="GenerousAPIModel.BankAccount">
+        <MappingFragment StoreEntitySet="BankAccount">
+          <ScalarProperty Name="BankAccountTokenId" ColumnName="BankAccountTokenId" />
+          <ScalarProperty Name="BankAccountBSB" ColumnName="BankAccountBSB" />
+          <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
+          <ScalarProperty Name="BankAcountName" ColumnName="BankAcountName" />
+          <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

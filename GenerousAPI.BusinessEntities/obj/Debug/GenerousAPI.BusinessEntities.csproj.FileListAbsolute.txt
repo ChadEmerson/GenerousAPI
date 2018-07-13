@@ -1,5 +1,5 @@
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessEntities\bin\Debug\GenerousAPI.BusinessEntities.dll
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessEntities\bin\Debug\GenerousAPI.BusinessEntities.pdb
-c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessEntities\obj\Debug\GenerousAPI.BusinessEntities.csprojResolveAssemblyReference.cache
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessEntities\obj\Debug\GenerousAPI.BusinessEntities.dll
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessEntities\obj\Debug\GenerousAPI.BusinessEntities.pdb
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessEntities\obj\Debug\GenerousAPI.BusinessEntities.csprojResolveAssemblyReference.cache

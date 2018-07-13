@@ -11,8 +11,6 @@ namespace GenerousAPI.Models
 
         public string PaymentProfileTokenId { get; set; }
 
-        public int FundId { get; set; }
-
         public string TransactionReferenceNumber { get; set; }
 
         public bool IsTest { get; set; }

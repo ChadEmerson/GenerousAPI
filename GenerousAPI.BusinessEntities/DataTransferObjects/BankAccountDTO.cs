@@ -8,7 +8,6 @@ namespace GenerousAPI.BusinessEntities
         public string BankAcountName { get; set; }
         public string BankAccountNumber { get; set; }
         public string BankAccountBSB { get; set; }
-        public Nullable<int> FundId { get; set; }
         public string BankAccountTokenId { get; set; }
 
     }
