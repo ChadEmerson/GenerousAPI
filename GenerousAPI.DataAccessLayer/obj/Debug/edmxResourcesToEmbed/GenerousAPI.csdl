@@ -39,6 +39,7 @@
       <End Role="PaymentProfile" EntitySet="PaymentProfiles" />
     </AssociationSet>
     <EntitySet Name="BankAccounts" EntityType="GenerousAPIModel.BankAccount" />
+    <EntitySet Name="TransactionDetails" EntityType="GenerousAPIModel.TransactionDetail" />
   </EntityContainer>
   <EntityType Name="TransactionMode">
     <Key>
@@ -163,5 +164,19 @@
     <Property Name="BankAccountNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="BankAccountBSB" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="BankAccountTokenId" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="Active" Type="Boolean" />
+  </EntityType>
+  <EntityType Name="TransactionDetail">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Guid" Nullable="false" />
+    <Property Name="BankAccountTokenId" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="Amount" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+    <Property Name="PaymentProfileTokenId" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="PaymentMethodId" Type="Int32" Nullable="false" />
+    <Property Name="ProcessDateTime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ResponseCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ResponseText" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
   </EntityType>
 </Schema>

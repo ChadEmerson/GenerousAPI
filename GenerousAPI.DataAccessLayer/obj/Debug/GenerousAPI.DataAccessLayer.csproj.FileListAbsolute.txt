@@ -10,3 +10,8 @@ c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\obj\Debug\GenerousAPI.DataAccessLayer.pdb
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\GenerousAPI.BusinessEntities.dll
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\GenerousAPI.BusinessEntities.pdb
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\AutoMapper.dll
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\System.ValueTuple.dll
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\AutoMapper.pdb
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\AutoMapper.xml
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\System.ValueTuple.xml

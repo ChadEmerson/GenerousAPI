@@ -32,5 +32,6 @@ namespace GenerousAPI.DataAccessLayer
         public virtual DbSet<PaymentGatewayType> PaymentGatewayTypes { get; set; }
         public virtual DbSet<PaymentProfile> PaymentProfiles { get; set; }
         public virtual DbSet<BankAccount> BankAccounts { get; set; }
+        public virtual DbSet<TransactionDetail> TransactionDetails { get; set; }
     }
 }

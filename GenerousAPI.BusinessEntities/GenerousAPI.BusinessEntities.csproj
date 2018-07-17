@@ -43,6 +43,7 @@
     <Compile Include="DataTransferObjects\BankAccountDTO.cs" />
     <Compile Include="DataTransferObjects\PaymentGatewayDTO.cs" />
     <Compile Include="DataTransferObjects\PaymentProfileDTO.cs" />
+    <Compile Include="DataTransferObjects\TransactionDetailsDTO.cs" />
     <Compile Include="PaymentResponse.cs" />
     <Compile Include="ProcessorResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

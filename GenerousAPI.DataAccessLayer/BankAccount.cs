@@ -19,5 +19,6 @@ namespace GenerousAPI.DataAccessLayer
         public string BankAccountNumber { get; set; }
         public string BankAccountBSB { get; set; }
         public string BankAccountTokenId { get; set; }
+        public Nullable<bool> Active { get; set; }
     }
 }

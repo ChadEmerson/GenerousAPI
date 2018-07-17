@@ -16,6 +16,7 @@
         <AssociationConnector Association="GenerousAPIModel.FK_PaymentProfile_PaymentMethod" />
         <AssociationConnector Association="GenerousAPIModel.FK_PaymentProfile_TransactionMode" />
         <EntityTypeShape EntityType="GenerousAPIModel.BankAccount" Width="1.5" PointX="3.375" PointY="3.75" />
+        <EntityTypeShape EntityType="GenerousAPIModel.TransactionDetail" Width="1.5" PointX="5.375" PointY="8.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

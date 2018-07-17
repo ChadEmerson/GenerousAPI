@@ -14,6 +14,7 @@
           <Property Name="BankAccountNumber" Type="nvarchar" MaxLength="500" />
           <Property Name="BankAccountBSB" Type="nvarchar" MaxLength="500" />
           <Property Name="BankAccountTokenId" Type="nvarchar" MaxLength="500" />
+          <Property Name="Active" Type="bit" />
         </EntityType>
         <EntityType Name="CardType">
           <Key>
@@ -81,6 +82,19 @@
           <Property Name="AccountType" Type="nvarchar" MaxLength="50" />
           <Property Name="CardSerurityNumber" Type="nvarchar" MaxLength="500" />
         </EntityType>
+        <EntityType Name="TransactionDetails">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="BankAccountTokenId" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="PaymentProfileTokenId" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="PaymentMethodId" Type="int" Nullable="false" />
+          <Property Name="ProcessDateTime" Type="datetime" Nullable="false" />
+          <Property Name="ResponseCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ResponseText" Type="nvarchar" MaxLength="300" Nullable="false" />
+        </EntityType>
         <EntityType Name="TransactionMode">
           <Key>
             <PropertyRef Name="TransactionModeId" />
@@ -143,6 +157,7 @@
           <EntitySet Name="PaymentGatewayType" EntityType="Self.PaymentGatewayType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentMethod" EntityType="Self.PaymentMethod" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentProfile" EntityType="Self.PaymentProfile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TransactionDetails" EntityType="Self.TransactionDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransactionMode" EntityType="Self.TransactionMode" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_PaymentGateway_PaymentGateway" Association="Self.FK_PaymentGateway_PaymentGateway">
             <End Role="PaymentGatewayType" EntitySet="PaymentGatewayType" />
@@ -204,6 +219,7 @@
             <End Role="PaymentProfile" EntitySet="PaymentProfiles" />
           </AssociationSet>
           <EntitySet Name="BankAccounts" EntityType="GenerousAPIModel.BankAccount" />
+          <EntitySet Name="TransactionDetails" EntityType="GenerousAPIModel.TransactionDetail" />
           </EntityContainer>
         <EntityType Name="TransactionMode">
           <Key>
@@ -328,6 +344,20 @@
           <Property Name="BankAccountNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="BankAccountBSB" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="BankAccountTokenId" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="TransactionDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="BankAccountTokenId" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <Property Name="PaymentProfileTokenId" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentMethodId" Type="Int32" Nullable="false" />
+          <Property Name="ProcessDateTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ResponseCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ResponseText" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -417,11 +447,26 @@
           <EntitySetMapping Name="BankAccounts">
             <EntityTypeMapping TypeName="GenerousAPIModel.BankAccount">
               <MappingFragment StoreEntitySet="BankAccount">
+                <ScalarProperty Name="Active" ColumnName="Active" />
                 <ScalarProperty Name="BankAccountTokenId" ColumnName="BankAccountTokenId" />
                 <ScalarProperty Name="BankAccountBSB" ColumnName="BankAccountBSB" />
                 <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
                 <ScalarProperty Name="BankAcountName" ColumnName="BankAcountName" />
                 <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TransactionDetails">
+            <EntityTypeMapping TypeName="GenerousAPIModel.TransactionDetail">
+              <MappingFragment StoreEntitySet="TransactionDetails">
+                <ScalarProperty Name="ResponseText" ColumnName="ResponseText" />
+                <ScalarProperty Name="ResponseCode" ColumnName="ResponseCode" />
+                <ScalarProperty Name="ProcessDateTime" ColumnName="ProcessDateTime" />
+                <ScalarProperty Name="PaymentMethodId" ColumnName="PaymentMethodId" />
+                <ScalarProperty Name="PaymentProfileTokenId" ColumnName="PaymentProfileTokenId" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="BankAccountTokenId" ColumnName="BankAccountTokenId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

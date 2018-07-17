@@ -44,9 +44,11 @@
     <Compile Include="Interfaces\IBankAccountBS.cs" />
     <Compile Include="Interfaces\IPaymentGatewayBS.cs" />
     <Compile Include="Interfaces\IPaymentProfileBS.cs" />
+    <Compile Include="Interfaces\ITransactionDetailsBS.cs" />
     <Compile Include="PaymentGatewayBS.cs" />
     <Compile Include="PaymentProfileBS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransactionDetailsBS.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GenerousAPI.BusinessEntities\GenerousAPI.BusinessEntities.csproj">

@@ -17,6 +17,7 @@ namespace GenerousAPI.Controllers
         private IPaymentProfileBS _IPaymentProfileBS = null;
         private IPaymentGatewayBS _IPaymentGatewayBS = null;
         private IBankAccountBS _IBankAccountBS = null;
+        private ITransactionDetailsBS _ITransactionDetailsBS = null;
 
         public const string CardAccessMerchantId = "2004";
         public const string CardAccessPassword = "password1234";
@@ -143,6 +144,52 @@ namespace GenerousAPI.Controllers
             }
         }
 
+        [AcceptVerbs("POST")]
+        [HttpPost]
+        public TransactionDetailsDTO GetTransactionDetails(HttpRequestMessage request)
+        {
+            try
+            {
+                _ITransactionDetailsBS = new TransactionDetailsBS();
+
+                // Now pull out the body from the request 
+                string token = request.Content.ReadAsStringAsync().Result;
+
+                // Get the transaction details
+                var transactionDetails = _ITransactionDetailsBS.GetTransactionDetails(Guid.Parse(token));
+
+                // Return response
+                return transactionDetails;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        [AcceptVerbs("POST")]
+        [HttpPost]
+        public IEnumerable<TransactionDetailsDTO> GetTransactionDetailsForBankAccount(HttpRequestMessage request)
+        {
+            try
+            {
+                _ITransactionDetailsBS = new TransactionDetailsBS();
+
+                // Now pull out the body from the request 
+                string token = request.Content.ReadAsStringAsync().Result;
+
+                // Get the transaction details
+                var transactionDetails = _ITransactionDetailsBS.GetTransactionDetailsForBankAccount(token);
+
+                // Return response
+                return transactionDetails;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Process a payment
         /// </summary>
@@ -204,10 +251,13 @@ namespace GenerousAPI.Controllers
                         paymentResponse.IsSuccess = cardAccessResponse.TransactionSuccessful;
                         paymentResponse.Message = cardAccessResponse.ResponseMessage + " " + cardAccessResponse.ResponseText;
                         paymentResponse.Amount = transaction.Amount;
+                        
+                        var transactionInformation = CreateTransactionDetailsObject(transaction, paymentResponse, paymentProfile.TransactionMode, cardAccessResponse.ResponseCode);
+                        CreateTransactionRecord(transactionInformation);
+                        paymentResponse.TransactionId = transactionInformation.Id;
 
                         paymentResponses.Add(paymentResponse);
-                    }
-                    
+                    }                    
                 }
                 catch (Exception ex)
                 {
@@ -221,6 +271,23 @@ namespace GenerousAPI.Controllers
             }
 
             return paymentResponses;
+        }
+
+        /// <summary>
+        /// Create the transaction record information
+        /// </summary>
+        /// <param name="transactionDetails"></param>
+        private void CreateTransactionRecord(DataAccessLayer.TransactionDetail transactionDetails)
+        {
+            try
+            {
+                _ITransactionDetailsBS = new TransactionDetailsBS();
+                _ITransactionDetailsBS.CreateTransactionRecord(transactionDetails);
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
         }
 
         /// <summary>
@@ -306,6 +373,28 @@ namespace GenerousAPI.Controllers
             };
 
             return bankAccount;
+        }
+
+        /// <summary>
+        /// Create the payment profile object and use the DTO to transform the data
+        /// </summary>
+        /// <param name="paymentProfileDTO">DTO of the payment profile</param>
+        /// <returns>Payment Profile object for DAL</returns>
+        private DataAccessLayer.TransactionDetail CreateTransactionDetailsObject(TransactionDetails transactionDetails, PaymentResponse paymentResponse, TransactionMode transactionMode, string responseCode)
+        {
+            var transactionDetail = new DataAccessLayer.TransactionDetail
+            {
+                Amount = transactionDetails.Amount,
+                BankAccountTokenId = transactionDetails.BankAccountForFundsTokenId,
+                PaymentProfileTokenId = transactionDetails.PaymentProfileTokenId,
+                PaymentMethodId = (byte)transactionMode,
+                ProcessDateTime = DateTime.Now,
+                ResponseText = paymentResponse.Message,
+                ResponseCode = string.IsNullOrEmpty(responseCode) ? "99" : responseCode,
+                Id = Guid.NewGuid()
+            };
+
+            return transactionDetail;
         }
 
     }

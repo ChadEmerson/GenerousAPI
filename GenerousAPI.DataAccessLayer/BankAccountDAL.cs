@@ -114,10 +114,11 @@ namespace GenerousAPI.DataAccessLayer
                         db.BankAccounts.Attach(BankAccount);
                     }
 
-                    db.BankAccounts.Remove(BankAccount);
+                    BankAccount.Active = false;
                     db.SaveChanges();
                 }
-
+                
+                response.AuthToken = BankAccountTokenId;
                 response.Message = "Bank Account successfully deleted";
                 response.IsSuccess = true;
             }

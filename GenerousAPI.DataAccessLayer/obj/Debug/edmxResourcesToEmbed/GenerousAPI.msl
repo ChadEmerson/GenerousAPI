@@ -83,11 +83,26 @@
     <EntitySetMapping Name="BankAccounts">
       <EntityTypeMapping TypeName="GenerousAPIModel.BankAccount">
         <MappingFragment StoreEntitySet="BankAccount">
+          <ScalarProperty Name="Active" ColumnName="Active" />
           <ScalarProperty Name="BankAccountTokenId" ColumnName="BankAccountTokenId" />
           <ScalarProperty Name="BankAccountBSB" ColumnName="BankAccountBSB" />
           <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
           <ScalarProperty Name="BankAcountName" ColumnName="BankAcountName" />
           <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TransactionDetails">
+      <EntityTypeMapping TypeName="GenerousAPIModel.TransactionDetail">
+        <MappingFragment StoreEntitySet="TransactionDetails">
+          <ScalarProperty Name="ResponseText" ColumnName="ResponseText" />
+          <ScalarProperty Name="ResponseCode" ColumnName="ResponseCode" />
+          <ScalarProperty Name="ProcessDateTime" ColumnName="ProcessDateTime" />
+          <ScalarProperty Name="PaymentMethodId" ColumnName="PaymentMethodId" />
+          <ScalarProperty Name="PaymentProfileTokenId" ColumnName="PaymentProfileTokenId" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="BankAccountTokenId" ColumnName="BankAccountTokenId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
