@@ -57,7 +57,9 @@ namespace GenerousAPI.DataAccessLayer
                             PaymentProfileTokenId = transactionDetails.PaymentProfileTokenId,
                             ProcessDateTime = transactionDetails.ProcessDateTime,
                             ResponseCode = transactionDetails.ResponseCode,
-                            ResponseText = transactionDetails.ResponseText
+                            ResponseText = transactionDetails.ResponseText,
+                            AuditNumber = transactionDetails.AuditNumber,
+                            CustomerReference = transactionDetails.CustomerReference
                         }).SingleOrDefault();
             }
         }
@@ -82,7 +84,9 @@ namespace GenerousAPI.DataAccessLayer
                             PaymentProfileTokenId = transactionDetails.PaymentProfileTokenId,
                             ProcessDateTime = transactionDetails.ProcessDateTime,
                             ResponseCode = transactionDetails.ResponseCode,
-                            ResponseText = transactionDetails.ResponseText
+                            ResponseText = transactionDetails.ResponseText,
+                            AuditNumber = transactionDetails.AuditNumber,
+                            CustomerReference = transactionDetails.CustomerReference
                         }).ToList();
             }
 

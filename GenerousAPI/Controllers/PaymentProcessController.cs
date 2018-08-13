@@ -191,6 +191,65 @@ namespace GenerousAPI.Controllers
         }
 
         /// <summary>
+        /// Process a refund for the most recent credit card transaction for this person
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AcceptVerbs("POST")]
+        [HttpPost]
+        public PaymentResponse ProcessRefund(HttpRequestMessage request)
+        {
+            var refundResponse = new PaymentResponse();
+
+            PaymentGatewayProcessing.PaymentGatewayProcessing paymentGatewayProcessing = null;
+            NameValueCollection collection = PaymentGatewayConfigXMLParser.ParseConfigXML(GetGenerousPaymentGatewayDetails((byte)Enums.PaymentGatewayType.GENEROUS).GatewayConfig);
+            paymentGatewayProcessing = new ProcessCardAccessPayment(collection);
+
+            try
+            {
+                PaymentGatewayProcessing.Helpers.RefundRequest cardAccessRefundRequest = new PaymentGatewayProcessing.Helpers.RefundRequest();
+
+
+                _ITransactionDetailsBS = new TransactionDetailsBS();
+
+                // Now pull out the body from the request 
+                string token = request.Content.ReadAsStringAsync().Result;
+
+                // Get the transaction details
+                var transactionDetails = _ITransactionDetailsBS.GetTransactionDetails(Guid.Parse(token));
+                var paymentProfile = GetPaymentProfileDetails(transactionDetails.PaymentProfileTokenId);
+
+                var auditNumberOfLastTrans = transactionDetails.AuditNumber;
+
+                cardAccessRefundRequest.RefundAuditId = auditNumberOfLastTrans;
+                cardAccessRefundRequest.RefundAmount = transactionDetails.Amount;
+                cardAccessRefundRequest.DonationTransactionReferenceNumber = transactionDetails.CustomerReference;
+
+                var cardAccessResponse = paymentGatewayProcessing.ProcessRefund(cardAccessRefundRequest);
+                
+                refundResponse.IsSuccess = cardAccessResponse.TransactionSuccessful;
+                refundResponse.Message = cardAccessResponse.ResponseMessage + " " + cardAccessResponse.ResponseText;
+                refundResponse.Amount = transactionDetails.Amount;
+
+                var transactionDetail = DataTransformTransactionDetailsDTO(transactionDetails);
+
+                var transactionInformation = CreateTransactionDetailsObject(transactionDetail, refundResponse, TransactionMode.Refund, cardAccessResponse.ResponseCode);
+
+                transactionInformation.CustomerReference = transactionDetails.CustomerReference;
+                transactionInformation.AuditNumber = cardAccessResponse.ResponseAuditNumber;
+                CreateTransactionRecord(transactionInformation);
+                refundResponse.TransactionId = transactionInformation.Id;
+            }
+            catch (Exception ex)
+            {
+                refundResponse.IsSuccess = false;
+                refundResponse.Message = ex.Message;
+            }
+        
+            return refundResponse;
+        }
+
+        /// <summary>
         /// Process a payment
         /// </summary>
         /// <param name="transactionDetails">Collection of transaction details</param>
@@ -253,6 +312,9 @@ namespace GenerousAPI.Controllers
                         paymentResponse.Amount = transaction.Amount;
                         
                         var transactionInformation = CreateTransactionDetailsObject(transaction, paymentResponse, paymentProfile.TransactionMode, cardAccessResponse.ResponseCode);
+
+                        transactionInformation.CustomerReference = transaction.TransactionReferenceNumber;
+                        transactionInformation.AuditNumber = cardAccessResponse.ResponseAuditNumber;
                         CreateTransactionRecord(transactionInformation);
                         paymentResponse.TransactionId = transactionInformation.Id;
 
@@ -360,7 +422,7 @@ namespace GenerousAPI.Controllers
         /// <summary>
         /// Create the payment profile object and use the DTO to transform the data
         /// </summary>
-        /// <param name="paymentProfileDTO">DTO of the payment profile</param>
+        /// <param name="bankAccountDTO">DTO of the bank account</param>
         /// <returns>Payment Profile object for DAL</returns>
         private DataAccessLayer.BankAccount DataTransformBankAccountDTO(BankAccountDTO bankAccountDTO)
         {
@@ -373,6 +435,23 @@ namespace GenerousAPI.Controllers
             };
 
             return bankAccount;
+        }
+
+        /// <summary>
+        /// Create the transaction detail object and use the DTO to transform the data
+        /// </summary>
+        /// <param name="transactionDetailsDTO">DTO of the transaction</param>
+        /// <returns>Payment Profile object for DAL</returns>
+        private TransactionDetails DataTransformTransactionDetailsDTO(TransactionDetailsDTO transactionDetailsDTO)
+        {
+            var transactionDetail = new TransactionDetails
+            {
+                Amount = transactionDetailsDTO.Amount,
+                BankAccountForFundsTokenId = transactionDetailsDTO.BankAccountTokenId,
+                PaymentProfileTokenId = transactionDetailsDTO.PaymentProfileTokenId,
+            };
+
+            return transactionDetail;
         }
 
         /// <summary>

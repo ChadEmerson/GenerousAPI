@@ -94,6 +94,8 @@
           <Property Name="ProcessDateTime" Type="datetime" Nullable="false" />
           <Property Name="ResponseCode" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="ResponseText" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="AuditNumber" Type="nvarchar" MaxLength="100" />
+          <Property Name="CustomerReference" Type="nvarchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="TransactionMode">
           <Key>
@@ -358,6 +360,8 @@
           <Property Name="ProcessDateTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ResponseCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ResponseText" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="AuditNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerReference" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -459,6 +463,8 @@
           <EntitySetMapping Name="TransactionDetails">
             <EntityTypeMapping TypeName="GenerousAPIModel.TransactionDetail">
               <MappingFragment StoreEntitySet="TransactionDetails">
+                <ScalarProperty Name="CustomerReference" ColumnName="CustomerReference" />
+                <ScalarProperty Name="AuditNumber" ColumnName="AuditNumber" />
                 <ScalarProperty Name="ResponseText" ColumnName="ResponseText" />
                 <ScalarProperty Name="ResponseCode" ColumnName="ResponseCode" />
                 <ScalarProperty Name="ProcessDateTime" ColumnName="ProcessDateTime" />

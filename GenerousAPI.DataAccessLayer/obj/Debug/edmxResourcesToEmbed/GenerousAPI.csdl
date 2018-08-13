@@ -178,5 +178,7 @@
     <Property Name="ProcessDateTime" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ResponseCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="ResponseText" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
+    <Property Name="AuditNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerReference" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
   </EntityType>
 </Schema>

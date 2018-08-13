@@ -22,5 +22,7 @@ namespace GenerousAPI.DataAccessLayer
         public System.DateTime ProcessDateTime { get; set; }
         public string ResponseCode { get; set; }
         public string ResponseText { get; set; }
+        public string AuditNumber { get; set; }
+        public string CustomerReference { get; set; }
     }
 }

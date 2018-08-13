@@ -89,6 +89,8 @@
     <Property Name="ProcessDateTime" Type="datetime" Nullable="false" />
     <Property Name="ResponseCode" Type="varchar" MaxLength="50" Nullable="false" />
     <Property Name="ResponseText" Type="nvarchar" MaxLength="300" Nullable="false" />
+    <Property Name="AuditNumber" Type="nvarchar" MaxLength="100" />
+    <Property Name="CustomerReference" Type="nvarchar" MaxLength="150" />
   </EntityType>
   <EntityType Name="TransactionMode">
     <Key>

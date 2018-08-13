@@ -95,6 +95,8 @@
     <EntitySetMapping Name="TransactionDetails">
       <EntityTypeMapping TypeName="GenerousAPIModel.TransactionDetail">
         <MappingFragment StoreEntitySet="TransactionDetails">
+          <ScalarProperty Name="CustomerReference" ColumnName="CustomerReference" />
+          <ScalarProperty Name="AuditNumber" ColumnName="AuditNumber" />
           <ScalarProperty Name="ResponseText" ColumnName="ResponseText" />
           <ScalarProperty Name="ResponseCode" ColumnName="ResponseCode" />
           <ScalarProperty Name="ProcessDateTime" ColumnName="ProcessDateTime" />
