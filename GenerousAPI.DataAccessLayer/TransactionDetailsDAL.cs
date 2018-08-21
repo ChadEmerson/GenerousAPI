@@ -1,11 +1,11 @@
-﻿using AutoMapper;
-using GenerousAPI.BusinessEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
+﻿
 namespace GenerousAPI.DataAccessLayer
 {
+    using BusinessEntities;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class TransactionDetailsDAL : ITransactionDetailsDAL
     {
         /// <summary>

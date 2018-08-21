@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GenerousAPI.DataAccessLayer.Interfaces
+namespace GenerousAPI.DataAccessLayer
 {
     public interface IPaymentGatewayDAL
     {

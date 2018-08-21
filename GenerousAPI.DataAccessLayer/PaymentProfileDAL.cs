@@ -1,10 +1,10 @@
-﻿using GenerousAPI.BusinessEntities;
-using System;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-
-namespace GenerousAPI.DataAccessLayer
+﻿namespace GenerousAPI.DataAccessLayer
 {
+    using BusinessEntities;
+    using System;
+    using System.Data.Entity.Infrastructure;
+    using System.Linq;
+
     public class PaymentProfileDAL : IPaymentProfileDAL
     {
         /// <summary>

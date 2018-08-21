@@ -18,6 +18,7 @@ namespace GenerousAPI.Controllers
         private IPaymentGatewayBS _IPaymentGatewayBS = null;
         private IBankAccountBS _IBankAccountBS = null;
         private ITransactionDetailsBS _ITransactionDetailsBS = null;
+        private IPaymentProfileBinInfoBS _IPaymentProfileBinInfoBS = null;
 
         public const string CardAccessMerchantId = "2004";
         public const string CardAccessPassword = "password1234";
@@ -49,6 +50,26 @@ namespace GenerousAPI.Controllers
                     !string.IsNullOrEmpty(paymentProfileDTO.ExpirationYear))
                 {
                     paymentProfile.PaymentMethodId = (byte)Enums.PaymentMethod.CreditCard;
+
+                    // Get Card Bin info
+                    var binInfo = RetrieveBinInfo(paymentProfileDTO.CardNumber.Substring(0, 8));
+
+                    // Save Bin info
+                    var binInfoDetails = new DataAccessLayer.PaymentProfileBinInfo
+                    {
+                        BinInfoId = Guid.NewGuid(),
+                        PaymentProfileId = paymentProfile.Id,
+                        BankName = binInfo.Bank,
+                        Brand = binInfo.Brand,
+                        CountryCode = binInfo.CountryCode,
+                        CountryName = binInfo.CountryName,
+                        CardType = binInfo.CardType,
+                        Latitude = Convert.ToInt32(binInfo.Latitude),
+                        Longitude = Convert.ToInt32(binInfo.Longitude)
+                    };
+
+                    _IPaymentProfileBinInfoBS = new PaymentProfileBinInfoBS();
+                    _IPaymentProfileBinInfoBS.CreateBinInfo(binInfoDetails);
                 }
                 else
                 {
@@ -60,7 +81,7 @@ namespace GenerousAPI.Controllers
                 _IPaymentProfileBS = new PaymentProfileBS();
                 // Save the payment profile
                 var response = _IPaymentProfileBS.CreatePaymentProfile(paymentProfile);
-
+                
                 // Return a token id
                 return response;
             }
@@ -336,6 +357,16 @@ namespace GenerousAPI.Controllers
         }
 
         /// <summary>
+        /// Get the Bin Info from binlist.net for this credit card
+        /// </summary>
+        /// <param name="BinNumberToSearch"></param>
+        /// <returns></returns>
+        private BinInfo.IssuerInformation RetrieveBinInfo(string BinNumberToSearch)
+        {
+            return BinInfo.BinList.Find(BinNumberToSearch);
+        }
+
+        /// <summary>
         /// Create the transaction record information
         /// </summary>
         /// <param name="transactionDetails"></param>
@@ -435,7 +466,7 @@ namespace GenerousAPI.Controllers
             };
 
             return bankAccount;
-        }
+        }              
 
         /// <summary>
         /// Create the transaction detail object and use the DTO to transform the data

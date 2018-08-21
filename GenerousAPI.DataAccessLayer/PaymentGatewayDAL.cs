@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GenerousAPI.DataAccessLayer.Interfaces
+namespace GenerousAPI.DataAccessLayer
 {
     public class PaymentGatewayDAL : IPaymentGatewayDAL
     {
