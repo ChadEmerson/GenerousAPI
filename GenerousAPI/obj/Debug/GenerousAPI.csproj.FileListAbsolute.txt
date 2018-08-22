@@ -96,3 +96,4 @@ c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI\
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI\bin\PaymentGatewayProcessing.dll
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI\bin\GenerousAPI.BusinessServices.pdb
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI\bin\PaymentGatewayProcessing.pdb
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI\bin\BinInfo.dll

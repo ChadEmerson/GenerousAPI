@@ -108,5 +108,21 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="PaymentProfileBinInfoes">
+      <EntityTypeMapping TypeName="GenerousAPIModel.PaymentProfileBinInfo">
+        <MappingFragment StoreEntitySet="PaymentProfileBinInfo">
+          <ScalarProperty Name="Scheme" ColumnName="Scheme" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="CardType" ColumnName="CardType" />
+          <ScalarProperty Name="BankName" ColumnName="BankName" />
+          <ScalarProperty Name="CountryName" ColumnName="CountryName" />
+          <ScalarProperty Name="CountryCode" ColumnName="CountryCode" />
+          <ScalarProperty Name="Brand" ColumnName="Brand" />
+          <ScalarProperty Name="PaymentProfileId" ColumnName="PaymentProfileId" />
+          <ScalarProperty Name="BinInfoId" ColumnName="BinInfoId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

@@ -83,6 +83,7 @@
     </Compile>
     <Compile Include="Interfaces\IBankAccountDAL.cs" />
     <Compile Include="Interfaces\IPaymentGatewayDAL.cs" />
+    <Compile Include="Interfaces\IPaymentProfileBinInfoDAL.cs" />
     <Compile Include="Interfaces\IPaymentProfileDAL.cs" />
     <Compile Include="Interfaces\ITransactionDetailsDAL.cs" />
     <Compile Include="PaymentGatewayDAL.cs" />
@@ -98,6 +99,10 @@
     <Compile Include="PaymentProfile.cs">
       <DependentUpon>GenerousAPI.tt</DependentUpon>
     </Compile>
+    <Compile Include="PaymentProfileBinInfo.cs">
+      <DependentUpon>GenerousAPI.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PaymentProfileBinInfoDAL.cs" />
     <Compile Include="PaymentProfileDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransactionDetail.cs">

@@ -77,6 +77,21 @@
     <Property Name="AccountType" Type="nvarchar" MaxLength="50" />
     <Property Name="CardSerurityNumber" Type="nvarchar" MaxLength="500" />
   </EntityType>
+  <EntityType Name="PaymentProfileBinInfo">
+    <Key>
+      <PropertyRef Name="BinInfoId" />
+    </Key>
+    <Property Name="BinInfoId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="PaymentProfileId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Brand" Type="nvarchar" MaxLength="40" Nullable="false" />
+    <Property Name="CountryCode" Type="nvarchar" MaxLength="4" Nullable="false" />
+    <Property Name="CountryName" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="BankName" Type="nvarchar" MaxLength="250" />
+    <Property Name="CardType" Type="nvarchar" MaxLength="25" Nullable="false" />
+    <Property Name="Latitude" Type="int" />
+    <Property Name="Longitude" Type="int" />
+    <Property Name="Scheme" Type="nvarchar" MaxLength="25" />
+  </EntityType>
   <EntityType Name="TransactionDetails">
     <Key>
       <PropertyRef Name="Id" />
@@ -154,6 +169,7 @@
     <EntitySet Name="PaymentGatewayType" EntityType="Self.PaymentGatewayType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentMethod" EntityType="Self.PaymentMethod" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentProfile" EntityType="Self.PaymentProfile" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PaymentProfileBinInfo" EntityType="Self.PaymentProfileBinInfo" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TransactionDetails" EntityType="Self.TransactionDetails" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TransactionMode" EntityType="Self.TransactionMode" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_PaymentGateway_PaymentGateway" Association="Self.FK_PaymentGateway_PaymentGateway">

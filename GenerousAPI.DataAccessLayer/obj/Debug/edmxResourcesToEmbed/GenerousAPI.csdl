@@ -40,6 +40,7 @@
     </AssociationSet>
     <EntitySet Name="BankAccounts" EntityType="GenerousAPIModel.BankAccount" />
     <EntitySet Name="TransactionDetails" EntityType="GenerousAPIModel.TransactionDetail" />
+    <EntitySet Name="PaymentProfileBinInfoes" EntityType="GenerousAPIModel.PaymentProfileBinInfo" />
   </EntityContainer>
   <EntityType Name="TransactionMode">
     <Key>
@@ -180,5 +181,20 @@
     <Property Name="ResponseText" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
     <Property Name="AuditNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
     <Property Name="CustomerReference" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="PaymentProfileBinInfo">
+    <Key>
+      <PropertyRef Name="BinInfoId" />
+    </Key>
+    <Property Name="BinInfoId" Type="Guid" Nullable="false" />
+    <Property Name="PaymentProfileId" Type="Guid" Nullable="false" />
+    <Property Name="Brand" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="CountryCode" Type="String" Nullable="false" MaxLength="4" FixedLength="false" Unicode="true" />
+    <Property Name="CountryName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+    <Property Name="BankName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+    <Property Name="CardType" Type="String" Nullable="false" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="Latitude" Type="Int32" />
+    <Property Name="Longitude" Type="Int32" />
+    <Property Name="Scheme" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
   </EntityType>
 </Schema>

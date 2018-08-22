@@ -23,7 +23,6 @@ namespace GenerousAPI.DataAccessLayer
         public string CardType { get; set; }
         public Nullable<int> Latitude { get; set; }
         public Nullable<int> Longitude { get; set; }
-    
-        public virtual PaymentProfile PaymentProfile { get; set; }
+        public string Scheme { get; set; }
     }
 }

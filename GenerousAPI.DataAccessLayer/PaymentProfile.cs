@@ -14,12 +14,6 @@ namespace GenerousAPI.DataAccessLayer
     
     public partial class PaymentProfile
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public PaymentProfile()
-        {
-            this.PaymentProfileBinInfoes = new HashSet<PaymentProfileBinInfo>();
-        }
-    
         public System.Guid Id { get; set; }
         public string TokenId { get; set; }
         public byte PaymentMethodId { get; set; }
@@ -53,7 +47,5 @@ namespace GenerousAPI.DataAccessLayer
         public virtual CardType CardType1 { get; set; }
         public virtual PaymentMethod PaymentMethod { get; set; }
         public virtual TransactionMode TransactionMode1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PaymentProfileBinInfo> PaymentProfileBinInfoes { get; set; }
     }
 }

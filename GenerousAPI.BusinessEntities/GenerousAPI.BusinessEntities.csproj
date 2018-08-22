@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataTransferObjects\BankAccountDTO.cs" />
+    <Compile Include="DataTransferObjects\BinInfoDTO.cs" />
     <Compile Include="DataTransferObjects\PaymentGatewayDTO.cs" />
     <Compile Include="DataTransferObjects\PaymentProfileDTO.cs" />
     <Compile Include="DataTransferObjects\TransactionDetailsDTO.cs" />

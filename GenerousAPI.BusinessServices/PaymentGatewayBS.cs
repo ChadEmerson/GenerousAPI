@@ -1,5 +1,5 @@
 ﻿using GenerousAPI.BusinessEntities;
-using GenerousAPI.DataAccessLayer.Interfaces;
+using GenerousAPI.DataAccessLayer;
 using System;
 using System.Collections.Generic;
 

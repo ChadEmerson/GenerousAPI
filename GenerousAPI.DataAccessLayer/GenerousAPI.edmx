@@ -95,6 +95,7 @@
           <Property Name="CardType" Type="nvarchar" MaxLength="25" Nullable="false" />
           <Property Name="Latitude" Type="int" />
           <Property Name="Longitude" Type="int" />
+          <Property Name="Scheme" Type="nvarchar" MaxLength="25" />
         </EntityType>
         <EntityType Name="TransactionDetails">
           <Key>
@@ -166,18 +167,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_PaymentProfileBinInfo_PaymentProfile">
-          <End Role="PaymentProfile" Type="Self.PaymentProfile" Multiplicity="1" />
-          <End Role="PaymentProfileBinInfo" Type="Self.PaymentProfileBinInfo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PaymentProfile">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="PaymentProfileBinInfo">
-              <PropertyRef Name="PaymentProfileId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="GenerousAPIModelStoreContainer">
           <EntitySet Name="BankAccount" EntityType="Self.BankAccount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardType" EntityType="Self.CardType" Schema="dbo" store:Type="Tables" />
@@ -203,10 +192,6 @@
           <AssociationSet Name="FK_PaymentProfile_TransactionMode" Association="Self.FK_PaymentProfile_TransactionMode">
             <End Role="TransactionMode" EntitySet="TransactionMode" />
             <End Role="PaymentProfile" EntitySet="PaymentProfile" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PaymentProfileBinInfo_PaymentProfile" Association="Self.FK_PaymentProfileBinInfo_PaymentProfile">
-            <End Role="PaymentProfile" EntitySet="PaymentProfile" />
-            <End Role="PaymentProfileBinInfo" EntitySet="PaymentProfileBinInfo" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -254,10 +239,6 @@
           <EntitySet Name="BankAccounts" EntityType="GenerousAPIModel.BankAccount" />
           <EntitySet Name="TransactionDetails" EntityType="GenerousAPIModel.TransactionDetail" />
           <EntitySet Name="PaymentProfileBinInfoes" EntityType="GenerousAPIModel.PaymentProfileBinInfo" />
-          <AssociationSet Name="FK_PaymentProfileBinInfo_PaymentProfile" Association="GenerousAPIModel.FK_PaymentProfileBinInfo_PaymentProfile">
-            <End Role="PaymentProfile" EntitySet="PaymentProfiles" />
-            <End Role="PaymentProfileBinInfo" EntitySet="PaymentProfileBinInfoes" />
-          </AssociationSet>
           </EntityContainer>
         <EntityType Name="TransactionMode">
           <Key>
@@ -336,7 +317,6 @@
           <NavigationProperty Name="PaymentMethod" Relationship="GenerousAPIModel.FK_PaymentProfile_PaymentMethod" FromRole="PaymentProfile" ToRole="PaymentMethod" />
           <NavigationProperty Name="TransactionMode1" Relationship="GenerousAPIModel.FK_PaymentProfile_TransactionMode" FromRole="PaymentProfile" ToRole="TransactionMode" />
           <Property Name="CardSerurityNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="PaymentProfileBinInfoes" Relationship="GenerousAPIModel.FK_PaymentProfileBinInfo_PaymentProfile" FromRole="PaymentProfile" ToRole="PaymentProfileBinInfo" />
         </EntityType>
         <Association Name="FK_PaymentProfile_CardType">
           <End Type="GenerousAPIModel.CardType" Role="CardType" Multiplicity="0..1" />
@@ -403,11 +383,6 @@
         <EntityType Name="PaymentProfileBinInfo">
           <Key>
             <PropertyRef Name="BinInfoId" />
-            <PropertyRef Name="PaymentProfileId" />
-            <PropertyRef Name="Brand" />
-            <PropertyRef Name="CountryCode" />
-            <PropertyRef Name="CountryName" />
-            <PropertyRef Name="CardType" />
           </Key>
           <Property Name="BinInfoId" Type="Guid" Nullable="false" />
           <Property Name="PaymentProfileId" Type="Guid" Nullable="false" />
@@ -418,20 +393,8 @@
           <Property Name="CardType" Type="String" Nullable="false" MaxLength="25" FixedLength="false" Unicode="true" />
           <Property Name="Latitude" Type="Int32" />
           <Property Name="Longitude" Type="Int32" />
-          <NavigationProperty Name="PaymentProfile" Relationship="GenerousAPIModel.FK_PaymentProfileBinInfo_PaymentProfile" FromRole="PaymentProfileBinInfo" ToRole="PaymentProfile" />
+          <Property Name="Scheme" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
         </EntityType>
-        <Association Name="FK_PaymentProfileBinInfo_PaymentProfile">
-          <End Type="GenerousAPIModel.PaymentProfile" Role="PaymentProfile" Multiplicity="1" />
-          <End Type="GenerousAPIModel.PaymentProfileBinInfo" Role="PaymentProfileBinInfo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PaymentProfile">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="PaymentProfileBinInfo">
-              <PropertyRef Name="PaymentProfileId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -548,6 +511,7 @@
           <EntitySetMapping Name="PaymentProfileBinInfoes">
             <EntityTypeMapping TypeName="GenerousAPIModel.PaymentProfileBinInfo">
               <MappingFragment StoreEntitySet="PaymentProfileBinInfo">
+                <ScalarProperty Name="Scheme" ColumnName="Scheme" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />
                 <ScalarProperty Name="CardType" ColumnName="CardType" />

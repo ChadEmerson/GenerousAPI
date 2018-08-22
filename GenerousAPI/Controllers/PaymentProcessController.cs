@@ -6,8 +6,12 @@ using PaymentGatewayProcessing.CardAccess;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Web.Http;
 
 namespace GenerousAPI.Controllers
@@ -54,18 +58,19 @@ namespace GenerousAPI.Controllers
                     // Get Card Bin info
                     var binInfo = RetrieveBinInfo(paymentProfileDTO.CardNumber.Substring(0, 8));
 
-                    // Save Bin info
+                    // Save Binbin info
                     var binInfoDetails = new DataAccessLayer.PaymentProfileBinInfo
                     {
                         BinInfoId = Guid.NewGuid(),
                         PaymentProfileId = paymentProfile.Id,
-                        BankName = binInfo.Bank,
+                        BankName = binInfo.Bank.Name,
                         Brand = binInfo.Brand,
-                        CountryCode = binInfo.CountryCode,
-                        CountryName = binInfo.CountryName,
-                        CardType = binInfo.CardType,
-                        Latitude = Convert.ToInt32(binInfo.Latitude),
-                        Longitude = Convert.ToInt32(binInfo.Longitude)
+                        CountryCode = binInfo.Country.CountryCode,
+                        CountryName = binInfo.Country.CountryName,
+                        CardType = binInfo.Type,
+                        Latitude = Convert.ToInt32(binInfo.Country.Latitude),
+                        Longitude = Convert.ToInt32(binInfo.Country.Longitude),
+                        Scheme = binInfo.Scheme
                     };
 
                     _IPaymentProfileBinInfoBS = new PaymentProfileBinInfoBS();
@@ -361,9 +366,34 @@ namespace GenerousAPI.Controllers
         /// </summary>
         /// <param name="BinNumberToSearch"></param>
         /// <returns></returns>
-        private BinInfo.IssuerInformation RetrieveBinInfo(string BinNumberToSearch)
+        private IssuerInformation RetrieveBinInfo(string BinNumberToSearch)
         {
-            return BinInfo.BinList.Find(BinNumberToSearch);
+            //return BinInfo.BinList.Find(BinNumberToSearch);
+
+            using (WebClient web = new WebClient())
+            {
+                try
+                {
+                    string json = web.DownloadString("https://lookup.binlist.net/" + BinNumberToSearch);
+
+                    DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(IssuerInformation));
+
+                    var issuerInfo =
+                        (IssuerInformation)serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(json)));
+
+                    return issuerInfo;
+                }
+                catch (WebException ex)
+                {
+                    string addInfo = string.Format("No results for {0}. Make sure you enter a valid BIN/IIN number. --- ", BinNumberToSearch);
+                    throw new WebException(addInfo + ex.Message, ex, ex.Status, ex.Response);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+
         }
 
         /// <summary>
