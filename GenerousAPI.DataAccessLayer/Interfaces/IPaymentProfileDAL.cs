@@ -1,6 +1,7 @@
 ﻿namespace GenerousAPI.DataAccessLayer
 {
     using GenerousAPI.BusinessEntities;
+    using System.Collections.Generic;
 
     public interface IPaymentProfileDAL
     {
@@ -31,5 +32,14 @@
         /// <param name="paymentProfileTokenId">Payment profile token ID of donor</param>
         /// <returns>Donor payment profile details</returns>
         PaymentProfileDTO GetPaymentProfile(string paymentProfileTokenId);
+
+        /// <summary>
+        /// Get payment profile details for cards that are expiring
+        /// </summary>
+        /// <param name="ExpiryMonth">Expiring month</param>
+        /// <param name="ExpiryYear">Expiring year</param>
+        /// <param name="ExpiryNotificationPeriod">Period of notification</param>
+        /// <returns>Donor payment profile details</returns>
+        List<ContactDetailsDTO> GetExpiringCards(string ExpiryMonth, string ExpiryYear, int ExpiryNotificationPeriod);
     }
 }

@@ -96,6 +96,8 @@ namespace GenerousAPI.Controllers
             }
         }
 
+
+
         [AcceptVerbs("POST")]
         [HttpPost]
         public ProcessorResponse CreateBankAccount([FromBody]BankAccountDTO bankAccountDTO)
@@ -116,6 +118,41 @@ namespace GenerousAPI.Controllers
 
                 // Return a token id
                 return response;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        [AcceptVerbs("POST")]
+        [HttpPost]
+        public List<ContactDetailsDTO> GetExpiringCreditCards()
+        {
+            try
+            {
+                // Get expiring credit card details member/donor
+                var contactDetails = new List<ContactDetailsDTO>();
+
+                // Because credit cards expire at the end of the month, get cards based off this
+                var dateIn60Days = DateTime.Now.AddMonths(2);
+                var dateIn30Days = DateTime.Now.AddMonths(1);
+
+                // Running on the first of the month, yesterday was last month
+                var expired = DateTime.Now.AddDays(-1); 
+
+                // Get expiry for next month
+                var paymentProfiles = GetPaymentProfilesWithExpiringCards(dateIn60Days.Month.ToString(), dateIn60Days.Year.ToString(), 60);
+
+                // Get expiry for this month
+                paymentProfiles.AddRange(GetPaymentProfilesWithExpiringCards(dateIn30Days.Month.ToString(), dateIn30Days.Year.ToString(), 30));
+
+                // Get expired
+                paymentProfiles.AddRange(GetPaymentProfilesWithExpiringCards(expired.Month.ToString(), expired.Year.ToString(), 0));
+
+                paymentProfiles = paymentProfiles.Distinct().ToList();
+
+                return paymentProfiles;
             }
             catch (Exception)
             {
@@ -169,6 +206,8 @@ namespace GenerousAPI.Controllers
                 return null;
             }
         }
+
+
 
         [AcceptVerbs("POST")]
         [HttpPost]
@@ -385,8 +424,9 @@ namespace GenerousAPI.Controllers
                 }
                 catch (WebException ex)
                 {
-                    string addInfo = string.Format("No results for {0}. Make sure you enter a valid BIN/IIN number. --- ", BinNumberToSearch);
-                    throw new WebException(addInfo + ex.Message, ex, ex.Status, ex.Response);
+                    //string addInfo = string.Format("No results for {0}. Make sure you enter a valid BIN/IIN number. --- ", BinNumberToSearch);
+                    //throw new WebException(addInfo + ex.Message, ex, ex.Status, ex.Response);
+                    return null;
                 }
                 catch (Exception)
                 {
@@ -427,10 +467,25 @@ namespace GenerousAPI.Controllers
             paymentProfileDTO.RoutingNumber = EncryptionService.Decrypt(paymentProfileDTO.RoutingNumber);
             paymentProfileDTO.AccountNumber = EncryptionService.Decrypt(paymentProfileDTO.AccountNumber);
             paymentProfileDTO.CardNumber = EncryptionService.Decrypt(paymentProfileDTO.CardNumber);
-            paymentProfileDTO.ExpirationMonth = EncryptionService.Decrypt(paymentProfileDTO.ExpirationMonth);
-            paymentProfileDTO.ExpirationYear = EncryptionService.Decrypt(paymentProfileDTO.ExpirationYear);
+            paymentProfileDTO.ExpirationMonth = paymentProfileDTO.ExpirationMonth;
+            paymentProfileDTO.ExpirationYear = paymentProfileDTO.ExpirationYear;
             paymentProfileDTO.SecurityCode = EncryptionService.Decrypt(paymentProfileDTO.SecurityCode);
             return paymentProfileDTO;
+        }
+
+        /// <summary>
+        /// Get the payment profile details based on the token
+        /// </summary>
+        /// <param name="ExpiryMonth">Expiring month</param>
+        /// <param name="ExpiryYear">Expiring year</param>
+        /// <returns>payment profile details</returns>        
+        private List<ContactDetailsDTO> GetPaymentProfilesWithExpiringCards(string ExpiryMonth, string ExpiryYear, int ExpiryNotificationPeriod)
+        {
+            _IPaymentProfileBS = new PaymentProfileBS();
+
+            var paymentProfileDTOs = _IPaymentProfileBS.GetExpiringCards(ExpiryMonth, ExpiryYear, ExpiryNotificationPeriod);
+            
+            return paymentProfileDTOs;
         }
 
         /// <summary>
@@ -467,8 +522,8 @@ namespace GenerousAPI.Controllers
                 BankAccountNumber = EncryptionService.Encrypt(paymentProfileDTO.AccountNumber),
                 CardType = paymentProfileDTO.CardType,
                 CardNumber = EncryptionService.Encrypt(paymentProfileDTO.CardNumber),
-                CardExpiryMonth = EncryptionService.Encrypt(paymentProfileDTO.ExpirationMonth),
-                CardExpiryYear = EncryptionService.Encrypt(paymentProfileDTO.ExpirationYear),
+                CardExpiryMonth =paymentProfileDTO.ExpirationMonth,
+                CardExpiryYear = paymentProfileDTO.ExpirationYear,
                 CardSerurityNumber = EncryptionService.Encrypt(paymentProfileDTO.SecurityCode),
                 BankName = paymentProfileDTO.BankName,
                 TransactionMode = (byte)paymentProfileDTO.TransactionMode,

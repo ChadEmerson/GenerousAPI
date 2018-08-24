@@ -2,6 +2,7 @@
 {
     using BusinessEntities;
     using System;
+    using System.Collections.Generic;
     using System.Data.Entity.Infrastructure;
     using System.Linq;
 
@@ -137,6 +138,38 @@
 
             return response;
 
+        }
+
+        /// <summary>
+        /// Get payment profile details for cards that are expiring
+        /// </summary>
+        /// <param name="ExpiryMonth">Expiring month</param>
+        /// <param name="ExpiryYear">Expiring year</param>
+        /// <param name="ExpiryNotificationPeriod">Period of notification</param>
+        /// <returns>Donor payment profile details</returns>
+        public List<ContactDetailsDTO> GetExpiringCards(string ExpiryMonth, string ExpiryYear, int ExpiryNotificationPeriod)
+        {
+            try
+            {
+                using (var db = new GenerousAPIEntities())
+                {
+                    var paymentProfilesWithExpiringCards = from paymentProfiles in db.PaymentProfiles
+                                                           where paymentProfiles.CardExpiryMonth == ExpiryMonth && paymentProfiles.CardExpiryYear == ExpiryYear
+                                                           select new ContactDetailsDTO
+                                                           {
+                                                               CustomerFirstName = paymentProfiles.CustomerFirstName,
+                                                               CustomerLastName = paymentProfiles.CustomerLastName,
+                                                               TokenId = paymentProfiles.TokenId,
+                                                               DaysUntilExpiry = ExpiryNotificationPeriod
+                                                           };
+
+                    return paymentProfilesWithExpiringCards.ToList();
+                }                
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
