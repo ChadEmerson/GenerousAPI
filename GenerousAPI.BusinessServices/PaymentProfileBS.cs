@@ -61,11 +61,10 @@
         /// </summary>
         /// <param name="ExpiryMonth">Expiring month</param>
         /// <param name="ExpiryYear">Expiring year</param>
-        /// <param name="ExpiryNotificationPeriod">Period of notification</param>
         /// <returns>Donor payment profile details</returns>
-        public List<ContactDetailsDTO> GetExpiringCards(string ExpiryMonth, string ExpiryYear, int ExpiryNotificationPeriod)
+        public List<ContactDetailsDTO> GetExpiringCards(string ExpiryMonth, string ExpiryYear)
         {
-            return _IPaymentProfileDAL.GetExpiringCards(ExpiryMonth, ExpiryYear, ExpiryNotificationPeriod);
+            return _IPaymentProfileDAL.GetExpiringCards(ExpiryMonth, ExpiryYear);
         }
     }
 }

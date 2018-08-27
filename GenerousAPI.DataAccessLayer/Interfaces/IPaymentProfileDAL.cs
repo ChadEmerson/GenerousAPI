@@ -38,8 +38,7 @@
         /// </summary>
         /// <param name="ExpiryMonth">Expiring month</param>
         /// <param name="ExpiryYear">Expiring year</param>
-        /// <param name="ExpiryNotificationPeriod">Period of notification</param>
         /// <returns>Donor payment profile details</returns>
-        List<ContactDetailsDTO> GetExpiringCards(string ExpiryMonth, string ExpiryYear, int ExpiryNotificationPeriod);
+        List<ContactDetailsDTO> GetExpiringCards(string ExpiryMonth, string ExpiryYear);
     }
 }

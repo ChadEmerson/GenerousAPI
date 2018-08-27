@@ -141,26 +141,29 @@
         }
 
         /// <summary>
-        /// Get payment profile details for cards that are expiring
+        /// Get active payment profile details for cards that are expiring
         /// </summary>
         /// <param name="ExpiryMonth">Expiring month</param>
         /// <param name="ExpiryYear">Expiring year</param>
-        /// <param name="ExpiryNotificationPeriod">Period of notification</param>
         /// <returns>Donor payment profile details</returns>
-        public List<ContactDetailsDTO> GetExpiringCards(string ExpiryMonth, string ExpiryYear, int ExpiryNotificationPeriod)
+        public List<ContactDetailsDTO> GetExpiringCards(string ExpiryMonth, string ExpiryYear)
         {
             try
             {
                 using (var db = new GenerousAPIEntities())
                 {
                     var paymentProfilesWithExpiringCards = from paymentProfiles in db.PaymentProfiles
-                                                           where paymentProfiles.CardExpiryMonth == ExpiryMonth && paymentProfiles.CardExpiryYear == ExpiryYear
+                                                           where paymentProfiles.CardExpiryMonth == ExpiryMonth && 
+                                                           paymentProfiles.CardExpiryYear == ExpiryYear &&
+                                                           paymentProfiles.IsActive == true
                                                            select new ContactDetailsDTO
                                                            {
                                                                CustomerFirstName = paymentProfiles.CustomerFirstName,
                                                                CustomerLastName = paymentProfiles.CustomerLastName,
                                                                TokenId = paymentProfiles.TokenId,
-                                                               DaysUntilExpiry = ExpiryNotificationPeriod
+                                                               ExpiryMonth = ExpiryMonth,
+                                                               ExpiryYear = ExpiryYear,
+                                                               CardNumberMask = paymentProfiles.CardNumber
                                                            };
 
                     return paymentProfilesWithExpiringCards.ToList();

@@ -125,8 +125,8 @@ namespace GenerousAPI.Controllers
             }
         }
 
-        [AcceptVerbs("POST")]
-        [HttpPost]
+        [AcceptVerbs("GET")]
+        [HttpGet]
         public List<ContactDetailsDTO> GetExpiringCreditCards()
         {
             try
@@ -142,15 +142,20 @@ namespace GenerousAPI.Controllers
                 var expired = DateTime.Now.AddDays(-1); 
 
                 // Get expiry for next month
-                var paymentProfiles = GetPaymentProfilesWithExpiringCards(dateIn60Days.Month.ToString(), dateIn60Days.Year.ToString(), 60);
+                var paymentProfiles = GetPaymentProfilesWithExpiringCards(dateIn60Days.Month.ToString(), dateIn60Days.Year.ToString());
 
                 // Get expiry for this month
-                paymentProfiles.AddRange(GetPaymentProfilesWithExpiringCards(dateIn30Days.Month.ToString(), dateIn30Days.Year.ToString(), 30));
+                paymentProfiles.AddRange(GetPaymentProfilesWithExpiringCards(dateIn30Days.Month.ToString(), dateIn30Days.Year.ToString()));
 
                 // Get expired
-                paymentProfiles.AddRange(GetPaymentProfilesWithExpiringCards(expired.Month.ToString(), expired.Year.ToString(), 0));
+                paymentProfiles.AddRange(GetPaymentProfilesWithExpiringCards(expired.Month.ToString(), expired.Year.ToString()));
 
                 paymentProfiles = paymentProfiles.Distinct().ToList();
+
+                foreach(var paymentProfile in paymentProfiles)
+                {
+                    paymentProfile.CardNumberMask = EncryptionService.Decrypt(paymentProfile.CardNumberMask).Substring(12);
+                }
 
                 return paymentProfiles;
             }
@@ -479,11 +484,11 @@ namespace GenerousAPI.Controllers
         /// <param name="ExpiryMonth">Expiring month</param>
         /// <param name="ExpiryYear">Expiring year</param>
         /// <returns>payment profile details</returns>        
-        private List<ContactDetailsDTO> GetPaymentProfilesWithExpiringCards(string ExpiryMonth, string ExpiryYear, int ExpiryNotificationPeriod)
+        private List<ContactDetailsDTO> GetPaymentProfilesWithExpiringCards(string ExpiryMonth, string ExpiryYear)
         {
             _IPaymentProfileBS = new PaymentProfileBS();
 
-            var paymentProfileDTOs = _IPaymentProfileBS.GetExpiringCards(ExpiryMonth, ExpiryYear, ExpiryNotificationPeriod);
+            var paymentProfileDTOs = _IPaymentProfileBS.GetExpiringCards(ExpiryMonth, ExpiryYear);
             
             return paymentProfileDTOs;
         }

@@ -8,7 +8,11 @@ namespace GenerousAPI.BusinessEntities
 
         public string TokenId { get; set; }
 
-        public int DaysUntilExpiry { get; set; }
+        public string ExpiryMonth { get; set; }
+
+        public string ExpiryYear { get; set; }
+
+        public string CardNumberMask { get; set; }
     }
 }
 
