@@ -46,6 +46,16 @@ namespace GenerousAPI.BusinessServices
         }
 
         /// <summary>
+        /// Get Bank account details
+        /// </summary>
+        /// <param name="bankAccountId">Guid iD of bank</param>
+        /// <returns>Bank account details</returns>
+        public BankAccount GetBankAccountById(System.Guid bankAccountId)
+        {
+            return _IBankAccountDAL.GetBankAccountById(bankAccountId);
+        }
+
+        /// <summary>
         /// Delete a payment profile for a donor
         /// </summary>
         /// <param name="BankAccountTokenId">Payment profile token id</param>
@@ -53,6 +63,15 @@ namespace GenerousAPI.BusinessServices
         public ProcessorResponse DeleteBankAccount(string BankAccountTokenId)
         {
             return _IBankAccountDAL.DeleteBankAccount(BankAccountTokenId);
+        }
+
+        /// <summary>
+        /// Create a payment batch for an organisatsion
+        /// </summary>
+        /// <param name="batch">Payment batch details</param>
+        public void CreatePaymentToOrganisationBatch(PaymentToOrganisationBatch batch)
+        {
+            _IBankAccountDAL.CreatePaymentToOrganisationBatch(batch);
         }
     }
 }

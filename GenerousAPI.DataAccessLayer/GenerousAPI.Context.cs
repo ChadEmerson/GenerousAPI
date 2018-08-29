@@ -12,6 +12,8 @@ namespace GenerousAPI.DataAccessLayer
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class GenerousAPIEntities : DbContext
     {
@@ -34,5 +36,45 @@ namespace GenerousAPI.DataAccessLayer
         public virtual DbSet<BankAccount> BankAccounts { get; set; }
         public virtual DbSet<TransactionDetail> TransactionDetails { get; set; }
         public virtual DbSet<PaymentProfileBinInfo> PaymentProfileBinInfoes { get; set; }
+        public virtual DbSet<PaymentProcessStatu> PaymentProcessStatus { get; set; }
+        public virtual DbSet<PaymentToOrganisationBatch> PaymentToOrganisationBatches { get; set; }
+        public virtual DbSet<TransactionHistory> TransactionHistories { get; set; }
+        public virtual DbSet<TransactionType> TransactionTypes { get; set; }
+        public virtual DbSet<PaymentToOrganisationBatchTransactionLog> PaymentToOrganisationBatchTransactionLogs { get; set; }
+        public virtual DbSet<PaymentToOrganisationBatchLineItem> PaymentToOrganisationBatchLineItems { get; set; }
+        public virtual DbSet<OrganisationFeeProcessing> OrganisationFeeProcessings { get; set; }
+        public virtual DbSet<OrganisationPromoFee> OrganisationPromoFees { get; set; }
+        public virtual DbSet<OrganisationStandardFee> OrganisationStandardFees { get; set; }
+    
+        public virtual int AssignBatchLineItemToApprovedDonations()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("AssignBatchLineItemToApprovedDonations");
+        }
+    
+        public virtual int AssignBatchToApprovedDonations(Nullable<System.Guid> batchId)
+        {
+            var batchIdParameter = batchId.HasValue ?
+                new ObjectParameter("BatchId", batchId) :
+                new ObjectParameter("BatchId", typeof(System.Guid));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("AssignBatchToApprovedDonations", batchIdParameter);
+        }
+    
+        public virtual int UpdatePaymentToOrganisationBatchProcessStatus(Nullable<System.Guid> batchId, Nullable<System.DateTime> actionedDateTime, string actionedBy)
+        {
+            var batchIdParameter = batchId.HasValue ?
+                new ObjectParameter("BatchId", batchId) :
+                new ObjectParameter("BatchId", typeof(System.Guid));
+    
+            var actionedDateTimeParameter = actionedDateTime.HasValue ?
+                new ObjectParameter("ActionedDateTime", actionedDateTime) :
+                new ObjectParameter("ActionedDateTime", typeof(System.DateTime));
+    
+            var actionedByParameter = actionedBy != null ?
+                new ObjectParameter("ActionedBy", actionedBy) :
+                new ObjectParameter("ActionedBy", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UpdatePaymentToOrganisationBatchProcessStatus", batchIdParameter, actionedDateTimeParameter, actionedByParameter);
+        }
     }
 }

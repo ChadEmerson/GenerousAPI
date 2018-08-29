@@ -42,6 +42,9 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PaymentGatewayProcessing">
+      <HintPath>D:\Dev\GivingPortal_Inspinia\PaymentGatewayProcessing\bin\Debug\PaymentGatewayProcessing.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -85,6 +88,7 @@
     <Compile Include="Interfaces\IPaymentGatewayDAL.cs" />
     <Compile Include="Interfaces\IPaymentProfileBinInfoDAL.cs" />
     <Compile Include="Interfaces\IPaymentProfileDAL.cs" />
+    <Compile Include="Interfaces\IPaymentToOrganisationDAL.cs" />
     <Compile Include="Interfaces\ITransactionDetailsDAL.cs" />
     <Compile Include="PaymentGatewayDAL.cs" />
     <Compile Include="PaymentGatewayConfig.cs">
@@ -96,6 +100,9 @@
     <Compile Include="PaymentMethod.cs">
       <DependentUpon>GenerousAPI.tt</DependentUpon>
     </Compile>
+    <Compile Include="PaymentProcessStatu.cs">
+      <DependentUpon>GenerousAPI.tt</DependentUpon>
+    </Compile>
     <Compile Include="PaymentProfile.cs">
       <DependentUpon>GenerousAPI.tt</DependentUpon>
     </Compile>
@@ -104,12 +111,30 @@
     </Compile>
     <Compile Include="PaymentProfileBinInfoDAL.cs" />
     <Compile Include="PaymentProfileDAL.cs" />
+    <Compile Include="PaymentToOrganisationBatch.cs">
+      <DependentUpon>GenerousAPI.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PaymentToOrganisationBatchLineItem.cs">
+      <DependentUpon>GenerousAPI.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PaymentToOrganisationBatchTransactionLog.cs">
+      <DependentUpon>GenerousAPI.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PaymentToOrganisationDAL.cs" />
+    <Compile Include="PaymentToOrg\DonationTransactionWithRelatedData.cs" />
+    <Compile Include="PaymentToOrg\PaymentToOrganisationListDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransactionDetail.cs">
       <DependentUpon>GenerousAPI.tt</DependentUpon>
     </Compile>
     <Compile Include="TransactionDetailsDAL.cs" />
+    <Compile Include="TransactionHistory.cs">
+      <DependentUpon>GenerousAPI.tt</DependentUpon>
+    </Compile>
     <Compile Include="TransactionMode.cs">
+      <DependentUpon>GenerousAPI.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TransactionType.cs">
       <DependentUpon>GenerousAPI.tt</DependentUpon>
     </Compile>
   </ItemGroup>

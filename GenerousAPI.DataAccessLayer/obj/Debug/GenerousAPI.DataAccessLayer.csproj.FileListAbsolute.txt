@@ -15,3 +15,5 @@ C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.
 C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\AutoMapper.pdb
 C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\AutoMapper.xml
 C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\System.ValueTuple.xml
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\PaymentGatewayProcessing.dll
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.DataAccessLayer\bin\Debug\PaymentGatewayProcessing.pdb

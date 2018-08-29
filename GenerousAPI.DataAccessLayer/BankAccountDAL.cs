@@ -91,6 +91,28 @@ namespace GenerousAPI.DataAccessLayer
         }
 
         /// <summary>
+        /// Get Bank account details
+        /// </summary>
+        /// <param name="bankAccountId">Guid iD of bank</param>
+        /// <returns>Bank account details</returns>
+        public BankAccount GetBankAccountById(System.Guid bankAccountId)
+        {
+            try
+            {
+                using (var db = new GenerousAPIEntities())
+                {
+                    var bankAccount = db.BankAccounts.SingleOrDefault(x => x.BankAccountId == bankAccountId);
+                    return bankAccount;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            
+        }
+
+        /// <summary>
         /// Delete a payment profile for a donor
         /// </summary>
         /// <param name="BankAccountTokenId">Payment profile token id</param>
@@ -127,6 +149,38 @@ namespace GenerousAPI.DataAccessLayer
 
             return response;
 
+        }
+
+        /// <summary>
+        /// Create a payment batch for an organisatsion
+        /// </summary>
+        /// <param name="batch">Payment batch details</param>
+        public void CreatePaymentToOrganisationBatch(PaymentToOrganisationBatch batch)
+        {
+            using (var db = new GenerousAPIEntities())
+            {
+                using (var trans = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        db.PaymentToOrganisationBatches.Add(batch);
+
+                        if (batch.PaymentToOrganisationBatchLineItems != null && batch.PaymentToOrganisationBatchLineItems.Count > 0)
+                        {
+                            db.PaymentToOrganisationBatchLineItems.AddRange(batch.PaymentToOrganisationBatchLineItems);
+                        }
+
+                        db.SaveChanges();
+
+                        trans.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw ex;
+                    }
+                }
+            }
         }
     }
 }

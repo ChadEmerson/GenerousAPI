@@ -33,5 +33,19 @@ namespace GenerousAPI.BusinessServices
         /// <returns>Bank account details</returns>
         BankAccountDTO GetBankAccount(string bankAccountTokenId);
 
+        /// <summary>
+        /// Get Bank account details
+        /// </summary>
+        /// <param name="bankAccountId">Guid iD of bank</param>
+        /// <returns>Bank account details</returns>
+        BankAccount GetBankAccountById(System.Guid bankAccountId);
+
+        /// <summary>
+        /// Create a payment batch for an organisatsion
+        /// </summary>
+        /// <param name="batch">Payment batch details</param>
+        void CreatePaymentToOrganisationBatch(PaymentToOrganisationBatch batch);
+
+
     }
 }

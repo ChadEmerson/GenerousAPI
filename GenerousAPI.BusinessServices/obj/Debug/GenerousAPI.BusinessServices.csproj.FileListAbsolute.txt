@@ -9,3 +9,5 @@ c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\obj\Debug\GenerousAPI.BusinessServices.csprojResolveAssemblyReference.cache
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\obj\Debug\GenerousAPI.BusinessServices.dll
 c:\users\cemerson\documents\visual studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\obj\Debug\GenerousAPI.BusinessServices.pdb
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\bin\Debug\PaymentGatewayProcessing.dll
+C:\Users\cemerson\Documents\Visual Studio 2015\Projects\GenerousAPI\GenerousAPI.BusinessServices\bin\Debug\PaymentGatewayProcessing.pdb

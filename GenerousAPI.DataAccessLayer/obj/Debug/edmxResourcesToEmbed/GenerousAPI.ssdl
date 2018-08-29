@@ -10,6 +10,10 @@
     <Property Name="BankAccountBSB" Type="nvarchar" MaxLength="500" />
     <Property Name="BankAccountTokenId" Type="nvarchar" MaxLength="500" />
     <Property Name="Active" Type="bit" />
+    <Property Name="BankVerificationAmounts" Type="varchar" MaxLength="50" />
+    <Property Name="BankVerificationRequestedOn" Type="datetime" />
+    <Property Name="BankVerificationRequestedBy" Type="varchar" MaxLength="80" />
+    <Property Name="BankVerificationPaymentStatus" Type="varchar" MaxLength="50" />
   </EntityType>
   <EntityType Name="CardType">
     <Key>
@@ -42,6 +46,13 @@
     </Key>
     <Property Name="Id" Type="tinyint" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Method" Type="varchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <EntityType Name="PaymentProcessStatus">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="tinyint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Status" Type="varchar" MaxLength="30" Nullable="false" />
   </EntityType>
   <EntityType Name="PaymentProfile">
     <Key>
@@ -92,6 +103,55 @@
     <Property Name="Longitude" Type="int" />
     <Property Name="Scheme" Type="nvarchar" MaxLength="25" />
   </EntityType>
+  <EntityType Name="PaymentToOrganisationBatch">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="BatchNumber" Type="varchar" MaxLength="15" Nullable="false" />
+    <Property Name="IsBankVerificationBatch" Type="bit" Nullable="false" />
+    <Property Name="LastProcessedDateTime" Type="datetime" />
+    <Property Name="BatchCompletedDateTime" Type="datetime" />
+    <Property Name="CreateDateTime" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="80" Nullable="false" />
+    <Property Name="isPaymentToDay3" Type="smallint" />
+  </EntityType>
+  <EntityType Name="PaymentToOrganisationBatchLineItem">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="LineItemNumber" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BatchId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="BatchNumber" Type="varchar" MaxLength="15" Nullable="false" />
+    <Property Name="BankAccountId" Type="uniqueidentifier" />
+    <Property Name="IsBankVerification" Type="bit" Nullable="false" />
+    <Property Name="TotalPaymentsReceived" Type="bigint" Nullable="false" />
+    <Property Name="TotalAmountReceived" Type="decimal" Precision="22" Scale="2" Nullable="false" />
+    <Property Name="TotalAmountPaidToOrganisation" Type="decimal" Precision="22" Scale="2" Nullable="false" />
+    <Property Name="ProcessDateTime" Type="datetime" />
+    <Property Name="ProcessStatusId" Type="tinyint" Nullable="false" />
+    <Property Name="Processed_PaymentSubmittedDateTime" Type="datetime" />
+    <Property Name="Processed_PaymentFinalisedDateTime" Type="datetime" />
+    <Property Name="LastProcessedDateTime" Type="datetime" />
+    <Property Name="ProcessRetryCounter" Type="tinyint" />
+    <Property Name="CreateDateTime" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="80" Nullable="false" />
+    <Property Name="LastModifiedDateTime" Type="datetime" />
+    <Property Name="LastModifiedBy" Type="nvarchar" MaxLength="80" />
+    <Property Name="DoNotProcess" Type="bit" Nullable="false" />
+    <Property Name="BankAccountBSB" Type="nvarchar" MaxLength="500" />
+    <Property Name="BankAccountNumber" Type="nvarchar" MaxLength="500" />
+    <Property Name="BankAcountName" Type="nvarchar" MaxLength="500" />
+  </EntityType>
+  <EntityType Name="PaymentToOrganisationBatchTransactionLog">
+    <Key>
+      <PropertyRef Name="PaymentToOrganisationBatchLineItemId" />
+      <PropertyRef Name="DonationTransactionId" />
+    </Key>
+    <Property Name="PaymentToOrganisationBatchLineItemId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="DonationTransactionId" Type="uniqueidentifier" Nullable="false" />
+  </EntityType>
   <EntityType Name="TransactionDetails">
     <Key>
       <PropertyRef Name="Id" />
@@ -106,6 +166,21 @@
     <Property Name="ResponseText" Type="nvarchar" MaxLength="300" Nullable="false" />
     <Property Name="AuditNumber" Type="nvarchar" MaxLength="100" />
     <Property Name="CustomerReference" Type="nvarchar" MaxLength="150" />
+    <Property Name="PaymentToOrganisationBatchId" Type="uniqueidentifier" />
+    <Property Name="PaymentToOrganisationBatchLineItemId" Type="uniqueidentifier" />
+    <Property Name="IsValidForPaymentToOrganisation" Type="bit" />
+    <Property Name="ProcessStatusId" Type="tinyint" />
+  </EntityType>
+  <EntityType Name="TransactionHistory">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="TransactionId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="TransactionTypeId" Type="tinyint" Nullable="false" />
+    <Property Name="Status" Type="varchar" MaxLength="30" />
+    <Property Name="StatusUpdateDateTime" Type="datetime" />
+    <Property Name="StatusUpdateBy" Type="nvarchar" MaxLength="80" />
   </EntityType>
   <EntityType Name="TransactionMode">
     <Key>
@@ -113,6 +188,13 @@
     </Key>
     <Property Name="TransactionModeId" Type="int" Nullable="false" />
     <Property Name="TransactionMode" Type="nvarchar" MaxLength="20" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TransactionType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="tinyint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Type" Type="varchar" MaxLength="50" Nullable="false" />
   </EntityType>
   <Association Name="FK_PaymentGateway_PaymentGateway">
     <End Role="PaymentGatewayType" Type="Self.PaymentGatewayType" Multiplicity="1" />
@@ -162,16 +244,79 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_PaymentToOrganisationBatch_PaymentToOrganisationBatch">
+    <End Role="PaymentToOrganisationBatch" Type="Self.PaymentToOrganisationBatch" Multiplicity="1" />
+    <End Role="PaymentToOrganisationBatch1" Type="Self.PaymentToOrganisationBatch" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentToOrganisationBatch">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PaymentToOrganisationBatch1">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentToOrganisationBatchLineItem_PaymentProcessStatus">
+    <End Role="PaymentProcessStatus" Type="Self.PaymentProcessStatus" Multiplicity="1" />
+    <End Role="PaymentToOrganisationBatchLineItem" Type="Self.PaymentToOrganisationBatchLineItem" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentProcessStatus">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PaymentToOrganisationBatchLineItem">
+        <PropertyRef Name="ProcessStatusId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentToOrganisationBatchLineItem_PaymentToOrganisationBatch">
+    <End Role="PaymentToOrganisationBatch" Type="Self.PaymentToOrganisationBatch" Multiplicity="1" />
+    <End Role="PaymentToOrganisationBatchLineItem" Type="Self.PaymentToOrganisationBatchLineItem" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentToOrganisationBatch">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PaymentToOrganisationBatchLineItem">
+        <PropertyRef Name="BatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TransactionHistory_TransactionType">
+    <End Role="TransactionType" Type="Self.TransactionType" Multiplicity="1" />
+    <End Role="TransactionHistory" Type="Self.TransactionHistory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TransactionType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TransactionHistory">
+        <PropertyRef Name="TransactionTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Function Name="AssignBatchLineItemToApprovedDonations" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="AssignBatchToApprovedDonations" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="BatchId" Type="uniqueidentifier" Mode="In" />
+  </Function>
+  <Function Name="UpdatePaymentToOrganisationBatchProcessStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="BatchId" Type="uniqueidentifier" Mode="In" />
+    <Parameter Name="ActionedDateTime" Type="datetime" Mode="In" />
+    <Parameter Name="ActionedBy" Type="nvarchar" Mode="In" />
+  </Function>
   <EntityContainer Name="GenerousAPIModelStoreContainer">
     <EntitySet Name="BankAccount" EntityType="Self.BankAccount" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CardType" EntityType="Self.CardType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentGatewayConfig" EntityType="Self.PaymentGatewayConfig" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentGatewayType" EntityType="Self.PaymentGatewayType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentMethod" EntityType="Self.PaymentMethod" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PaymentProcessStatus" EntityType="Self.PaymentProcessStatus" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentProfile" EntityType="Self.PaymentProfile" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentProfileBinInfo" EntityType="Self.PaymentProfileBinInfo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PaymentToOrganisationBatch" EntityType="Self.PaymentToOrganisationBatch" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PaymentToOrganisationBatchLineItem" EntityType="Self.PaymentToOrganisationBatchLineItem" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PaymentToOrganisationBatchTransactionLog" EntityType="Self.PaymentToOrganisationBatchTransactionLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TransactionDetails" EntityType="Self.TransactionDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TransactionHistory" EntityType="Self.TransactionHistory" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TransactionMode" EntityType="Self.TransactionMode" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TransactionType" EntityType="Self.TransactionType" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_PaymentGateway_PaymentGateway" Association="Self.FK_PaymentGateway_PaymentGateway">
       <End Role="PaymentGatewayType" EntitySet="PaymentGatewayType" />
       <End Role="PaymentGatewayConfig" EntitySet="PaymentGatewayConfig" />
@@ -187,6 +332,22 @@
     <AssociationSet Name="FK_PaymentProfile_TransactionMode" Association="Self.FK_PaymentProfile_TransactionMode">
       <End Role="TransactionMode" EntitySet="TransactionMode" />
       <End Role="PaymentProfile" EntitySet="PaymentProfile" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentToOrganisationBatch_PaymentToOrganisationBatch" Association="Self.FK_PaymentToOrganisationBatch_PaymentToOrganisationBatch">
+      <End Role="PaymentToOrganisationBatch" EntitySet="PaymentToOrganisationBatch" />
+      <End Role="PaymentToOrganisationBatch1" EntitySet="PaymentToOrganisationBatch" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentToOrganisationBatchLineItem_PaymentProcessStatus" Association="Self.FK_PaymentToOrganisationBatchLineItem_PaymentProcessStatus">
+      <End Role="PaymentProcessStatus" EntitySet="PaymentProcessStatus" />
+      <End Role="PaymentToOrganisationBatchLineItem" EntitySet="PaymentToOrganisationBatchLineItem" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentToOrganisationBatchLineItem_PaymentToOrganisationBatch" Association="Self.FK_PaymentToOrganisationBatchLineItem_PaymentToOrganisationBatch">
+      <End Role="PaymentToOrganisationBatch" EntitySet="PaymentToOrganisationBatch" />
+      <End Role="PaymentToOrganisationBatchLineItem" EntitySet="PaymentToOrganisationBatchLineItem" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TransactionHistory_TransactionType" Association="Self.FK_TransactionHistory_TransactionType">
+      <End Role="TransactionType" EntitySet="TransactionType" />
+      <End Role="TransactionHistory" EntitySet="TransactionHistory" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

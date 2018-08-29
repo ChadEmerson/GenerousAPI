@@ -83,6 +83,10 @@
     <EntitySetMapping Name="BankAccounts">
       <EntityTypeMapping TypeName="GenerousAPIModel.BankAccount">
         <MappingFragment StoreEntitySet="BankAccount">
+          <ScalarProperty Name="BankVerificationPaymentStatus" ColumnName="BankVerificationPaymentStatus" />
+          <ScalarProperty Name="BankVerificationRequestedBy" ColumnName="BankVerificationRequestedBy" />
+          <ScalarProperty Name="BankVerificationRequestedOn" ColumnName="BankVerificationRequestedOn" />
+          <ScalarProperty Name="BankVerificationAmounts" ColumnName="BankVerificationAmounts" />
           <ScalarProperty Name="Active" ColumnName="Active" />
           <ScalarProperty Name="BankAccountTokenId" ColumnName="BankAccountTokenId" />
           <ScalarProperty Name="BankAccountBSB" ColumnName="BankAccountBSB" />
@@ -95,6 +99,10 @@
     <EntitySetMapping Name="TransactionDetails">
       <EntityTypeMapping TypeName="GenerousAPIModel.TransactionDetail">
         <MappingFragment StoreEntitySet="TransactionDetails">
+          <ScalarProperty Name="ProcessStatusId" ColumnName="ProcessStatusId" />
+          <ScalarProperty Name="IsValidForPaymentToOrganisation" ColumnName="IsValidForPaymentToOrganisation" />
+          <ScalarProperty Name="PaymentToOrganisationBatchLineItemId" ColumnName="PaymentToOrganisationBatchLineItemId" />
+          <ScalarProperty Name="PaymentToOrganisationBatchId" ColumnName="PaymentToOrganisationBatchId" />
           <ScalarProperty Name="CustomerReference" ColumnName="CustomerReference" />
           <ScalarProperty Name="AuditNumber" ColumnName="AuditNumber" />
           <ScalarProperty Name="ResponseText" ColumnName="ResponseText" />
@@ -121,6 +129,88 @@
           <ScalarProperty Name="Brand" ColumnName="Brand" />
           <ScalarProperty Name="PaymentProfileId" ColumnName="PaymentProfileId" />
           <ScalarProperty Name="BinInfoId" ColumnName="BinInfoId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PaymentProcessStatus">
+      <EntityTypeMapping TypeName="GenerousAPIModel.PaymentProcessStatu">
+        <MappingFragment StoreEntitySet="PaymentProcessStatus">
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PaymentToOrganisationBatches">
+      <EntityTypeMapping TypeName="GenerousAPIModel.PaymentToOrganisationBatch">
+        <MappingFragment StoreEntitySet="PaymentToOrganisationBatch">
+          <ScalarProperty Name="isPaymentToDay3" ColumnName="isPaymentToDay3" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreateDateTime" ColumnName="CreateDateTime" />
+          <ScalarProperty Name="BatchCompletedDateTime" ColumnName="BatchCompletedDateTime" />
+          <ScalarProperty Name="LastProcessedDateTime" ColumnName="LastProcessedDateTime" />
+          <ScalarProperty Name="IsBankVerificationBatch" ColumnName="IsBankVerificationBatch" />
+          <ScalarProperty Name="BatchNumber" ColumnName="BatchNumber" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TransactionHistories">
+      <EntityTypeMapping TypeName="GenerousAPIModel.TransactionHistory">
+        <MappingFragment StoreEntitySet="TransactionHistory">
+          <ScalarProperty Name="StatusUpdateBy" ColumnName="StatusUpdateBy" />
+          <ScalarProperty Name="StatusUpdateDateTime" ColumnName="StatusUpdateDateTime" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="TransactionTypeId" ColumnName="TransactionTypeId" />
+          <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TransactionTypes">
+      <EntityTypeMapping TypeName="GenerousAPIModel.TransactionType">
+        <MappingFragment StoreEntitySet="TransactionType">
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PaymentToOrganisationBatchTransactionLogs">
+      <EntityTypeMapping TypeName="GenerousAPIModel.PaymentToOrganisationBatchTransactionLog">
+        <MappingFragment StoreEntitySet="PaymentToOrganisationBatchTransactionLog">
+          <ScalarProperty Name="DonationTransactionId" ColumnName="DonationTransactionId" />
+          <ScalarProperty Name="PaymentToOrganisationBatchLineItemId" ColumnName="PaymentToOrganisationBatchLineItemId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="AssignBatchLineItemToApprovedDonations" FunctionName="GenerousAPIModel.Store.AssignBatchLineItemToApprovedDonations" />
+    <FunctionImportMapping FunctionImportName="AssignBatchToApprovedDonations" FunctionName="GenerousAPIModel.Store.AssignBatchToApprovedDonations" />
+    <FunctionImportMapping FunctionImportName="UpdatePaymentToOrganisationBatchProcessStatus" FunctionName="GenerousAPIModel.Store.UpdatePaymentToOrganisationBatchProcessStatus" />
+    <EntitySetMapping Name="PaymentToOrganisationBatchLineItems">
+      <EntityTypeMapping TypeName="GenerousAPIModel.PaymentToOrganisationBatchLineItem">
+        <MappingFragment StoreEntitySet="PaymentToOrganisationBatchLineItem">
+          <ScalarProperty Name="BankAcountName" ColumnName="BankAcountName" />
+          <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
+          <ScalarProperty Name="BankAccountBSB" ColumnName="BankAccountBSB" />
+          <ScalarProperty Name="DoNotProcess" ColumnName="DoNotProcess" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+          <ScalarProperty Name="LastModifiedDateTime" ColumnName="LastModifiedDateTime" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreateDateTime" ColumnName="CreateDateTime" />
+          <ScalarProperty Name="ProcessRetryCounter" ColumnName="ProcessRetryCounter" />
+          <ScalarProperty Name="LastProcessedDateTime" ColumnName="LastProcessedDateTime" />
+          <ScalarProperty Name="Processed_PaymentFinalisedDateTime" ColumnName="Processed_PaymentFinalisedDateTime" />
+          <ScalarProperty Name="Processed_PaymentSubmittedDateTime" ColumnName="Processed_PaymentSubmittedDateTime" />
+          <ScalarProperty Name="ProcessStatusId" ColumnName="ProcessStatusId" />
+          <ScalarProperty Name="ProcessDateTime" ColumnName="ProcessDateTime" />
+          <ScalarProperty Name="TotalAmountPaidToOrganisation" ColumnName="TotalAmountPaidToOrganisation" />
+          <ScalarProperty Name="TotalAmountReceived" ColumnName="TotalAmountReceived" />
+          <ScalarProperty Name="TotalPaymentsReceived" ColumnName="TotalPaymentsReceived" />
+          <ScalarProperty Name="IsBankVerification" ColumnName="IsBankVerification" />
+          <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
+          <ScalarProperty Name="BatchNumber" ColumnName="BatchNumber" />
+          <ScalarProperty Name="BatchId" ColumnName="BatchId" />
+          <ScalarProperty Name="LineItemNumber" ColumnName="LineItemNumber" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

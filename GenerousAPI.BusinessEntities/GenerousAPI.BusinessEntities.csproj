@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BankVerificationResponse.cs" />
+    <Compile Include="Common.cs" />
     <Compile Include="DataTransferObjects\BankAccountDTO.cs" />
     <Compile Include="DataTransferObjects\BinInfoDTO.cs" />
     <Compile Include="DataTransferObjects\ContactDetailsDTO.cs" />

@@ -35,6 +35,6 @@ namespace GenerousAPI.Helpers
             DirectDebit = 2,
 
             
-        }
+        }       
     }
 }

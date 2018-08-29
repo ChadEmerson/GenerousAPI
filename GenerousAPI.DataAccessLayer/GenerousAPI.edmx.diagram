@@ -18,7 +18,20 @@
         <EntityTypeShape EntityType="GenerousAPIModel.BankAccount" Width="1.5" PointX="3.375" PointY="3.75" />
         <EntityTypeShape EntityType="GenerousAPIModel.TransactionDetail" Width="1.5" PointX="5.375" PointY="8.75" />
         <EntityTypeShape EntityType="GenerousAPIModel.PaymentProfileBinInfo" Width="1.5" PointX="7.375" PointY="8.75" />
-      </Diagram>
+        <EntityTypeShape EntityType="GenerousAPIModel.PaymentProcessStatu" Width="1.5" PointX="9.375" PointY="15.5" />
+        <EntityTypeShape EntityType="GenerousAPIModel.PaymentToOrganisationBatch" Width="1.5" PointX="9.375" PointY="10.75" />
+        <AssociationConnector Association="GenerousAPIModel.FK_PaymentToOrganisationBatch_PaymentToOrganisationBatch" />
+        <EntityTypeShape EntityType="GenerousAPIModel.TransactionHistory" Width="1.5" PointX="12.625" PointY="1" />
+        <EntityTypeShape EntityType="GenerousAPIModel.TransactionType" Width="1.5" PointX="10.375" PointY="1.375" />
+        <AssociationConnector Association="GenerousAPIModel.FK_TransactionHistory_TransactionType" />
+        <EntityTypeShape EntityType="GenerousAPIModel.PaymentToOrganisationBatchTransactionLog" Width="1.5" PointX="0.75" PointY="10.75" />
+        <EntityTypeShape EntityType="GenerousAPIModel.PaymentToOrganisationBatchLineItem" Width="1.5" PointX="11.625" PointY="11" />
+        <AssociationConnector Association="GenerousAPIModel.FK_PaymentToOrganisationBatchLineItem_PaymentProcessStatus" />
+        <AssociationConnector Association="GenerousAPIModel.FK_PaymentToOrganisationBatchLineItem_PaymentToOrganisationBatch" />
+        <EntityTypeShape EntityType="GenerousAPIModel.OrganisationFeeProcessing" Width="1.5" PointX="10.75" PointY="4.75" />
+        <EntityTypeShape EntityType="GenerousAPIModel.OrganisationPromoFee" Width="1.5" PointX="12.75" PointY="4.75" />
+        <EntityTypeShape EntityType="GenerousAPIModel.OrganisationStandardFee" Width="1.5" PointX="0.75" PointY="13.75" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

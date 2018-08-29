@@ -23,6 +23,7 @@ namespace GenerousAPI.Controllers
         private IBankAccountBS _IBankAccountBS = null;
         private ITransactionDetailsBS _ITransactionDetailsBS = null;
         private IPaymentProfileBinInfoBS _IPaymentProfileBinInfoBS = null;
+        private IPaymentToOrganisationBS _IPaymentToOrganisationBS = null;
 
         public const string CardAccessMerchantId = "2004";
         public const string CardAccessPassword = "password1234";
@@ -100,7 +101,7 @@ namespace GenerousAPI.Controllers
 
         [AcceptVerbs("POST")]
         [HttpPost]
-        public ProcessorResponse CreateBankAccount([FromBody]BankAccountDTO bankAccountDTO)
+        public BankVerificationResponse CreateBankAccount([FromBody]BankAccountDTO bankAccountDTO)
         {
             try
             {
@@ -114,7 +115,9 @@ namespace GenerousAPI.Controllers
                 _IBankAccountBS = new BankAccountBS();
 
                 // Save the bank account
-                var response = _IBankAccountBS.CreateBankAccount(bankAccount);
+                var creationResponse = _IBankAccountBS.CreateBankAccount(bankAccount);
+
+                var response = GenerateBankVerificationDonations(bankAccount.BankAccountTokenId);
 
                 // Return a token id
                 return response;
@@ -164,7 +167,7 @@ namespace GenerousAPI.Controllers
                 return null;
             }
         }
-
+        
         [AcceptVerbs("POST")]
         [HttpPost]
         public ProcessorResponse DeletePaymentProfile(HttpRequestMessage request)
@@ -257,6 +260,20 @@ namespace GenerousAPI.Controllers
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+
+        [AcceptVerbs("POST")]
+        [HttpPost]
+        public void CreatePaymentToOrganisationBatch(HttpRequestMessage request)
+        {
+            try
+            {
+                CreatePaymentToOrganisationBatch();
+            }
+            catch (Exception)
+            {
+                // Some error occurred
             }
         }
 
@@ -406,6 +423,97 @@ namespace GenerousAPI.Controllers
         }
 
         /// <summary>
+        /// Returns a batch payment to an organisation
+        /// </summary>
+        /// <returns>Batch payment to an organisation</returns>
+        private DataAccessLayer.PaymentToOrganisationBatch CreatePaymentToOrganisationBatch()
+        {
+            DataAccessLayer.PaymentToOrganisationBatch batch = new DataAccessLayer.PaymentToOrganisationBatch();
+            batch.Id = Guid.NewGuid();
+            batch.BatchNumber = BatchNumberHelper.GetBatchNumberForPaymentToOrganisation();
+            batch.CreateDateTime = DateTime.Now;
+            batch.CreatedBy = PaymentConfiguration.TransactionProcessBatchName;
+
+            _IPaymentToOrganisationBS = new PaymentToOrganisationBS();
+
+            bool areThereAnyAPPROVED_Trans_Not_Assigned_To_Any_Batch = _IPaymentToOrganisationBS.AreThereAny_APPROVED_DonationTransactions_NotAssigned_To_Any_Batch();
+
+            //if there are no APPROVED donation transactions to be batched, then we simply abort the batch creation process
+            if (!areThereAnyAPPROVED_Trans_Not_Assigned_To_Any_Batch)
+                // return null;
+
+            //create batch record in db
+            _IPaymentToOrganisationBS.CreatePaymentToOrganisationBatch(batch);
+
+
+            // Get batch items so they can be decrypted
+            var batchlistDetails = _IPaymentToOrganisationBS.BatchProcessPaymentToOrganisation(Common.BatchPaymentToOrganisationStatus.Unprocessed);
+            var batchitems = _IPaymentToOrganisationBS.GetBatchListItems(PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.Unprocessed, batchlistDetails);
+
+            foreach(var batchitem in batchitems)
+            {
+                batchitem.BankAccountNumber = EncryptionService.Decrypt(batchitem.BankAccountNumber);
+                batchitem.BankAccountBSB = EncryptionService.Decrypt(batchitem.BankAccountBSB);
+            }
+
+            _IPaymentToOrganisationBS.ProcessPaymentToOrganisationBatches_UnProcessed(batchlistDetails, batchitems, false);
+
+
+            //_IPaymentToOrganisationBS.ProcessBatchList(Common.BatchPaymentToOrganisationStatus.Unprocessed, batchlistDetails);
+
+            return batch;
+        }
+
+        /// <summary>
+        /// Creates a verification payment for the batch line items
+        /// </summary>
+        /// <param name="bankAccountId">Bank account id</param>
+        /// <param name="verificationAmounts">Amounts to verify</param>
+        private void CreateBankVerificationPaymenBatchLineItems(BankAccountDTO bankAccount, List<decimal> verificationAmounts)
+        {
+            List<DataAccessLayer.PaymentToOrganisationBatchLineItem> batchLineItemList = new List<DataAccessLayer.PaymentToOrganisationBatchLineItem>();
+
+            //create a new batch to process the bank verification request
+            DataAccessLayer.PaymentToOrganisationBatch batch = new DataAccessLayer.PaymentToOrganisationBatch();
+            batch.Id = Guid.NewGuid();
+            batch.BatchNumber = Helpers.BatchNumberHelper.GetBatchNumberForBankVerification();
+            batch.IsBankVerificationBatch = true;
+            batch.CreateDateTime = DateTime.Now;
+            batch.CreatedBy = PaymentConfiguration.TransactionProcessBatchName;
+
+            foreach (Decimal verificationAmount in verificationAmounts)
+            {
+                DataAccessLayer.PaymentToOrganisationBatchLineItem donationItem = new DataAccessLayer.PaymentToOrganisationBatchLineItem();
+                donationItem.ProcessStatusId = (byte)PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.Unprocessed;
+                donationItem.Id = Guid.NewGuid();
+                donationItem.BatchId = batch.Id;
+                donationItem.BatchNumber = batch.BatchNumber;
+                donationItem.IsBankVerification = true;
+                
+                donationItem.BankAcountName = bankAccount.BankAcountName;
+                donationItem.BankAccountNumber = bankAccount.BankAccountNumber;
+                donationItem.BankAccountId = bankAccount.BankAccountId;
+                
+                donationItem.BankAccountBSB = bankAccount.BankAccountBSB;
+                donationItem.TotalAmountPaidToOrganisation = verificationAmount;
+                donationItem.TotalAmountReceived = 0;
+                donationItem.TotalPaymentsReceived = 0;
+                donationItem.ProcessDateTime = DateTime.Now;
+                donationItem.CreateDateTime = DateTime.Now;
+                donationItem.CreatedBy = PaymentConfiguration.TransactionProcessBatchName;
+
+                batchLineItemList.Add(donationItem);
+            }
+
+            //assign batch line items to batch
+            batch.PaymentToOrganisationBatchLineItems = batchLineItemList;
+
+            _IBankAccountBS = new BankAccountBS();
+
+            _IBankAccountBS.CreatePaymentToOrganisationBatch(batch);            
+        }
+
+        /// <summary>
         /// Get the Bin Info from binlist.net for this credit card
         /// </summary>
         /// <param name="BinNumberToSearch"></param>
@@ -439,6 +547,46 @@ namespace GenerousAPI.Controllers
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Generates a random amount for account verification purposes
+        /// </summary>
+        /// <param name="tokenId">Unique identifier of the bank account</param>        
+        private BankVerificationResponse GenerateBankVerificationDonations(string tokenId)
+        {
+            _IBankAccountBS = new BankAccountBS();
+
+            var bankAccount = _IBankAccountBS.GetBankAccount(tokenId);
+
+            List<decimal> verificationAmounts = new List<decimal>();
+
+            //generate random amounts less than a dollar
+            Random random = new Random();
+            verificationAmounts.Add((decimal)random.Next(50, 99) / 100);
+            verificationAmounts.Add((decimal)random.Next(50, 99) / 100);
+
+            // Create verification amounts
+            CreateBankVerificationPaymenBatchLineItems(bankAccount, verificationAmounts);
+
+            //record bank verification request                
+            bankAccount.BankVerificationAmounts = String.Join(",", verificationAmounts.ToArray());
+            bankAccount.BankVerificationRequestedOn = DateTime.Now;
+
+            var bankAccountToUpdate = DataTransformBankAccountDTO(bankAccount);
+
+            var response = _IBankAccountBS.UpdateBankAccount(bankAccountToUpdate);
+
+            var bankResponse = new BankVerificationResponse
+            {
+                Message = response.Message,
+                AuthToken = response.AuthToken,
+                IsSuccess = response.IsSuccess,
+                VerificationAmounts = verificationAmounts,
+                BankVerificationRequestedOn = bankAccount.BankVerificationRequestedOn
+            };
+
+            return bankResponse;
         }
 
         /// <summary>
@@ -498,11 +646,11 @@ namespace GenerousAPI.Controllers
         /// </summary>
         /// <param name="paymentGatewayType"></param>
         /// <returns></returns>
-        private PaymentGatewayDTO GetGenerousPaymentGatewayDetails(byte paymentGatewayType, Guid organisationId = new Guid())
+        private PaymentGatewayDTO GetGenerousPaymentGatewayDetails(byte paymentGatewayType)
         {
             _IPaymentGatewayBS = new PaymentGatewayBS();
 
-            var paymentGateways = _IPaymentGatewayBS.GetPaymentGatewayDetails(organisationId, paymentGatewayType);
+            var paymentGateways = _IPaymentGatewayBS.GetPaymentGatewayDetails(paymentGatewayType);
 
             return paymentGateways.FirstOrDefault();
         }
@@ -547,15 +695,33 @@ namespace GenerousAPI.Controllers
         /// <returns>Payment Profile object for DAL</returns>
         private DataAccessLayer.BankAccount DataTransformBankAccountDTO(BankAccountDTO bankAccountDTO)
         {
-            var bankAccount = new DataAccessLayer.BankAccount
+            if (bankAccountDTO.BankVerificationAmounts != null)
             {
-                BankAccountNumber = EncryptionService.Encrypt(bankAccountDTO.BankAccountNumber),
-                BankAccountBSB = EncryptionService.Encrypt(bankAccountDTO.BankAccountBSB),
-                BankAccountId = Guid.NewGuid(),
-                BankAcountName = bankAccountDTO.BankAcountName
-            };
+                var bankAccount = new DataAccessLayer.BankAccount
+                {
+                    BankAccountNumber = EncryptionService.Encrypt(bankAccountDTO.BankAccountNumber),
+                    BankAccountBSB = EncryptionService.Encrypt(bankAccountDTO.BankAccountBSB),
+                    BankAccountId = Guid.NewGuid(),
+                    BankAcountName = bankAccountDTO.BankAcountName
+                };
 
-            return bankAccount;
+                return bankAccount;
+            }
+            else
+            {
+                var bankAccount = new DataAccessLayer.BankAccount
+                {
+                    BankAccountNumber = EncryptionService.Encrypt(bankAccountDTO.BankAccountNumber),
+                    BankAccountBSB = EncryptionService.Encrypt(bankAccountDTO.BankAccountBSB),
+                    BankAccountId = Guid.NewGuid(),
+                    BankAcountName = bankAccountDTO.BankAcountName,
+                    BankVerificationAmounts = bankAccountDTO.BankVerificationAmounts,
+                    BankVerificationRequestedOn = DateTime.Now
+                };
+
+                return bankAccount;
+            }
+            
         }              
 
         /// <summary>

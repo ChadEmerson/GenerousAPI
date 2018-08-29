@@ -24,5 +24,9 @@ namespace GenerousAPI.DataAccessLayer
         public string ResponseText { get; set; }
         public string AuditNumber { get; set; }
         public string CustomerReference { get; set; }
+        public Nullable<System.Guid> PaymentToOrganisationBatchId { get; set; }
+        public Nullable<System.Guid> PaymentToOrganisationBatchLineItemId { get; set; }
+        public Nullable<bool> IsValidForPaymentToOrganisation { get; set; }
+        public Nullable<byte> ProcessStatusId { get; set; }
     }
 }

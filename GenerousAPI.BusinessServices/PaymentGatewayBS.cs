@@ -27,9 +27,9 @@ namespace GenerousAPI.BusinessServices
         /// <param name="organisationId">Organisation ID</param>
         /// <param name="gatewayType">Gateway type</param>
         /// <returns>Payment gateway details for an organisation</returns>
-        public IEnumerable<PaymentGatewayDTO> GetPaymentGatewayDetails(Guid organisationId, byte gatewayType)
+        public IEnumerable<PaymentGatewayDTO> GetPaymentGatewayDetails(byte gatewayType)
         {
-            return _IPaymentGatewayDAL.GetPaymentGatewayDetails(organisationId, gatewayType);
+            return _IPaymentGatewayDAL.GetPaymentGatewayDetails(gatewayType);
         }
     }
 }

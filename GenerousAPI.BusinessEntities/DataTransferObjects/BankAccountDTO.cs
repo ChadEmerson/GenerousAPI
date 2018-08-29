@@ -10,5 +10,10 @@ namespace GenerousAPI.BusinessEntities
         public string BankAccountBSB { get; set; }
         public string BankAccountTokenId { get; set; }
 
+        public string BankVerificationAmounts { get; set; }
+        public Nullable<System.DateTime> BankVerificationRequestedOn { get; set; }
+        public string BankVerificationRequestedBy { get; set; }
+        public string BankVerificationPaymentStatus { get; set; }
+
     }
 }
