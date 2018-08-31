@@ -37,6 +37,7 @@ namespace GenerousAPI.DataAccessLayer
         public string BankAccountBSB { get; set; }
         public string BankAccountNumber { get; set; }
         public string BankAcountName { get; set; }
+        public Nullable<int> OrganisationId { get; set; }
     
         public virtual PaymentProcessStatu PaymentProcessStatu { get; set; }
         public virtual PaymentToOrganisationBatch PaymentToOrganisationBatch { get; set; }

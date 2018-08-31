@@ -43,8 +43,8 @@ namespace GenerousAPI.DataAccessLayer
         public virtual DbSet<PaymentToOrganisationBatchTransactionLog> PaymentToOrganisationBatchTransactionLogs { get; set; }
         public virtual DbSet<PaymentToOrganisationBatchLineItem> PaymentToOrganisationBatchLineItems { get; set; }
         public virtual DbSet<OrganisationFeeProcessing> OrganisationFeeProcessings { get; set; }
-        public virtual DbSet<OrganisationPromoFee> OrganisationPromoFees { get; set; }
         public virtual DbSet<OrganisationStandardFee> OrganisationStandardFees { get; set; }
+        public virtual DbSet<OrganisationPromoFee> OrganisationPromoFees { get; set; }
     
         public virtual int AssignBatchLineItemToApprovedDonations()
         {

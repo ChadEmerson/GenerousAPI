@@ -11,7 +11,7 @@ namespace GenerousAPI.BusinessEntities
     {
         Unknown,
 
-        Debit,
+        DirectDebit,
 
         Credit,
 

@@ -17,5 +17,8 @@ namespace GenerousAPI.Models
 
         public bool IsTest { get; set; }
 
+        public int OrganisationId { get; set; }
+
+        public int NumberOfEventTickets { get; set; }
     }
 }

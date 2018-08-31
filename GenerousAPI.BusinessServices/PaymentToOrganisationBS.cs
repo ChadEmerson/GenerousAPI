@@ -1,4 +1,5 @@
-﻿using GenerousAPI.DataAccessLayer;
+﻿using GenerousAPI.BusinessEntities;
+using GenerousAPI.DataAccessLayer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,9 @@ namespace GenerousAPI.BusinessServices
         /// Reference to the PaymentToOrganisationDAL Interface
         /// </summary>
         private IPaymentToOrganisationDAL _paymentToOrganisationDAL = null;
+        private IPaymentProfileDAL _IPaymentProfileDAL = null;
+        private IOrganisationFeeProcessingDAL _organisationFeeProcessing = null;
+        private ITransactionDetailsDAL _ITransactionDetailsDAL = null;
 
         //        /// <summary>
         //        /// Reference to the DonationTransactionDAL Interface
@@ -30,7 +34,9 @@ namespace GenerousAPI.BusinessServices
         {
             _paymentToOrganisationDAL = new PaymentToOrganisationDAL();
             //_donationTransactionDAL = new DonationTransactionDAL();
-            //_organisationFeeProcessing = new OrganisationFeeProcessingDAL();
+            _organisationFeeProcessing = new OrganisationFeeProcessingDAL();
+            _ITransactionDetailsDAL = new TransactionDetailsDAL();
+            _IPaymentProfileDAL = new PaymentProfileDAL();
         }
 
         /// <summary>
@@ -64,10 +70,7 @@ namespace GenerousAPI.BusinessServices
             //assign new batch to approved donations
             AssignBatchToApprovedDonations(batch);
 
-            //create batch line items 
-            // ###########################
-            // (Need to create the fees)             
-            // ###########################
+            //create batch line items and calculate fees            
             CreatePaymentToOrganisationBatchLineItems(batch);
         }
 
@@ -547,20 +550,20 @@ namespace GenerousAPI.BusinessServices
             //Update the processing fee record
             foreach (PaymentToOrganisationBatchLineItem batchItem in batchLineItems)
             {
-                //try
-                //{
-                //    OrganisationFeeProcessing OrgProcessingRecord = _organisationFeeProcessing.GetOrganisationsToProcessFeeRecordByOrganisationId(batchItem.OrganisationId.Value);
-                //    OrgProcessingRecord.LastRunDate = DateTime.Now;
-                //    int OrgBillDate = OrgProcessingRecord.OrganisationBillDate != null ? OrgProcessingRecord.OrganisationBillDate.Value.Day : 1;
-                //    DateTime nextMonthDate = DateTime.Now.AddMonths(1);
-                //    DateTime nextRunDate = CreateDate(nextMonthDate.Year, nextMonthDate.Month, OrgBillDate, nextMonthDate);
-                //    OrgProcessingRecord.NextRunDate = nextRunDate;
-                //    _organisationFeeProcessing.UpdateOrganisationFeeProces(OrgProcessingRecord);
-                //}
-                //catch (Exception)
-                //{
-                //    // failed to update - can ignore for now
-                //}
+                try
+                {
+                    OrganisationFeeProcessing OrgProcessingRecord = _organisationFeeProcessing.GetOrganisationsToProcessFeeRecordByOrganisationId(batchItem.OrganisationId.Value);
+                    OrgProcessingRecord.LastRunDate = DateTime.Now;
+                    int OrgBillDate = OrgProcessingRecord.OrganisationBillDate != null ? OrgProcessingRecord.OrganisationBillDate.Value.Day : 1;
+                    DateTime nextMonthDate = DateTime.Now.AddMonths(1);
+                    DateTime nextRunDate = CreateDate(nextMonthDate.Year, nextMonthDate.Month, OrgBillDate, nextMonthDate);
+                    OrgProcessingRecord.NextRunDate = nextRunDate;
+                    _organisationFeeProcessing.UpdateOrganisationFeeProces(OrgProcessingRecord);
+                }
+                catch (Exception)
+                {
+                    // failed to update - can ignore for now
+                }
             }
 
             //send the aba file to concerned staff for bank processsing
@@ -720,6 +723,11 @@ namespace GenerousAPI.BusinessServices
                     }
 
                 }
+
+                // Re-encrypt the bank data
+                batchLineItem.BankAccountBSB = EncryptionService.Encrypt(batchLineItem.BankAccountBSB);
+                batchLineItem.BankAccountNumber = EncryptionService.Encrypt(batchLineItem.BankAccountNumber);
+
             }
 
             if (batchLineItemList.Count() > 0)
@@ -739,184 +747,254 @@ namespace GenerousAPI.BusinessServices
             NAB_ABAFileGen.GenerateABAFile(batchLineItems, ABAGeneration.AbaConfig.ABAPaymentCollectionFilePath, ABAFileName);   //TODO: Exception handling if invalid data etc. 
             return ABAFileName;
         }
-
-
-        //        private OrganisationFeeProcessing GetOrganisationFeeProcessingSettings(int organisationId)
-        //        {
-        //            return _paymentToOrganisationDAL.GetOrganisationFeeProcessingSettings(organisationId);
-        //        }
-
-        //        private void ProcessLineItemFee(DonationTransactionWithRelatedData donationTransaction, OrganisationPaymentGateway organisationPaymentGateway, OrganisationFeeProcessing organisationFeeProcessingSettings)
-        //        {
-        //            if (donationTransaction != null && organisationPaymentGateway != null && organisationFeeProcessingSettings != null)
-        //            {
-        //                _organisation = new OrganisationDAL();
-        //                _donationTransactionDAL = new DonationTransactionDAL();
-
-        //                decimal totalAmount = donationTransaction.DonationTransaction.Amount;
-        //                decimal calcAmount = 0;
-        //                decimal platformFee = 0;
-        //                decimal directDebitFee = 0;
-        //                decimal paymentGatewayFee = 0;
-
-        //                //Deduct the direct debit fixed fee
-        //                if (organisationFeeProcessingSettings.DirectDebitFeeFixed != null && organisationFeeProcessingSettings.DirectDebitFeeFixed > 0
-        //                    && totalAmount < (int)FeeProcessingSettings.DirectDebitFixedAmount && donationTransaction.DonationTransaction_PaymentMethod == Common.PaymentMethod.DirectDebit.ToString())
-        //                {
-        //                    directDebitFee = DeductFixedAmount(totalAmount, (float)organisationFeeProcessingSettings.DirectDebitFeeFixed);
-        //                    calcAmount = directDebitFee;
-        //                }
-
-        //                if (organisationFeeProcessingSettings.DirectDebitFeePercentage != null && organisationFeeProcessingSettings.DirectDebitFeePercentage > 0 && totalAmount > (int)FeeProcessingSettings.DirectDebitFixedAmount
-        //                     && donationTransaction.DonationTransaction_PaymentMethod == Common.PaymentMethod.DirectDebit.ToString())
-        //                {
-        //                    directDebitFee = DeductPrecentageAmount(totalAmount, (float)organisationFeeProcessingSettings.DirectDebitFeePercentage);
-        //                    calcAmount = directDebitFee;
-        //                }
-
-        //                //Deduct the platform fee
-        //                if (organisationFeeProcessingSettings.PlatformFeePercentage != null && organisationFeeProcessingSettings.PlatformFeePercentage > 0)
-        //                {
-        //                    platformFee = DeductPrecentageAmount(totalAmount, (float)organisationFeeProcessingSettings.PlatformFeePercentage);
-        //                    calcAmount = calcAmount + platformFee;
-        //                }
-
-        //                if (organisationPaymentGateway.GenerousDefaultGateway.HasValue && organisationPaymentGateway.GenerousDefaultGateway.Value)
-        //                {
-        //                    //Deduct the day3 paymentgateway fee
-        //                    if (organisationFeeProcessingSettings.MF_PG_Day3_Fee_Precentage != null && organisationFeeProcessingSettings.MF_PG_Day3_Fee_Precentage > 0)
-        //                    {
-        //                        paymentGatewayFee = DeductPrecentageAmount(totalAmount, (float)organisationFeeProcessingSettings.MF_PG_Day3_Fee_Precentage);
-        //                        calcAmount = calcAmount + paymentGatewayFee;
-        //                    }
-        //                }
-
-        //                // If there is a processing fee and it was not paid by the donor, then add it here as well
-        //                if (!donationTransaction.DonationTransaction.ProcessingFeePaidByDonor && donationTransaction.DonationTransaction.ProcessingFeeAmount > 0)
-        //                {
-        //                    calcAmount = calcAmount + (decimal)donationTransaction.DonationTransaction.ProcessingFeeAmount;
-        //                }
-
-        //                //donationTransaction.DonationTransaction.Amount = Decimal.Round(totalAmount - calcAmount, 2);
-        //                //Update the amount paid to organisation after fee deductions
-        //                donationTransaction.DonationTransaction.AmountAfterFeeDeductions = Decimal.Round(totalAmount - calcAmount, 2);
-
-        //                //Save the updated donation transaction record.
-        //                _donationTransactionDAL.UpdateDonationTransaction(donationTransaction.DonationTransaction);
-
-        //                //Save the fee break down
-        //                _organisation.SaveDonationTransactionFeeBreakDown(donationTransaction.DonationTransaction.Id, platformFee, directDebitFee, paymentGatewayFee);
-        //            }
-        //        }
-
-        //        private OrganisationPaymentGateway GetOrganisationPaymentGatewayDetails(int organisationId)
-        //        {
-        //            _organisation = new OrganisationDAL();
-        //            return _organisation.GetOrganisationPaymentGateway(organisationId);
-        //        }
-
-        //        private decimal DeductPrecentageAmount(decimal currentTotal, float precentage)
-        //        {
-        //            return (currentTotal * (decimal)(precentage / 100));
-        //        }
-
-        //        private decimal DeductFixedAmount(decimal currentTotal, float amount)
-        //        {
-        //            return (decimal)amount;
-        //        }
-
-        //        /// <summary>
-        //        /// Assigns the donation batch to approved donations
-        //        /// </summary>
-        //        /// <param name="batch">Batch donation details</param>
-        //        private void AssignBatchToApprovedDonations(PaymentToOrganisationBatch batch)
-        //        {
-        //            _paymentToOrganisationDAL.AssignBatchToApprovedDonations(batch);
-        //        }
-
-        //        /// <summary>
-        //        /// Create a new batch item to process for an organisation
-        //        /// </summary>
-        //        /// <param name="batch">Batch detials</param>
-        private void CreatePaymentToOrganisationBatchLineItems(PaymentToOrganisationBatch batch)
+        
+        private void ProcessLineItemFee(DonationTransactionWithRelatedData donationTransaction, OrganisationFeeProcesingWithRelatedData organisationFeeProcessingSettings)
         {
-            //IBankAccountBS bankAccountBS = new BankAccountBS();
+            if (donationTransaction != null && organisationFeeProcessingSettings != null)
+            {
+                decimal totalAmount = donationTransaction.TransactionDetail.Amount;
+                decimal calcAmount = 0;
+                decimal ticketFee = 0;
 
-            //Dictionary<Guid, List<TransactionDetail>> donationsTowardsBankAccount = new Dictionary<Guid, List<TransactionDetail>>();
+                if (Convert.ToBoolean(organisationFeeProcessingSettings.OrganisationToProcess.IsActive) &&
+                    Convert.ToBoolean(organisationFeeProcessingSettings.OrganisationToProcess.IsPromoBilling))
+                {
+                    // organisation has promo billing    
+                    calcAmount = CalculateFeeAmount(totalAmount, true, donationTransaction, organisationFeeProcessingSettings);
+                }
+                else
+                {
+                    // organisation does not have promo billing
+                    calcAmount = CalculateFeeAmount(totalAmount, false, donationTransaction, organisationFeeProcessingSettings);
+                }
 
-            //List<DonationTransactionWithRelatedData> transListOfBatch = _donationTransactionDAL.GetDonationTransactionsOf_Batch_WithRelatedData(batch.Id) as List<DonationTransactionWithRelatedData>;
+                calcAmount += organisationFeeProcessingSettings.OrganisationStandardFees.TransactionFeeAmount.Value;
 
-            ////sorting the approved transactions of a batch by bank account
-            //foreach (DonationTransactionWithRelatedData trans in transListOfBatch)
-            //{
-            //    var orgPaymentGatewaySettings = GetOrganisationPaymentGatewayDetails(trans.Organisation.Id);
-            //    var OrgFeeProcessingSettings = GetOrganisationFeeProcessingSettings(trans.Organisation.Id);
-            //    ProcessLineItemFee(trans, orgPaymentGatewaySettings, OrgFeeProcessingSettings);
 
-            //    if (!donationsTowardsBankAccount.Keys.Contains(trans.Project.PaymentToBankAccountId))
-            //    {
-            //        List<DonationTransaction> transList = new List<DonationTransaction>();
-            //        transList.Add(trans.DonationTransaction);
-            //        donationsTowardsBankAccount.Add(trans.Project.PaymentToBankAccountId, transList);
-            //    }
-            //    else
-            //    {
-            //        donationsTowardsBankAccount[trans.Project.PaymentToBankAccountId].Add(trans.DonationTransaction);
-            //    }
+                if (donationTransaction.TransactionDetail.NumberOfEventTickets > 0)
+                {
+                    // Calculate price of tickets
+                    try
+                    {
+                        var ticketPrice = (donationTransaction.TransactionDetail.Amount / donationTransaction.TransactionDetail.NumberOfEventTickets);
+                        
+                        if (ticketPrice.Value >= organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket1 &&
+                            ticketPrice.Value <= organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket2)
+                        {
+                            ticketFee = organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket1Fee.Value;
+                        }
+                        else if(ticketPrice.Value >= organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket2 &&
+                            ticketPrice.Value <= organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket3)
+                        {
+                            ticketFee = organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket2Fee.Value;
+                        }
+                        else if (ticketPrice.Value >= organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket3 &&
+                            ticketPrice.Value <= organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket4)
+                        {
+                            ticketFee = organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket3Fee.Value;
+                        }
+                        else if (ticketPrice.Value >= organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket4 &&
+                            ticketPrice.Value <= organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket5)
+                        {
+                            ticketFee = organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket4Fee.Value;
+                        }
+                        else
+                        {
+                            ticketFee = organisationFeeProcessingSettings.OrganisationStandardFees.EventTicketBracket5Fee.Value;
+                        }
 
-            //}
+                        ticketFee *= donationTransaction.TransactionDetail.NumberOfEventTickets.Value;
 
-            ////creating batch line items for each bank account
-            //List<PaymentToOrganisationBatchLineItem> batchLineItemList = new List<PaymentToOrganisationBatchLineItem>();
+                        calcAmount += ticketFee;
+                    }
+                    catch (Exception)
+                    {
+                        // No tickets? 
+                    }
+                }
 
-            //foreach (Guid bankAccountId in donationsTowardsBankAccount.Keys)
-            //{
-            //    BankAccount bankAccount = bankAccountBS.GetBankAccount(bankAccountId);
-            //    Organisation org = organisationBS.GetOrganisation(bankAccount.OrganisationId);
+                //Update the amount paid to organisation after fee deductions
+                donationTransaction.TransactionDetail.AmountAfterFeeDeductions = Decimal.Round(totalAmount - calcAmount, 2);
+                donationTransaction.TransactionDetail.TransactionFeeAmount = organisationFeeProcessingSettings.OrganisationStandardFees.TransactionFeeAmount;
+                donationTransaction.TransactionDetail.ProcessingFeeAmount = calcAmount;
+                donationTransaction.TransactionDetail.TicketFeeAmount = ticketFee;
 
-            //    List<DonationTransaction> bankAccountDonations = donationsTowardsBankAccount[bankAccountId];
+                //Save the updated donation transaction record
+                _ITransactionDetailsDAL.UpdateTransactionRecord(donationTransaction.TransactionDetail);
 
-            //    PaymentToOrganisationBatchLineItem lineItem = new PaymentToOrganisationBatchLineItem();
-            //    lineItem.ProcessStatusId = (byte)Common.PaymentProcessStatus.Unprocessed;
-            //    lineItem.Id = Guid.NewGuid();
-            //    lineItem.BatchId = batch.Id;
-            //    lineItem.BatchNumber = batch.BatchNumber;
-            //    lineItem.OrganisationId = org.Id;
-            //    lineItem.OrganisationName = org.Name;
-            //    lineItem.BankAccountId = bankAccount.Id;
-            //    lineItem.BankName = bankAccount.BankName;
-            //    lineItem.BSBNumber = bankAccount.BSBNumber;
-            //    lineItem.AccountNumber = bankAccount.AccountNumber;
-            //    lineItem.AccountName = bankAccount.AccountName;
-            //    lineItem.TotalAmountReceived = bankAccountDonations.Sum(x => x.Amount);
-            //    lineItem.TotalPaymentsReceived = bankAccountDonations.Count();
-            //    lineItem.TotalAmountPaidToOrganisation = (decimal)bankAccountDonations.Sum(x => x.AmountAfterFeeDeductions); //lineItem.TotalAmountReceived - CalculateFee(lineItem);
-            //    lineItem.ProcessDateTime = DateTime.Now;
-            //    lineItem.CreateDateTime = DateTime.Now;
-            //    lineItem.CreatedBy = Common.Config.TransactionProcessBatchName;
-
-            //    batchLineItemList.Add(lineItem);
-
-            //    //record association between batch line item and it's transactions as a running log that will be played back later to batch update transaction records as a single update statement in stored procedure with log being trimmed post play back 
-            //    //this is more efficient than updating required transaction records here to store the batch line item id against transaction records as we cannot batch it
-            //    //and it will have to be done one by one for each transaction record
-            //    _paymentToOrganisationDAL.RecordPaymentToOrganisationBatchTransactionLog(lineItem.Id, bankAccountDonations);
-            //}
-
-            ////save newly created batch line items in database
-            //_paymentToOrganisationDAL.CreatePaymentToOrganisationBatchLineItems(batchLineItemList);
-
-            ////play back batch line item and it's transaction running log
-            //_paymentToOrganisationDAL.PlayBackPaymentToOrganisationBatchTransactionLog();
+                //Save the fee break down
+                // _organisation.SaveDonationTransactionFeeBreakDown(donationTransaction.DonationTransaction.Id, platformFee, directDebitFee, paymentGatewayFee);
+            }
         }
 
-        //        private double NullCheck(double? value)
-        //        {
-        //            if (value == null)
-        //                return 0;
-        //            else
-        //                return value.Value;
-        //        }
+        private decimal CalculateFeeAmount(decimal totalAmount, bool PromoFees, DonationTransactionWithRelatedData donationTransaction, OrganisationFeeProcesingWithRelatedData organisationFeeProcessingSettings)
+        {
+            decimal feeAmount = 0;
+
+            // Determine if Fee (for events) 
+
+           
+            // Determine for the transaction if it was direct debit or credit card
+            if (donationTransaction.TransactionDetail.PaymentMethodId == (byte)BusinessEntities.TransactionMode.Credit)
+            {
+                // Determine for the transaction if it was credit card and what kind 
+                var paymentProfileDetails = _IPaymentProfileDAL.GetPaymentProfile(donationTransaction.TransactionDetail.PaymentProfileTokenId);
+
+                if (paymentProfileDetails.CardType.ToUpper() == GetEnumDescription(BusinessEntities.Common.CardType.Visa).ToUpper() ||
+                    paymentProfileDetails.CardType.ToUpper() == GetEnumDescription(BusinessEntities.Common.CardType.MasterCard).ToUpper())
+                {
+                    if (PromoFees)
+                    {
+                        feeAmount = CalcPrecentageAmount(totalAmount, Convert.ToSingle(organisationFeeProcessingSettings.OrganisationPromoFees.VisaFee));
+
+                        if (feeAmount < organisationFeeProcessingSettings.OrganisationPromoFees.VisaMinAmount.Value)
+                        {
+                            feeAmount = organisationFeeProcessingSettings.OrganisationPromoFees.VisaMinAmount.Value;
+                        }
+                    }
+                    else
+                    {
+                        feeAmount = CalcPrecentageAmount(totalAmount, Convert.ToSingle(organisationFeeProcessingSettings.OrganisationStandardFees.VisaFee));
+
+                        if (feeAmount < organisationFeeProcessingSettings.OrganisationStandardFees.VisaMinAmount.Value)
+                        {
+                            feeAmount = organisationFeeProcessingSettings.OrganisationStandardFees.VisaMinAmount.Value;
+                        }
+                    }
+                }
+                else if (paymentProfileDetails.CardType.ToUpper() == GetEnumDescription(BusinessEntities.Common.CardType.AMEX).ToUpper())
+                {
+                    if (PromoFees)
+                    {
+                        feeAmount = CalcPrecentageAmount(totalAmount, Convert.ToSingle(organisationFeeProcessingSettings.OrganisationPromoFees.AmexFee));
+
+                        if (feeAmount < organisationFeeProcessingSettings.OrganisationPromoFees.AmexMinAmount.Value)
+                        {
+                            feeAmount = organisationFeeProcessingSettings.OrganisationPromoFees.AmexMinAmount.Value;
+                        }
+                    }
+                    else
+                    {
+                        feeAmount = CalcPrecentageAmount(totalAmount, Convert.ToSingle(organisationFeeProcessingSettings.OrganisationStandardFees.AmexFee));
+
+                        if (feeAmount < organisationFeeProcessingSettings.OrganisationStandardFees.AmexMinAmount.Value)
+                        {
+                            feeAmount = organisationFeeProcessingSettings.OrganisationStandardFees.AmexMinAmount.Value;
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    if (PromoFees)
+                    {
+                        feeAmount = CalcPrecentageAmount(totalAmount, Convert.ToSingle(organisationFeeProcessingSettings.OrganisationPromoFees.InternationalFee));
+
+                        if (feeAmount < organisationFeeProcessingSettings.OrganisationPromoFees.InternationalMinAmount.Value)
+                        {
+                            feeAmount = organisationFeeProcessingSettings.OrganisationPromoFees.InternationalMinAmount.Value;
+                        }
+                    }
+                    else
+                    {
+                        feeAmount = CalcPrecentageAmount(totalAmount, Convert.ToSingle(organisationFeeProcessingSettings.OrganisationStandardFees.InternationalFee));
+
+                        if (feeAmount < organisationFeeProcessingSettings.OrganisationStandardFees.InternationalMinAmount.Value)
+                        {
+                            feeAmount = organisationFeeProcessingSettings.OrganisationStandardFees.InternationalMinAmount.Value;
+                        }
+                    } 
+                }                
+            }
+            else if (donationTransaction.TransactionDetail.PaymentMethodId == (byte)BusinessEntities.TransactionMode.DirectDebit)
+            {
+                feeAmount = CalcPrecentageAmount(totalAmount, Convert.ToSingle(organisationFeeProcessingSettings.OrganisationStandardFees.DirectDebitFee));
+
+                if (feeAmount < organisationFeeProcessingSettings.OrganisationStandardFees.DirectDebitMin.Value)
+                {
+                    feeAmount = organisationFeeProcessingSettings.OrganisationStandardFees.DirectDebitMin.Value;
+                }
+            }
+            else if (donationTransaction.TransactionDetail.PaymentMethodId == (byte)BusinessEntities.TransactionMode.Refund)
+            {
+                feeAmount = organisationFeeProcessingSettings.OrganisationStandardFees.RefundFee.Value;
+            }         
+                          
+            return feeAmount;
+        }
+
+
+        private decimal CalcPrecentageAmount(decimal currentTotal, float precentage)
+        {
+            return (currentTotal * (decimal)(precentage / 100));
+        }
+
+        private decimal DeductFixedAmount(decimal currentTotal, float amount)
+        {
+            return (decimal)amount;
+        }
+                
+        /// <summary>
+        /// Create a new batch item to process for an organisation
+        /// </summary>
+        /// <param name="batch">Batch detials</param>
+        private void CreatePaymentToOrganisationBatchLineItems(PaymentToOrganisationBatch batch)
+        {
+            IBankAccountBS bankAccountBS = new BankAccountBS();
+
+            Dictionary<Guid, List<TransactionDetail>> donationsTowardsBankAccount = new Dictionary<Guid, List<TransactionDetail>>();
+
+            List<DonationTransactionWithRelatedData> transListOfBatch = _ITransactionDetailsDAL.GetDonationTransactionsOf_Batch_WithRelatedData(batch.Id) as List<DonationTransactionWithRelatedData>;
+
+            List<PaymentToOrganisationBatchLineItem> batchLineItemList = new List<PaymentToOrganisationBatchLineItem>();
+
+            //sorting the approved transactions of a batch by bank account
+            foreach (DonationTransactionWithRelatedData trans in transListOfBatch)
+            {                
+                var OrgFeeProcessingSettings = _organisationFeeProcessing.GetOrganisationFeeProcesingWithRelatedData(trans.TransactionDetail.OrganisationId.Value);
+
+                ProcessLineItemFee(trans, OrgFeeProcessingSettings);
+
+                var bankAccount = bankAccountBS.GetBankAccount(trans.TransactionDetail.BankAccountTokenId);
+
+                List<TransactionDetail> bankAccountDonations = donationsTowardsBankAccount[bankAccount.BankAccountId];
+
+                PaymentToOrganisationBatchLineItem lineItem = new PaymentToOrganisationBatchLineItem();
+                lineItem.ProcessStatusId = (byte)PaymentProcessStatus.Unprocessed;
+                lineItem.Id = Guid.NewGuid();
+                lineItem.BatchId = batch.Id;
+                lineItem.BatchNumber = batch.BatchNumber;
+                lineItem.OrganisationId = trans.TransactionDetail.OrganisationId;
+                lineItem.BankAccountId = bankAccount.BankAccountId;
+                lineItem.BankAccountBSB = bankAccount.BankAccountBSB;
+                lineItem.BankAccountNumber = bankAccount.BankAccountNumber;
+                lineItem.BankAcountName = bankAccount.BankAcountName;
+                lineItem.TotalAmountReceived = bankAccountDonations.Sum(x => x.Amount);
+                lineItem.TotalPaymentsReceived = bankAccountDonations.Count();
+                lineItem.TotalAmountPaidToOrganisation = (decimal)bankAccountDonations.Sum(x => x.AmountAfterFeeDeductions); //lineItem.TotalAmountReceived - CalculateFee(lineItem);
+                lineItem.ProcessDateTime = DateTime.Now;
+                lineItem.CreateDateTime = DateTime.Now;
+                lineItem.CreatedBy = TransactionProcessBatchName;
+
+                batchLineItemList.Add(lineItem);
+
+                // _paymentToOrganisationDAL.RecordPaymentToOrganisationBatchTransactionLog(lineItem.Id, bankAccountDonations);
+            }
+            
+            //save newly created batch line items in database
+            _paymentToOrganisationDAL.CreatePaymentToOrganisationBatchLineItems(batchLineItemList);
+
+            //play back batch line item and it's transaction running log
+            _paymentToOrganisationDAL.PlayBackPaymentToOrganisationBatchTransactionLog();
+        }
+
+        private double NullCheck(double? value)
+        {
+            if (value == null)
+                return 0;
+            else
+                return value.Value;
+        }        
 
         //        private void CreatePaymentToDay3BatchLineItems(PaymentToOrganisationBatch batch)
         //        {

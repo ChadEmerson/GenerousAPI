@@ -15,14 +15,14 @@ namespace GenerousAPI.DataAccessLayer
     public partial class OrganisationPromoFee
     {
         public System.Guid FeeProcessingId { get; set; }
-        public Nullable<int> OrganisationId { get; set; }
+        public Nullable<double> OrganisationId { get; set; }
         public Nullable<int> VisaFee { get; set; }
         public Nullable<decimal> VisaMinAmount { get; set; }
-        public Nullable<int> InternationaliFee { get; set; }
+        public Nullable<double> InternationalFee { get; set; }
         public Nullable<decimal> InternationalMinAmount { get; set; }
-        public Nullable<int> AmexFee { get; set; }
+        public Nullable<double> AmexFee { get; set; }
         public Nullable<decimal> AmexMinAmount { get; set; }
-        public Nullable<int> DirectDebitFee { get; set; }
+        public Nullable<double> DirectDebitFee { get; set; }
         public Nullable<decimal> DirectDebitMin { get; set; }
     }
 }

@@ -18,5 +18,10 @@ namespace GenerousAPI.DataAccessLayer
         public Nullable<int> OrganisationId { get; set; }
         public Nullable<bool> IsPromoBilling { get; set; }
         public Nullable<System.DateTime> PromoBillingExpiresOn { get; set; }
+        public Nullable<int> CurrencyCode { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public Nullable<System.DateTime> NextRunDate { get; set; }
+        public Nullable<System.DateTime> LastRunDate { get; set; }
+        public Nullable<System.DateTime> OrganisationBillDate { get; set; }
     }
 }

@@ -99,6 +99,13 @@
     <EntitySetMapping Name="TransactionDetails">
       <EntityTypeMapping TypeName="GenerousAPIModel.TransactionDetail">
         <MappingFragment StoreEntitySet="TransactionDetails">
+          <ScalarProperty Name="TicketFeeAmount" ColumnName="TicketFeeAmount" />
+          <ScalarProperty Name="NumberOfEventTickets" ColumnName="NumberOfEventTickets" />
+          <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
+          <ScalarProperty Name="TransactionFeeAmount" ColumnName="TransactionFeeAmount" />
+          <ScalarProperty Name="ProcessingFeeAmount" ColumnName="ProcessingFeeAmount" />
+          <ScalarProperty Name="AmountAfterFeeDeductions" ColumnName="AmountAfterFeeDeductions" />
+          <ScalarProperty Name="TransactionTypeId" ColumnName="TransactionTypeId" />
           <ScalarProperty Name="ProcessStatusId" ColumnName="ProcessStatusId" />
           <ScalarProperty Name="IsValidForPaymentToOrganisation" ColumnName="IsValidForPaymentToOrganisation" />
           <ScalarProperty Name="PaymentToOrganisationBatchLineItemId" ColumnName="PaymentToOrganisationBatchLineItemId" />
@@ -188,6 +195,7 @@
     <EntitySetMapping Name="PaymentToOrganisationBatchLineItems">
       <EntityTypeMapping TypeName="GenerousAPIModel.PaymentToOrganisationBatchLineItem">
         <MappingFragment StoreEntitySet="PaymentToOrganisationBatchLineItem">
+          <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
           <ScalarProperty Name="BankAcountName" ColumnName="BankAcountName" />
           <ScalarProperty Name="BankAccountNumber" ColumnName="BankAccountNumber" />
           <ScalarProperty Name="BankAccountBSB" ColumnName="BankAccountBSB" />
@@ -211,6 +219,74 @@
           <ScalarProperty Name="BatchId" ColumnName="BatchId" />
           <ScalarProperty Name="LineItemNumber" ColumnName="LineItemNumber" />
           <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="OrganisationFeeProcessings">
+      <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationFeeProcessing">
+        <MappingFragment StoreEntitySet="OrganisationFeeProcessing">
+          <ScalarProperty Name="OrganisationBillDate" ColumnName="OrganisationBillDate" />
+          <ScalarProperty Name="LastRunDate" ColumnName="LastRunDate" />
+          <ScalarProperty Name="NextRunDate" ColumnName="NextRunDate" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="CurrencyCode" ColumnName="CurrencyCode" />
+          <ScalarProperty Name="PromoBillingExpiresOn" ColumnName="PromoBillingExpiresOn" />
+          <ScalarProperty Name="IsPromoBilling" ColumnName="IsPromoBilling" />
+          <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="OrganisationStandardFees">
+      <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationStandardFee">
+        <MappingFragment StoreEntitySet="OrganisationStandardFee">
+          <ScalarProperty Name="EventTicketBracket5Fee" ColumnName="EventTicketBracket5Fee" />
+          <ScalarProperty Name="EventTicketBracket4Fee" ColumnName="EventTicketBracket4Fee" />
+          <ScalarProperty Name="EventTicketBracket3Fee" ColumnName="EventTicketBracket3Fee" />
+          <ScalarProperty Name="EventTicketBracket2Fee" ColumnName="EventTicketBracket2Fee" />
+          <ScalarProperty Name="EventTicketBracket1Fee" ColumnName="EventTicketBracket1Fee" />
+          <ScalarProperty Name="TransactionFeeAmount" ColumnName="TransactionFeeAmount" />
+          <ScalarProperty Name="ChurchManSystemModuleFee" ColumnName="ChurchManSystemModuleFee" />
+          <ScalarProperty Name="SocialMediaModuleFee" ColumnName="SocialMediaModuleFee" />
+          <ScalarProperty Name="EventModuleFee" ColumnName="EventModuleFee" />
+          <ScalarProperty Name="CampaignPortalModuleFee" ColumnName="CampaignPortalModuleFee" />
+          <ScalarProperty Name="PaymentModuleFee" ColumnName="PaymentModuleFee" />
+          <ScalarProperty Name="GivingModuleFee" ColumnName="GivingModuleFee" />
+          <ScalarProperty Name="ChargebackFee" ColumnName="ChargebackFee" />
+          <ScalarProperty Name="RefundFee" ColumnName="RefundFee" />
+          <ScalarProperty Name="EventTicketBracket5" ColumnName="EventTicketBracket5" />
+          <ScalarProperty Name="EventTicketBracket4" ColumnName="EventTicketBracket4" />
+          <ScalarProperty Name="EventTicketBracket3" ColumnName="EventTicketBracket3" />
+          <ScalarProperty Name="EventTicketBracket2" ColumnName="EventTicketBracket2" />
+          <ScalarProperty Name="EventTicketBracket1" ColumnName="EventTicketBracket1" />
+          <ScalarProperty Name="SmsReminderFee" ColumnName="SmsReminderFee" />
+          <ScalarProperty Name="TextToGiveFee" ColumnName="TextToGiveFee" />
+          <ScalarProperty Name="DirectDebitMin" ColumnName="DirectDebitMin" />
+          <ScalarProperty Name="DirectDebitFee" ColumnName="DirectDebitFee" />
+          <ScalarProperty Name="AmexMinAmount" ColumnName="AmexMinAmount" />
+          <ScalarProperty Name="AmexFee" ColumnName="AmexFee" />
+          <ScalarProperty Name="InternationalMinAmount" ColumnName="InternationalMinAmount" />
+          <ScalarProperty Name="InternationalFee" ColumnName="InternationalFee" />
+          <ScalarProperty Name="VisaMinAmount" ColumnName="VisaMinAmount" />
+          <ScalarProperty Name="VisaFee" ColumnName="VisaFee" />
+          <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
+          <ScalarProperty Name="FeeProcessingId" ColumnName="FeeProcessingId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="OrganisationPromoFees">
+      <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationPromoFee">
+        <MappingFragment StoreEntitySet="OrganisationPromoFee">
+          <ScalarProperty Name="DirectDebitMin" ColumnName="DirectDebitMin" />
+          <ScalarProperty Name="DirectDebitFee" ColumnName="DirectDebitFee" />
+          <ScalarProperty Name="AmexMinAmount" ColumnName="AmexMinAmount" />
+          <ScalarProperty Name="AmexFee" ColumnName="AmexFee" />
+          <ScalarProperty Name="InternationalMinAmount" ColumnName="InternationalMinAmount" />
+          <ScalarProperty Name="InternationalFee" ColumnName="InternationalFee" />
+          <ScalarProperty Name="VisaMinAmount" ColumnName="VisaMinAmount" />
+          <ScalarProperty Name="VisaFee" ColumnName="VisaFee" />
+          <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
+          <ScalarProperty Name="FeeProcessingId" ColumnName="FeeProcessingId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

@@ -72,6 +72,13 @@
       <End Role="PaymentToOrganisationBatch" EntitySet="PaymentToOrganisationBatches" />
       <End Role="PaymentToOrganisationBatchLineItem" EntitySet="PaymentToOrganisationBatchLineItems" />
     </AssociationSet>
+    <EntitySet Name="OrganisationFeeProcessings" EntityType="GenerousAPIModel.OrganisationFeeProcessing" />
+    <EntitySet Name="OrganisationStandardFees" EntityType="GenerousAPIModel.OrganisationStandardFee" />
+    <AssociationSet Name="FK_TransactionDetails_TransactionType" Association="GenerousAPIModel.FK_TransactionDetails_TransactionType">
+      <End Role="TransactionType" EntitySet="TransactionTypes" />
+      <End Role="TransactionDetail" EntitySet="TransactionDetails" />
+    </AssociationSet>
+    <EntitySet Name="OrganisationPromoFees" EntityType="GenerousAPIModel.OrganisationPromoFee" />
   </EntityContainer>
   <EntityType Name="TransactionMode">
     <Key>
@@ -220,6 +227,14 @@
     <Property Name="PaymentToOrganisationBatchLineItemId" Type="Guid" />
     <Property Name="IsValidForPaymentToOrganisation" Type="Boolean" />
     <Property Name="ProcessStatusId" Type="Byte" />
+    <Property Name="TransactionTypeId" Type="Byte" />
+    <NavigationProperty Name="TransactionType" Relationship="GenerousAPIModel.FK_TransactionDetails_TransactionType" FromRole="TransactionDetail" ToRole="TransactionType" />
+    <Property Name="AmountAfterFeeDeductions" Type="Decimal" Precision="12" Scale="2" />
+    <Property Name="ProcessingFeeAmount" Type="Decimal" Precision="12" Scale="2" />
+    <Property Name="TransactionFeeAmount" Type="Decimal" Precision="12" Scale="2" />
+    <Property Name="OrganisationId" Type="Int32" />
+    <Property Name="NumberOfEventTickets" Type="Int32" />
+    <Property Name="TicketFeeAmount" Type="Decimal" Precision="12" Scale="2" />
   </EntityType>
   <EntityType Name="PaymentProfileBinInfo">
     <Key>
@@ -291,6 +306,7 @@
     <Property Name="Id" Type="Byte" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Type" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
     <NavigationProperty Name="TransactionHistories" Relationship="GenerousAPIModel.FK_TransactionHistory_TransactionType" FromRole="TransactionType" ToRole="TransactionHistory" />
+    <NavigationProperty Name="TransactionDetails" Relationship="GenerousAPIModel.FK_TransactionDetails_TransactionType" FromRole="TransactionType" ToRole="TransactionDetail" />
   </EntityType>
   <Association Name="FK_TransactionHistory_TransactionType">
     <End Type="GenerousAPIModel.TransactionType" Role="TransactionType" Multiplicity="1" />
@@ -341,6 +357,7 @@
     <Property Name="BankAcountName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <NavigationProperty Name="PaymentProcessStatu" Relationship="GenerousAPIModel.FK_PaymentToOrganisationBatchLineItem_PaymentProcessStatus" FromRole="PaymentToOrganisationBatchLineItem" ToRole="PaymentProcessStatu" />
     <NavigationProperty Name="PaymentToOrganisationBatch" Relationship="GenerousAPIModel.FK_PaymentToOrganisationBatchLineItem_PaymentToOrganisationBatch" FromRole="PaymentToOrganisationBatchLineItem" ToRole="PaymentToOrganisationBatch" />
+    <Property Name="OrganisationId" Type="Int32" />
   </EntityType>
   <Association Name="FK_PaymentToOrganisationBatchLineItem_PaymentProcessStatus">
     <End Type="GenerousAPIModel.PaymentProcessStatu" Role="PaymentProcessStatu" Multiplicity="1" />
@@ -366,4 +383,81 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="OrganisationFeeProcessing">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Guid" Nullable="false" />
+    <Property Name="OrganisationId" Type="Int32" />
+    <Property Name="IsPromoBilling" Type="Boolean" />
+    <Property Name="PromoBillingExpiresOn" Type="DateTime" Precision="3" />
+    <Property Name="CurrencyCode" Type="Int32" />
+    <Property Name="IsActive" Type="Boolean" />
+    <Property Name="NextRunDate" Type="DateTime" Precision="3" />
+    <Property Name="LastRunDate" Type="DateTime" Precision="3" />
+    <Property Name="OrganisationBillDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="OrganisationStandardFee">
+    <Key>
+      <PropertyRef Name="FeeProcessingId" />
+    </Key>
+    <Property Name="FeeProcessingId" Type="Guid" Nullable="false" />
+    <Property Name="OrganisationId" Type="Int32" />
+    <Property Name="VisaFee" Type="Double" />
+    <Property Name="VisaMinAmount" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="InternationalFee" Type="Double" />
+    <Property Name="InternationalMinAmount" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="AmexFee" Type="Double" />
+    <Property Name="AmexMinAmount" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="DirectDebitFee" Type="Double" />
+    <Property Name="DirectDebitMin" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="TextToGiveFee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="SmsReminderFee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket1" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket2" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket3" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket4" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket5" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="RefundFee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="ChargebackFee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="GivingModuleFee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="PaymentModuleFee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="CampaignPortalModuleFee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventModuleFee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="SocialMediaModuleFee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="ChurchManSystemModuleFee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="TransactionFeeAmount" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket1Fee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket2Fee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket3Fee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket4Fee" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket5Fee" Type="Decimal" Precision="2" Scale="2" />
+  </EntityType>
+  <Association Name="FK_TransactionDetails_TransactionType">
+    <End Type="GenerousAPIModel.TransactionType" Role="TransactionType" Multiplicity="0..1" />
+    <End Type="GenerousAPIModel.TransactionDetail" Role="TransactionDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TransactionType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TransactionDetail">
+        <PropertyRef Name="TransactionTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="OrganisationPromoFee">
+    <Key>
+      <PropertyRef Name="FeeProcessingId" />
+    </Key>
+    <Property Name="FeeProcessingId" Type="Guid" Nullable="false" />
+    <Property Name="OrganisationId" Type="Double" />
+    <Property Name="VisaFee" Type="Int32" />
+    <Property Name="VisaMinAmount" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="InternationalFee" Type="Double" />
+    <Property Name="InternationalMinAmount" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="AmexFee" Type="Double" />
+    <Property Name="AmexMinAmount" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="DirectDebitFee" Type="Double" />
+    <Property Name="DirectDebitMin" Type="Decimal" Precision="2" Scale="2" />
+  </EntityType>
 </Schema>

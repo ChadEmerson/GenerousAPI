@@ -15,5 +15,6 @@ namespace GenerousAPI.BusinessEntities
         public string BankVerificationRequestedBy { get; set; }
         public string BankVerificationPaymentStatus { get; set; }
 
+        public int BankAccountOrganisationId { get; set; }
     }
 }

@@ -74,6 +74,9 @@ namespace GenerousAPI.Controllers
                         Scheme = binInfo.Scheme
                     };
 
+                    // Save card type
+                    paymentProfile.CardType = binInfo.Scheme;
+
                     _IPaymentProfileBinInfoBS = new PaymentProfileBinInfoBS();
                     _IPaymentProfileBinInfoBS.CreateBinInfo(binInfoDetails);
                 }
@@ -117,7 +120,7 @@ namespace GenerousAPI.Controllers
                 // Save the bank account
                 var creationResponse = _IBankAccountBS.CreateBankAccount(bankAccount);
 
-                var response = GenerateBankVerificationDonations(bankAccount.BankAccountTokenId);
+                var response = GenerateBankVerificationDonations(bankAccount.BankAccountTokenId, bankAccountDTO.BankAccountOrganisationId);
 
                 // Return a token id
                 return response;
@@ -366,7 +369,17 @@ namespace GenerousAPI.Controllers
                         var paymentGateway = new ProcessCardAccessPayment(targetUrl, CardAccessMerchantId, authentication);
 
                         var auditId = paymentGateway.GetAudit();
+                        paymentGateway.IsTest = transaction.IsTest;
 
+                        // Convert to cents
+                        cardAccessRequest.Amount = Convert.ToInt64(transaction.Amount * 100);                        
+                        cardAccessRequest.AccountNumber = "001030230";
+                        cardAccessRequest.AccountName = "Card Access Services";
+                        cardAccessRequest.BsbNumber = "123456";
+                        cardAccessRequest.DonationTransactionReferenceNumber = "Order #1234";
+
+                        var cardAccessResponse = paymentGatewayProcessing.ProcessDirectDebitDonation(cardAccessRequest);
+                                               
                         if (!string.IsNullOrEmpty(auditId))
                         {
                             var paymentResponse = new PaymentResponse();
@@ -382,7 +395,7 @@ namespace GenerousAPI.Controllers
                         var paymentProfile = GetPaymentProfileDetails(transaction.PaymentProfileTokenId);
 
                         // Convert to cents
-                        cardAccessRequest.Amount = transaction.Amount * 100;
+                        cardAccessRequest.Amount = Convert.ToInt64(transaction.Amount * 100);
                         cardAccessRequest.CardType = paymentProfile.CardType;
                         cardAccessRequest.CardNumber = String.IsNullOrEmpty(paymentProfile.CardNumber) ? paymentProfile.AccountNumber : paymentProfile.CardNumber;
                         cardAccessRequest.CardExpiryMonth = paymentProfile.ExpirationMonth;
@@ -445,7 +458,6 @@ namespace GenerousAPI.Controllers
             //create batch record in db
             _IPaymentToOrganisationBS.CreatePaymentToOrganisationBatch(batch);
 
-
             // Get batch items so they can be decrypted
             var batchlistDetails = _IPaymentToOrganisationBS.BatchProcessPaymentToOrganisation(Common.BatchPaymentToOrganisationStatus.Unprocessed);
             var batchitems = _IPaymentToOrganisationBS.GetBatchListItems(PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.Unprocessed, batchlistDetails);
@@ -469,7 +481,7 @@ namespace GenerousAPI.Controllers
         /// </summary>
         /// <param name="bankAccountId">Bank account id</param>
         /// <param name="verificationAmounts">Amounts to verify</param>
-        private void CreateBankVerificationPaymenBatchLineItems(BankAccountDTO bankAccount, List<decimal> verificationAmounts)
+        private void CreateBankVerificationPaymenBatchLineItems(BankAccountDTO bankAccount, List<decimal> verificationAmounts, int organisationId)
         {
             List<DataAccessLayer.PaymentToOrganisationBatchLineItem> batchLineItemList = new List<DataAccessLayer.PaymentToOrganisationBatchLineItem>();
 
@@ -493,7 +505,7 @@ namespace GenerousAPI.Controllers
                 donationItem.BankAcountName = bankAccount.BankAcountName;
                 donationItem.BankAccountNumber = bankAccount.BankAccountNumber;
                 donationItem.BankAccountId = bankAccount.BankAccountId;
-                
+                donationItem.OrganisationId = organisationId;
                 donationItem.BankAccountBSB = bankAccount.BankAccountBSB;
                 donationItem.TotalAmountPaidToOrganisation = verificationAmount;
                 donationItem.TotalAmountReceived = 0;
@@ -553,7 +565,7 @@ namespace GenerousAPI.Controllers
         /// Generates a random amount for account verification purposes
         /// </summary>
         /// <param name="tokenId">Unique identifier of the bank account</param>        
-        private BankVerificationResponse GenerateBankVerificationDonations(string tokenId)
+        private BankVerificationResponse GenerateBankVerificationDonations(string tokenId, int organisationId)
         {
             _IBankAccountBS = new BankAccountBS();
 
@@ -567,13 +579,13 @@ namespace GenerousAPI.Controllers
             verificationAmounts.Add((decimal)random.Next(50, 99) / 100);
 
             // Create verification amounts
-            CreateBankVerificationPaymenBatchLineItems(bankAccount, verificationAmounts);
+            CreateBankVerificationPaymenBatchLineItems(bankAccount, verificationAmounts, organisationId);
 
             //record bank verification request                
-            bankAccount.BankVerificationAmounts = String.Join(",", verificationAmounts.ToArray());
-            bankAccount.BankVerificationRequestedOn = DateTime.Now;
+            var bankAccountToUpdate = DataTransformBankAccountDTO(bankAccount, false);
 
-            var bankAccountToUpdate = DataTransformBankAccountDTO(bankAccount);
+            bankAccountToUpdate.BankVerificationAmounts = string.Join(",", verificationAmounts.ToArray());
+            bankAccountToUpdate.BankVerificationRequestedOn = DateTime.Now;
 
             var response = _IBankAccountBS.UpdateBankAccount(bankAccountToUpdate);
 
@@ -583,7 +595,7 @@ namespace GenerousAPI.Controllers
                 AuthToken = response.AuthToken,
                 IsSuccess = response.IsSuccess,
                 VerificationAmounts = verificationAmounts,
-                BankVerificationRequestedOn = bankAccount.BankVerificationRequestedOn
+                BankVerificationRequestedOn = bankAccountToUpdate.BankVerificationRequestedOn
             };
 
             return bankResponse;
@@ -602,7 +614,8 @@ namespace GenerousAPI.Controllers
             }
             catch (Exception ex)
             {
-                return;
+                // Log error message - email it
+                Mail.LogException(ex);
             }
         }
 
@@ -693,35 +706,50 @@ namespace GenerousAPI.Controllers
         /// </summary>
         /// <param name="bankAccountDTO">DTO of the bank account</param>
         /// <returns>Payment Profile object for DAL</returns>
-        private DataAccessLayer.BankAccount DataTransformBankAccountDTO(BankAccountDTO bankAccountDTO)
+        private DataAccessLayer.BankAccount DataTransformBankAccountDTO(BankAccountDTO bankAccountDTO, bool encrypt = true)
         {
-            if (bankAccountDTO.BankVerificationAmounts != null)
+            if (encrypt)
             {
-                var bankAccount = new DataAccessLayer.BankAccount
+                if (bankAccountDTO.BankVerificationAmounts != null)
                 {
-                    BankAccountNumber = EncryptionService.Encrypt(bankAccountDTO.BankAccountNumber),
-                    BankAccountBSB = EncryptionService.Encrypt(bankAccountDTO.BankAccountBSB),
-                    BankAccountId = Guid.NewGuid(),
-                    BankAcountName = bankAccountDTO.BankAcountName
-                };
+                    var bankAccount = new DataAccessLayer.BankAccount
+                    {
+                        BankAccountNumber = EncryptionService.Encrypt(bankAccountDTO.BankAccountNumber),
+                        BankAccountBSB = EncryptionService.Encrypt(bankAccountDTO.BankAccountBSB),
+                        BankAccountId = Guid.NewGuid(),
+                        BankAcountName = bankAccountDTO.BankAcountName
+                    };
 
-                return bankAccount;
+                    return bankAccount;
+                }
+                else
+                {
+                    var bankAccount = new DataAccessLayer.BankAccount
+                    {
+                        BankAccountNumber = EncryptionService.Encrypt(bankAccountDTO.BankAccountNumber),
+                        BankAccountBSB = EncryptionService.Encrypt(bankAccountDTO.BankAccountBSB),
+                        BankAccountId = Guid.NewGuid(),
+                        BankAcountName = bankAccountDTO.BankAcountName,
+                        BankVerificationAmounts = bankAccountDTO.BankVerificationAmounts,
+                        BankVerificationRequestedOn = DateTime.Now
+                    };
+
+                    return bankAccount;
+                }
             }
             else
             {
                 var bankAccount = new DataAccessLayer.BankAccount
                 {
-                    BankAccountNumber = EncryptionService.Encrypt(bankAccountDTO.BankAccountNumber),
-                    BankAccountBSB = EncryptionService.Encrypt(bankAccountDTO.BankAccountBSB),
-                    BankAccountId = Guid.NewGuid(),
+                    BankAccountNumber = bankAccountDTO.BankAccountNumber,
+                    BankAccountBSB = bankAccountDTO.BankAccountBSB,
+                    BankAccountId = bankAccountDTO.BankAccountId,
                     BankAcountName = bankAccountDTO.BankAcountName,
-                    BankVerificationAmounts = bankAccountDTO.BankVerificationAmounts,
-                    BankVerificationRequestedOn = DateTime.Now
+                    BankAccountTokenId = bankAccountDTO.BankAccountTokenId
                 };
 
                 return bankAccount;
             }
-            
         }              
 
         /// <summary>
@@ -736,6 +764,7 @@ namespace GenerousAPI.Controllers
                 Amount = transactionDetailsDTO.Amount,
                 BankAccountForFundsTokenId = transactionDetailsDTO.BankAccountTokenId,
                 PaymentProfileTokenId = transactionDetailsDTO.PaymentProfileTokenId,
+                OrganisationId = transactionDetailsDTO.OrganisationId
             };
 
             return transactionDetail;
@@ -757,7 +786,9 @@ namespace GenerousAPI.Controllers
                 ProcessDateTime = DateTime.Now,
                 ResponseText = paymentResponse.Message,
                 ResponseCode = string.IsNullOrEmpty(responseCode) ? "99" : responseCode,
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                OrganisationId = transactionDetails.OrganisationId,
+                NumberOfEventTickets = transactionDetails.NumberOfEventTickets
             };
 
             return transactionDetail;

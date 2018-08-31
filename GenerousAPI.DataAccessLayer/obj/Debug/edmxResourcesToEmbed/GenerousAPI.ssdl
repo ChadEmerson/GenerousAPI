@@ -21,6 +21,71 @@
     </Key>
     <Property Name="Type" Type="varchar" MaxLength="20" Nullable="false" />
   </EntityType>
+  <EntityType Name="OrganisationFeeProcessing">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="OrganisationId" Type="int" />
+    <Property Name="IsPromoBilling" Type="bit" />
+    <Property Name="PromoBillingExpiresOn" Type="datetime" />
+    <Property Name="CurrencyCode" Type="int" />
+    <Property Name="IsActive" Type="bit" />
+    <Property Name="NextRunDate" Type="datetime" />
+    <Property Name="LastRunDate" Type="datetime" />
+    <Property Name="OrganisationBillDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="OrganisationPromoFee">
+    <Key>
+      <PropertyRef Name="FeeProcessingId" />
+    </Key>
+    <Property Name="FeeProcessingId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="OrganisationId" Type="float" />
+    <Property Name="VisaFee" Type="int" />
+    <Property Name="VisaMinAmount" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="InternationalFee" Type="float" />
+    <Property Name="InternationalMinAmount" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="AmexFee" Type="float" />
+    <Property Name="AmexMinAmount" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="DirectDebitFee" Type="float" />
+    <Property Name="DirectDebitMin" Type="decimal" Precision="2" Scale="2" />
+  </EntityType>
+  <EntityType Name="OrganisationStandardFee">
+    <Key>
+      <PropertyRef Name="FeeProcessingId" />
+    </Key>
+    <Property Name="FeeProcessingId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="OrganisationId" Type="int" />
+    <Property Name="VisaFee" Type="float" />
+    <Property Name="VisaMinAmount" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="InternationalFee" Type="float" />
+    <Property Name="InternationalMinAmount" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="AmexFee" Type="float" />
+    <Property Name="AmexMinAmount" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="DirectDebitFee" Type="float" />
+    <Property Name="DirectDebitMin" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="TextToGiveFee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="SmsReminderFee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket1" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket2" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket3" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket4" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket5" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="RefundFee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="ChargebackFee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="GivingModuleFee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="PaymentModuleFee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="CampaignPortalModuleFee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventModuleFee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="SocialMediaModuleFee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="ChurchManSystemModuleFee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="TransactionFeeAmount" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket1Fee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket2Fee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket3Fee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket4Fee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="EventTicketBracket5Fee" Type="decimal" Precision="2" Scale="2" />
+  </EntityType>
   <EntityType Name="PaymentGatewayConfig">
     <Key>
       <PropertyRef Name="Id" />
@@ -143,6 +208,7 @@
     <Property Name="BankAccountBSB" Type="nvarchar" MaxLength="500" />
     <Property Name="BankAccountNumber" Type="nvarchar" MaxLength="500" />
     <Property Name="BankAcountName" Type="nvarchar" MaxLength="500" />
+    <Property Name="OrganisationId" Type="int" />
   </EntityType>
   <EntityType Name="PaymentToOrganisationBatchTransactionLog">
     <Key>
@@ -170,6 +236,13 @@
     <Property Name="PaymentToOrganisationBatchLineItemId" Type="uniqueidentifier" />
     <Property Name="IsValidForPaymentToOrganisation" Type="bit" />
     <Property Name="ProcessStatusId" Type="tinyint" />
+    <Property Name="TransactionTypeId" Type="tinyint" />
+    <Property Name="AmountAfterFeeDeductions" Type="decimal" Precision="12" Scale="2" />
+    <Property Name="ProcessingFeeAmount" Type="decimal" Precision="12" Scale="2" />
+    <Property Name="TransactionFeeAmount" Type="decimal" Precision="12" Scale="2" />
+    <Property Name="OrganisationId" Type="int" />
+    <Property Name="NumberOfEventTickets" Type="int" />
+    <Property Name="TicketFeeAmount" Type="decimal" Precision="12" Scale="2" />
   </EntityType>
   <EntityType Name="TransactionHistory">
     <Key>
@@ -280,6 +353,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_TransactionDetails_TransactionType">
+    <End Role="TransactionType" Type="Self.TransactionType" Multiplicity="0..1" />
+    <End Role="TransactionDetails" Type="Self.TransactionDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TransactionType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TransactionDetails">
+        <PropertyRef Name="TransactionTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_TransactionHistory_TransactionType">
     <End Role="TransactionType" Type="Self.TransactionType" Multiplicity="1" />
     <End Role="TransactionHistory" Type="Self.TransactionHistory" Multiplicity="*" />
@@ -304,6 +389,9 @@
   <EntityContainer Name="GenerousAPIModelStoreContainer">
     <EntitySet Name="BankAccount" EntityType="Self.BankAccount" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CardType" EntityType="Self.CardType" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="OrganisationFeeProcessing" EntityType="Self.OrganisationFeeProcessing" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="OrganisationPromoFee" EntityType="Self.OrganisationPromoFee" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="OrganisationStandardFee" EntityType="Self.OrganisationStandardFee" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentGatewayConfig" EntityType="Self.PaymentGatewayConfig" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentGatewayType" EntityType="Self.PaymentGatewayType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentMethod" EntityType="Self.PaymentMethod" Schema="dbo" store:Type="Tables" />
@@ -344,6 +432,10 @@
     <AssociationSet Name="FK_PaymentToOrganisationBatchLineItem_PaymentToOrganisationBatch" Association="Self.FK_PaymentToOrganisationBatchLineItem_PaymentToOrganisationBatch">
       <End Role="PaymentToOrganisationBatch" EntitySet="PaymentToOrganisationBatch" />
       <End Role="PaymentToOrganisationBatchLineItem" EntitySet="PaymentToOrganisationBatchLineItem" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TransactionDetails_TransactionType" Association="Self.FK_TransactionDetails_TransactionType">
+      <End Role="TransactionType" EntitySet="TransactionType" />
+      <End Role="TransactionDetails" EntitySet="TransactionDetails" />
     </AssociationSet>
     <AssociationSet Name="FK_TransactionHistory_TransactionType" Association="Self.FK_TransactionHistory_TransactionType">
       <End Role="TransactionType" EntitySet="TransactionType" />

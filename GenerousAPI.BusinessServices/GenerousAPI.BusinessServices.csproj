@@ -51,12 +51,14 @@
     <Compile Include="ABAGeneration\NAB_ABAFileGenerator.cs" />
     <Compile Include="BankAccountBS.cs" />
     <Compile Include="Interfaces\IBankAccountBS.cs" />
+    <Compile Include="Interfaces\IOrganisationFeeProcessingBS.cs" />
     <Compile Include="Interfaces\IPaymentGatewayBS.cs" />
     <Compile Include="Interfaces\IPaymentProfileBinInfoBS.cs" />
     <Compile Include="Interfaces\IPaymentProfileBS.cs" />
     <Compile Include="Interfaces\IPaymentToOrganisationBS.cs" />
     <Compile Include="Interfaces\ITransactionDetailsBS.cs" />
     <Compile Include="Mail\Mail.cs" />
+    <Compile Include="OrganisationFeeProcessingBS.cs" />
     <Compile Include="PaymentProfileBinInfoBS.cs" />
     <Compile Include="PaymentGatewayBS.cs" />
     <Compile Include="PaymentProfileBS.cs" />

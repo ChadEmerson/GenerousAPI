@@ -145,13 +145,6 @@ namespace GenerousAPI.DataAccessLayer
         void RecordPaymentToOrganisationBatchTransactionLog(Guid batchLineItemId, List<TransactionDetail> bankAccountDonations);
 
         /// <summary>
-        /// Get all payment settings for an organisation
-        /// </summary>
-        /// <param name="organisationId"></param>
-        /// <returns></returns>
-        //OrganisationFeeProcessing GetOrganisationFeeProcessingSettings(int organisationId);
-
-        /// <summary>
         /// Gets a collection of payment to organisation details based on the bank account
         /// </summary>
         /// <param name="bankAccountId">Bank account id</param>

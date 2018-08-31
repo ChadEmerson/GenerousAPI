@@ -18,6 +18,7 @@ namespace GenerousAPI.DataAccessLayer
         public TransactionType()
         {
             this.TransactionHistories = new HashSet<TransactionHistory>();
+            this.TransactionDetails = new HashSet<TransactionDetail>();
         }
     
         public byte Id { get; set; }
@@ -25,5 +26,7 @@ namespace GenerousAPI.DataAccessLayer
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TransactionHistory> TransactionHistories { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TransactionDetail> TransactionDetails { get; set; }
     }
 }

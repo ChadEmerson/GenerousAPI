@@ -1,18 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EncryptionService.cs" company="Day3 Solutions">
-//   Copyright (c) Day3 Solutions. All rights reserved.
-// </copyright>
-// <summary>
-//  Allows values to be encrypted and decrypted for secure storage
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-namespace GenerousAPI.Helpers
-{
-    using System;
-    using System.IO;
-    using System.Security.Cryptography;
-    using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace GenerousAPI.BusinessEntities
+{
     public class EncryptionService
     {
         /// <summary>

@@ -15,6 +15,8 @@ namespace GenerousAPI.BusinessEntities
         public string AuditNumber { get; set; }
         public string CustomerReference { get; set; }
 
+        public int OrganisationId { get; set; }
+
     }
 }
 

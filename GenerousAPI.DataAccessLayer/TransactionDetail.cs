@@ -28,5 +28,14 @@ namespace GenerousAPI.DataAccessLayer
         public Nullable<System.Guid> PaymentToOrganisationBatchLineItemId { get; set; }
         public Nullable<bool> IsValidForPaymentToOrganisation { get; set; }
         public Nullable<byte> ProcessStatusId { get; set; }
+        public Nullable<byte> TransactionTypeId { get; set; }
+        public Nullable<decimal> AmountAfterFeeDeductions { get; set; }
+        public Nullable<decimal> ProcessingFeeAmount { get; set; }
+        public Nullable<decimal> TransactionFeeAmount { get; set; }
+        public Nullable<int> OrganisationId { get; set; }
+        public Nullable<int> NumberOfEventTickets { get; set; }
+        public Nullable<decimal> TicketFeeAmount { get; set; }
+    
+        public virtual TransactionType TransactionType { get; set; }
     }
 }

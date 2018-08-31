@@ -16,13 +16,13 @@ namespace GenerousAPI.DataAccessLayer
     {
         public System.Guid FeeProcessingId { get; set; }
         public Nullable<int> OrganisationId { get; set; }
-        public Nullable<int> VisaFee { get; set; }
+        public Nullable<double> VisaFee { get; set; }
         public Nullable<decimal> VisaMinAmount { get; set; }
-        public Nullable<int> InternationaliFee { get; set; }
+        public Nullable<double> InternationalFee { get; set; }
         public Nullable<decimal> InternationalMinAmount { get; set; }
-        public Nullable<int> AmexFee { get; set; }
+        public Nullable<double> AmexFee { get; set; }
         public Nullable<decimal> AmexMinAmount { get; set; }
-        public Nullable<int> DirectDebitFee { get; set; }
+        public Nullable<double> DirectDebitFee { get; set; }
         public Nullable<decimal> DirectDebitMin { get; set; }
         public Nullable<decimal> TextToGiveFee { get; set; }
         public Nullable<decimal> SmsReminderFee { get; set; }
@@ -39,5 +39,11 @@ namespace GenerousAPI.DataAccessLayer
         public Nullable<decimal> EventModuleFee { get; set; }
         public Nullable<decimal> SocialMediaModuleFee { get; set; }
         public Nullable<decimal> ChurchManSystemModuleFee { get; set; }
+        public Nullable<decimal> TransactionFeeAmount { get; set; }
+        public Nullable<decimal> EventTicketBracket1Fee { get; set; }
+        public Nullable<decimal> EventTicketBracket2Fee { get; set; }
+        public Nullable<decimal> EventTicketBracket3Fee { get; set; }
+        public Nullable<decimal> EventTicketBracket4Fee { get; set; }
+        public Nullable<decimal> EventTicketBracket5Fee { get; set; }
     }
 }

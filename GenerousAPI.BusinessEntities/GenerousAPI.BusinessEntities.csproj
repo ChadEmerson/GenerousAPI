@@ -45,10 +45,12 @@
     <Compile Include="DataTransferObjects\BankAccountDTO.cs" />
     <Compile Include="DataTransferObjects\BinInfoDTO.cs" />
     <Compile Include="DataTransferObjects\ContactDetailsDTO.cs" />
+    <Compile Include="DataTransferObjects\OrganisationFeesDTO.cs" />
     <Compile Include="DataTransferObjects\PaymentGatewayDTO.cs" />
     <Compile Include="DataTransferObjects\PaymentProfileDTO.cs" />
     <Compile Include="DataTransferObjects\PaymentTokens.cs" />
     <Compile Include="DataTransferObjects\TransactionDetailsDTO.cs" />
+    <Compile Include="EncryptionService.cs" />
     <Compile Include="PaymentResponse.cs" />
     <Compile Include="ProcessorResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

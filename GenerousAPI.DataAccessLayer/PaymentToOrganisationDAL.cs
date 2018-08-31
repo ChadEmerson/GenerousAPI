@@ -239,7 +239,8 @@ namespace GenerousAPI.DataAccessLayer
             {
                 IQueryable<PaymentToOrganisationListDTO> query = from batchLineItem in db.PaymentToOrganisationBatchLineItems
                                                                  join trans in db.TransactionDetails on batchLineItem.BatchId equals trans.PaymentToOrganisationBatchId into transSub
-                                                                 where batchLineItem.IsBankVerification == false
+                                                                 where batchLineItem.OrganisationId == organisationId
+                                                                       && batchLineItem.IsBankVerification == false
                                                                  select new PaymentToOrganisationListDTO
                                                                  {
                                                                      LineItemDonationTransactions = transSub.Where(x => x.PaymentToOrganisationBatchId == batchLineItem.BatchId
@@ -262,20 +263,21 @@ namespace GenerousAPI.DataAccessLayer
 
             var query = (from batchLineItem in db.PaymentToOrganisationBatchLineItems
                          join trans in db.TransactionDetails on batchLineItem.BatchId equals trans.PaymentToOrganisationBatchId
-                         where batchLineItem.IsBankVerification == false
+                         where batchLineItem.OrganisationId == organisationId
+                                   && batchLineItem.IsBankVerification == false
                          select trans);
 
             return query.ToList();
         }
 
 
-        //public OrganisationFeeProcessing GetOrganisationFeeProcessingSettings(int organisationId)
-        //{
-        //    using (var db = new GenerousAPIEntities())
-        //    {
-        //        return db.OrganisationFeeProcessings.Where(x => x.OrganisationId == organisationId).SingleOrDefault<OrganisationFeeProcessing>();
-        //    }
-        //}
+        public OrganisationFeeProcessing GetOrganisationFeeProcessingSettings(int organisationId)
+        {
+            using (var db = new GenerousAPIEntities())
+            {
+                return db.OrganisationFeeProcessings.Where(x => x.OrganisationId == organisationId).SingleOrDefault<OrganisationFeeProcessing>();
+            }
+        }
 
         /// <summary>
         /// Gets a collection of payment to organisation details 
@@ -337,7 +339,8 @@ namespace GenerousAPI.DataAccessLayer
                 IQueryable<PaymentToOrganisationListDTO> query = from batchLineItem in db.PaymentToOrganisationBatchLineItems
                                                                  join trans in db.TransactionDetails on batchLineItem.BatchId equals trans.PaymentToOrganisationBatchId into transSub
                                                                  where batchLineItem.BankAccountId == bankAccountId
-                                                                       && batchLineItem.IsBankVerification == false
+                                                                 && batchLineItem.OrganisationId == organisationId
+                                                                 && batchLineItem.IsBankVerification == false
                                                                  select new PaymentToOrganisationListDTO
                                                                  {
                                                                      LineItemDonationTransactions = transSub.Where(x => x.PaymentToOrganisationBatchId == batchLineItem.BatchId && x.PaymentToOrganisationBatchLineItemId == batchLineItem.Id),

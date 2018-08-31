@@ -38,6 +38,37 @@ namespace GenerousAPI.DataAccessLayer
         }
 
         /// <summary>
+        /// Update a record for transaction details
+        /// </summary>
+        /// <param name="transactionDetails">Transaction details</param>
+        /// <returns>Response with success, message, and profile token</returns>
+        public ProcessorResponse UpdateTransactionRecord(TransactionDetail transactionDetails)
+        {
+            var response = new ProcessorResponse();
+
+            try
+            {
+                using (var db = new GenerousAPIEntities())
+                {
+                    //save changes to database
+                    db.Entry(transactionDetails).State = System.Data.Entity.EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+                response.Message = "Transaction successfully updated";
+                response.AuthToken = transactionDetails.PaymentProfileTokenId;
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        /// <summary>
         /// Update existing Bank account
         /// </summary>
         /// <param name="paymentProfile">Donor payment profile details</param>
@@ -59,7 +90,8 @@ namespace GenerousAPI.DataAccessLayer
                             ResponseCode = transactionDetails.ResponseCode,
                             ResponseText = transactionDetails.ResponseText,
                             AuditNumber = transactionDetails.AuditNumber,
-                            CustomerReference = transactionDetails.CustomerReference
+                            CustomerReference = transactionDetails.CustomerReference,
+                            OrganisationId = transactionDetails.OrganisationId.Value
                         }).SingleOrDefault();
             }
         }
@@ -86,10 +118,35 @@ namespace GenerousAPI.DataAccessLayer
                             ResponseCode = transactionDetails.ResponseCode,
                             ResponseText = transactionDetails.ResponseText,
                             AuditNumber = transactionDetails.AuditNumber,
-                            CustomerReference = transactionDetails.CustomerReference
+                            CustomerReference = transactionDetails.CustomerReference,
+                            OrganisationId = transactionDetails.OrganisationId.Value
                         }).ToList();
             }
 
+        }
+
+        /// <summary>
+        /// Get collection of donations with related data
+        /// </summary>
+        /// <param name="batchId">Batch ID to lookup</param>
+        /// <returns>Collection of donations with related data</returns>
+        public List<DonationTransactionWithRelatedData> GetDonationTransactionsOf_Batch_WithRelatedData(Guid batchId)
+        {
+            using (var db = new GenerousAPIEntities())
+            {
+                var transQuery = from trans in db.TransactionDetails
+                                 join status in db.PaymentProcessStatus on trans.ProcessStatusId equals status.Id
+                                 join PaymentMethod in db.PaymentMethods on trans.PaymentMethodId equals PaymentMethod.Id
+                                 where trans.PaymentToOrganisationBatchId == batchId
+                                 select new DonationTransactionWithRelatedData()
+                                 {
+                                     TransactionDetail = trans,
+                                     DonationTransaction_ProcessStatus = status.Status,
+                                     DonationTransaction_PaymentMethod = PaymentMethod.Method,
+                                 };
+
+                return transQuery.ToList<DonationTransactionWithRelatedData>();
+            }
         }
     }
 }
