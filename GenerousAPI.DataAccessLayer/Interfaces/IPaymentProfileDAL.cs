@@ -39,6 +39,32 @@
         /// <param name="ExpiryMonth">Expiring month</param>
         /// <param name="ExpiryYear">Expiring year</param>
         /// <returns>Donor payment profile details</returns>
-        List<ContactDetailsDTO> GetExpiringCards(string ExpiryMonth, string ExpiryYear);
+        List<ContactDetailsDTO> GetExpiringCards(string expiryMonth, string expiryYear);
+
+        // <summary>
+        /// Get when a card is expiring for the token
+        /// </summary>
+        /// <param name="ExpiryMonth">tokenId of payment profile</param>
+        /// <returns>Donor payment profile details</returns>
+        ContactDetailsDTO GetCardExpiryForTokenId(string tokenId);
+
+        /// <summary>
+        /// Save Expiring Credit Card Detais
+        /// </summary>
+        /// <param name="expiringCardDetails">Details of cards</param>
+        void SaveExpiringCreditCardDetais(ExpiringCreditCardsForOrganisation expiringCardDetails);
+
+        /// <summary>
+        /// Clear out records from table
+        /// </summary>
+        /// <returns>ProcessorResponse info</returns>
+        ProcessorResponse ClearExpiringCreditCardInfo();
+
+        /// <summary>
+        /// Get list of expiring credit cards for an organisation
+        /// </summary>
+        /// <param name="organisationId">Organisation Id to get details for</param>
+        /// <returns>Collection of contact details</returns>
+        List<ContactDetailsDTO> GetExpiringCreditCardInfoForOrganisation(int organisationId);
     }
 }

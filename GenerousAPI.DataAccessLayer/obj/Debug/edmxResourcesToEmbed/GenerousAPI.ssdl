@@ -21,6 +21,19 @@
     </Key>
     <Property Name="Type" Type="varchar" MaxLength="20" Nullable="false" />
   </EntityType>
+  <EntityType Name="ExpiringCreditCardsForOrganisation">
+    <Key>
+      <PropertyRef Name="ExpiringCCId" />
+    </Key>
+    <Property Name="ExpiringCCId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="ExpiryMonth" Type="int" Nullable="false" />
+    <Property Name="ExpiryYear" Type="int" Nullable="false" />
+    <Property Name="CardNumberMask" Type="nvarchar" MaxLength="4" Nullable="false" />
+    <Property Name="CustomerFirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="CustomerLastName" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="OrganisationId" Type="int" Nullable="false" />
+    <Property Name="CardTokenId" Type="nvarchar" MaxLength="100" />
+  </EntityType>
   <EntityType Name="OrganisationFeeProcessing">
     <Key>
       <PropertyRef Name="Id" />
@@ -389,6 +402,7 @@
   <EntityContainer Name="GenerousAPIModelStoreContainer">
     <EntitySet Name="BankAccount" EntityType="Self.BankAccount" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CardType" EntityType="Self.CardType" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ExpiringCreditCardsForOrganisation" EntityType="Self.ExpiringCreditCardsForOrganisation" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="OrganisationFeeProcessing" EntityType="Self.OrganisationFeeProcessing" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="OrganisationPromoFee" EntityType="Self.OrganisationPromoFee" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="OrganisationStandardFee" EntityType="Self.OrganisationStandardFee" Schema="dbo" store:Type="Tables" />

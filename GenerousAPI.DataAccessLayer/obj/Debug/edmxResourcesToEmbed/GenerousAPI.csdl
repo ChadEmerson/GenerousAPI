@@ -79,6 +79,7 @@
       <End Role="TransactionDetail" EntitySet="TransactionDetails" />
     </AssociationSet>
     <EntitySet Name="OrganisationPromoFees" EntityType="GenerousAPIModel.OrganisationPromoFee" />
+    <EntitySet Name="ExpiringCreditCardsForOrganisations" EntityType="GenerousAPIModel.ExpiringCreditCardsForOrganisation" />
   </EntityContainer>
   <EntityType Name="TransactionMode">
     <Key>
@@ -459,5 +460,18 @@
     <Property Name="AmexMinAmount" Type="Decimal" Precision="2" Scale="2" />
     <Property Name="DirectDebitFee" Type="Double" />
     <Property Name="DirectDebitMin" Type="Decimal" Precision="2" Scale="2" />
+  </EntityType>
+  <EntityType Name="ExpiringCreditCardsForOrganisation">
+    <Key>
+      <PropertyRef Name="ExpiringCCId" />
+    </Key>
+    <Property Name="ExpiringCCId" Type="Guid" Nullable="false" />
+    <Property Name="ExpiryMonth" Type="Int32" Nullable="false" />
+    <Property Name="ExpiryYear" Type="Int32" Nullable="false" />
+    <Property Name="CardNumberMask" Type="String" Nullable="false" MaxLength="4" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerFirstName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerLastName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="OrganisationId" Type="Int32" Nullable="false" />
+    <Property Name="CardTokenId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
   </EntityType>
 </Schema>

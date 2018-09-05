@@ -131,6 +131,45 @@ namespace GenerousAPI.Controllers
             }
         }
 
+        [AcceptVerbs("POST")]
+        [HttpGet]
+        public ProcessorResponse ClearExpiringCreditCardInfo()
+        {
+            // Clear out records from table           
+            _IPaymentProfileBS = new PaymentProfileBS();
+
+            return _IPaymentProfileBS.ClearExpiringCreditCardInfo();
+        }
+
+        [AcceptVerbs("POST")]
+        [HttpGet]
+        public List<ContactDetailsDTO> GetExpiringCreditCardInfoForOrganisation(DonorAndOrganisation donorAndOrganisation)
+        {
+            // Get expiring credit cards for an organisation based on id
+            _IPaymentProfileBS = new PaymentProfileBS();
+
+            return _IPaymentProfileBS.GetExpiringCreditCardInfoForOrganisation(donorAndOrganisation.OrganisationId);
+        }
+
+
+        [AcceptVerbs("POST")]
+        [HttpGet]
+        public void SaveExpiringCreditCardInfoForDonor(DonorAndOrganisation donorAndOrganisation)
+        {
+            // Get expiring credit card details member/donor
+            var contactDetails = new List<ContactDetailsDTO>();
+
+            var paymentProfile = GetCardExpiryForTokenId(donorAndOrganisation.TokenId);
+
+            // Transform details
+            var expiringCardDetails = DataTransformExpiringCCDetails(paymentProfile, donorAndOrganisation.OrganisationId);
+
+            // Save details
+            _IPaymentProfileBS = new PaymentProfileBS();
+
+            _IPaymentProfileBS.SaveExpiringCreditCardDetais(expiringCardDetails);
+        }
+
         [AcceptVerbs("GET")]
         [HttpGet]
         public List<ContactDetailsDTO> GetExpiringCreditCards()
@@ -655,6 +694,21 @@ namespace GenerousAPI.Controllers
         }
 
         /// <summary>
+        /// Get the payment profile details based on the token
+        /// </summary>
+        /// <param name="ExpiryMonth">Expiring month</param>
+        /// <param name="ExpiryYear">Expiring year</param>
+        /// <returns>payment profile details</returns>        
+        private ContactDetailsDTO GetCardExpiryForTokenId(string TokenId)
+        {
+            _IPaymentProfileBS = new PaymentProfileBS();
+
+            var paymentProfileDTOs = _IPaymentProfileBS.GetCardExpiryForTokenId(TokenId);
+
+            return paymentProfileDTOs;
+        }
+
+        /// <summary>
         /// Get the payment gateway type
         /// </summary>
         /// <param name="paymentGatewayType"></param>
@@ -699,6 +753,28 @@ namespace GenerousAPI.Controllers
             };
 
             return paymentProfile;
+        }
+
+        /// <summary>
+        /// Create the payment profile object and use the DTO to transform the data
+        /// </summary>
+        /// <param name="bankAccountDTO">DTO of the bank account</param>
+        /// <returns>Payment Profile object for DAL</returns>
+        private DataAccessLayer.ExpiringCreditCardsForOrganisation DataTransformExpiringCCDetails(ContactDetailsDTO contactDetails, int organisationId)
+        {
+            var expiringCCDetails = new DataAccessLayer.ExpiringCreditCardsForOrganisation
+            {
+                    ExpiringCCId = Guid.NewGuid(),
+                    ExpiryMonth = Convert.ToInt32(contactDetails.ExpiryMonth),
+                    ExpiryYear = Convert.ToInt32(contactDetails.ExpiryYear),
+                    CardNumberMask = EncryptionService.Decrypt(contactDetails.CardNumberMask).Substring(12),
+                    CustomerFirstName = contactDetails.CustomerFirstName,
+                    CustomerLastName = contactDetails.CustomerLastName,
+                    OrganisationId = organisationId,
+                    CardTokenId = contactDetails.TokenId
+            };
+
+            return expiringCCDetails;
         }
 
         /// <summary>

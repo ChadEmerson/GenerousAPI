@@ -26,6 +26,19 @@
           </Key>
           <Property Name="Type" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
+        <EntityType Name="ExpiringCreditCardsForOrganisation">
+          <Key>
+            <PropertyRef Name="ExpiringCCId" />
+          </Key>
+          <Property Name="ExpiringCCId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ExpiryMonth" Type="int" Nullable="false" />
+          <Property Name="ExpiryYear" Type="int" Nullable="false" />
+          <Property Name="CardNumberMask" Type="nvarchar" MaxLength="4" Nullable="false" />
+          <Property Name="CustomerFirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="CustomerLastName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="OrganisationId" Type="int" Nullable="false" />
+          <Property Name="CardTokenId" Type="nvarchar" MaxLength="100" />
+        </EntityType>
         <EntityType Name="OrganisationFeeProcessing">
           <Key>
             <PropertyRef Name="Id" />
@@ -394,6 +407,7 @@
         <EntityContainer Name="GenerousAPIModelStoreContainer">
           <EntitySet Name="BankAccount" EntityType="Self.BankAccount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardType" EntityType="Self.CardType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ExpiringCreditCardsForOrganisation" EntityType="Self.ExpiringCreditCardsForOrganisation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganisationFeeProcessing" EntityType="Self.OrganisationFeeProcessing" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganisationPromoFee" EntityType="Self.OrganisationPromoFee" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrganisationStandardFee" EntityType="Self.OrganisationStandardFee" Schema="dbo" store:Type="Tables" />
@@ -530,6 +544,7 @@
             <End Role="TransactionDetail" EntitySet="TransactionDetails" />
           </AssociationSet>
           <EntitySet Name="OrganisationPromoFees" EntityType="GenerousAPIModel.OrganisationPromoFee" />
+          <EntitySet Name="ExpiringCreditCardsForOrganisations" EntityType="GenerousAPIModel.ExpiringCreditCardsForOrganisation" />
           </EntityContainer>
         <EntityType Name="TransactionMode">
           <Key>
@@ -911,6 +926,19 @@
           <Property Name="DirectDebitFee" Type="Double" />
           <Property Name="DirectDebitMin" Type="Decimal" Precision="2" Scale="2" />
         </EntityType>
+        <EntityType Name="ExpiringCreditCardsForOrganisation">
+          <Key>
+            <PropertyRef Name="ExpiringCCId" />
+          </Key>
+          <Property Name="ExpiringCCId" Type="Guid" Nullable="false" />
+          <Property Name="ExpiryMonth" Type="Int32" Nullable="false" />
+          <Property Name="ExpiryYear" Type="Int32" Nullable="false" />
+          <Property Name="CardNumberMask" Type="String" Nullable="false" MaxLength="4" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerFirstName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerLastName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="OrganisationId" Type="Int32" Nullable="false" />
+          <Property Name="CardTokenId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1203,6 +1231,20 @@
                 <ScalarProperty Name="VisaFee" ColumnName="VisaFee" />
                 <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
                 <ScalarProperty Name="FeeProcessingId" ColumnName="FeeProcessingId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExpiringCreditCardsForOrganisations">
+            <EntityTypeMapping TypeName="GenerousAPIModel.ExpiringCreditCardsForOrganisation">
+              <MappingFragment StoreEntitySet="ExpiringCreditCardsForOrganisation">
+                <ScalarProperty Name="CardTokenId" ColumnName="CardTokenId" />
+                <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
+                <ScalarProperty Name="CustomerLastName" ColumnName="CustomerLastName" />
+                <ScalarProperty Name="CustomerFirstName" ColumnName="CustomerFirstName" />
+                <ScalarProperty Name="CardNumberMask" ColumnName="CardNumberMask" />
+                <ScalarProperty Name="ExpiryYear" ColumnName="ExpiryYear" />
+                <ScalarProperty Name="ExpiryMonth" ColumnName="ExpiryMonth" />
+                <ScalarProperty Name="ExpiringCCId" ColumnName="ExpiringCCId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

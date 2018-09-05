@@ -735,11 +735,11 @@ namespace GenerousAPI.BusinessServices
 
         }
 
-        //        /// <summary>
-        //        /// Generate a direct credit file based on line items
-        //        /// </summary>
-        //        /// <param name="batchLineItems">Collection of payment line items</param>
-        //        /// <returns>Direct Credit file</returns>
+        /// <summary>
+        /// Generate a direct credit file based on line items
+        /// </summary>
+        /// <param name="batchLineItems">Collection of payment line items</param>
+        /// <returns>Direct Credit file</returns>
         private string GenerateDirectCreditFile(List<PaymentToOrganisationBatchLineItem> batchLineItems)
         {
             String ABAFileName = String.Format("{0}-{1}.txt", "DC", DateTime.Now.ToString("yyyyMMddHHmm"));

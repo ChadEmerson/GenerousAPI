@@ -290,5 +290,19 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="ExpiringCreditCardsForOrganisations">
+      <EntityTypeMapping TypeName="GenerousAPIModel.ExpiringCreditCardsForOrganisation">
+        <MappingFragment StoreEntitySet="ExpiringCreditCardsForOrganisation">
+          <ScalarProperty Name="CardTokenId" ColumnName="CardTokenId" />
+          <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
+          <ScalarProperty Name="CustomerLastName" ColumnName="CustomerLastName" />
+          <ScalarProperty Name="CustomerFirstName" ColumnName="CustomerFirstName" />
+          <ScalarProperty Name="CardNumberMask" ColumnName="CardNumberMask" />
+          <ScalarProperty Name="ExpiryYear" ColumnName="ExpiryYear" />
+          <ScalarProperty Name="ExpiryMonth" ColumnName="ExpiryMonth" />
+          <ScalarProperty Name="ExpiringCCId" ColumnName="ExpiringCCId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

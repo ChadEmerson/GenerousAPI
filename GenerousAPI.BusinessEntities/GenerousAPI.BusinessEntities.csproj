@@ -45,6 +45,7 @@
     <Compile Include="DataTransferObjects\BankAccountDTO.cs" />
     <Compile Include="DataTransferObjects\BinInfoDTO.cs" />
     <Compile Include="DataTransferObjects\ContactDetailsDTO.cs" />
+    <Compile Include="DataTransferObjects\DonorAndOrganisation.cs" />
     <Compile Include="DataTransferObjects\OrganisationFeesDTO.cs" />
     <Compile Include="DataTransferObjects\PaymentGatewayDTO.cs" />
     <Compile Include="DataTransferObjects\PaymentProfileDTO.cs" />

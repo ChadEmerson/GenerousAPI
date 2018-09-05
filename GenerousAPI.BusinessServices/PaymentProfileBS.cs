@@ -62,9 +62,47 @@
         /// <param name="ExpiryMonth">Expiring month</param>
         /// <param name="ExpiryYear">Expiring year</param>
         /// <returns>Donor payment profile details</returns>
-        public List<ContactDetailsDTO> GetExpiringCards(string ExpiryMonth, string ExpiryYear)
+        public List<ContactDetailsDTO> GetExpiringCards(string expiryMonth, string expiryYear)
         {
-            return _IPaymentProfileDAL.GetExpiringCards(ExpiryMonth, ExpiryYear);
+            return _IPaymentProfileDAL.GetExpiringCards(expiryMonth, expiryYear);
+        }
+
+        // <summary>
+        /// Get when a card is expiring for the token
+        /// </summary>
+        /// <param name="ExpiryMonth">tokenId of payment profile</param>
+        /// <returns>Donor payment profile details</returns>
+        public ContactDetailsDTO GetCardExpiryForTokenId(string tokenId)
+        {
+            return _IPaymentProfileDAL.GetCardExpiryForTokenId(tokenId);
+        }
+
+        /// <summary>
+        /// Save Expiring Credit Card Detais
+        /// </summary>
+        /// <param name="expiringCardDetails">Details of cards</param>
+        public void SaveExpiringCreditCardDetais(ExpiringCreditCardsForOrganisation expiringCardDetails)
+        {
+            _IPaymentProfileDAL.SaveExpiringCreditCardDetais(expiringCardDetails);
+        }
+
+        /// <summary>
+        /// Clear out records from table
+        /// </summary>
+        /// <returns>ProcessorResponse info</returns>
+        public ProcessorResponse ClearExpiringCreditCardInfo()
+        {
+            return _IPaymentProfileDAL.ClearExpiringCreditCardInfo();
+        }
+
+        /// <summary>
+        /// Get list of expiring credit cards for an organisation
+        /// </summary>
+        /// <param name="organisationId">Organisation Id to get details for</param>
+        /// <returns>Collection of contact details</returns>
+        public List<ContactDetailsDTO> GetExpiringCreditCardInfoForOrganisation(int organisationId)
+        {
+            return _IPaymentProfileDAL.GetExpiringCreditCardInfoForOrganisation(organisationId);
         }
     }
 }
