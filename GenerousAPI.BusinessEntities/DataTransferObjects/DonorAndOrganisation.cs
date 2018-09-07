@@ -11,5 +11,9 @@ namespace GenerousAPI.BusinessEntities
         public int OrganisationId { get; set; }
 
         public string TokenId { get; set; }
+
+        public string ExpiryMonth { get; set; }
+
+        public string ExpiryYear { get; set; }
     }
 }

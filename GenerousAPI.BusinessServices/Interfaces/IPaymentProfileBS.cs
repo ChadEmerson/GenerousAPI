@@ -68,5 +68,14 @@ namespace GenerousAPI.BusinessServices
         /// <param name="organisationId">Organisation Id to get details for</param>
         /// <returns>Collection of contact details</returns>
         List<ContactDetailsDTO> GetExpiringCreditCardInfoForOrganisation(int organisationId);
+
+        /// <summary>
+        /// Get list of expiring credit cards for an organisation
+        /// </summary>
+        /// <param name="organisationId">Organisation Id to get details for</param>
+        /// <param name="ExpiryMonth">Expiring month</param>
+        /// <param name="ExpiryYear">Expiring year</param>
+        /// <returns>Collection of contact details</returns>
+        List<ContactDetailsDTO> GetExpiringCreditCardInfoForOrganisation(int organisationId, int expiryMonth, int expiryYear);
     }
 }

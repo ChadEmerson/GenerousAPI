@@ -285,5 +285,41 @@
                 return null;
             }
         }
+
+        /// <summary>
+        /// Get list of expiring credit cards for an organisation
+        /// </summary>
+        /// <param name="organisationId">Organisation Id to get details for</param>
+        /// <param name="ExpiryMonth">Expiring month</param>
+        /// <param name="ExpiryYear">Expiring year</param>
+        /// <returns>Collection of contact details</returns>
+        public List<ContactDetailsDTO> GetExpiringCreditCardInfoForOrganisation(int organisationId, int expiryMonth, int expiryYear)
+        {
+            try
+            {
+                using (var db = new GenerousAPIEntities())
+                {
+                    var paymentProfilesWithExpiringCards = from cardDetailsForOrganisation in db.ExpiringCreditCardsForOrganisations
+                                                           where cardDetailsForOrganisation.OrganisationId == organisationId &&
+                                                           cardDetailsForOrganisation.ExpiryMonth == expiryMonth &&
+                                                           cardDetailsForOrganisation.ExpiryYear == expiryYear
+                                                           select new ContactDetailsDTO
+                                                           {
+                                                               CustomerFirstName = cardDetailsForOrganisation.CustomerFirstName,
+                                                               CustomerLastName = cardDetailsForOrganisation.CustomerLastName,
+                                                               CardNumberMask = cardDetailsForOrganisation.CardNumberMask,
+                                                               ExpiryMonth = cardDetailsForOrganisation.ExpiryMonth.ToString(),
+                                                               ExpiryYear = cardDetailsForOrganisation.ExpiryYear.ToString(),
+                                                               TokenId = cardDetailsForOrganisation.CardTokenId
+                                                           };
+
+                    return paymentProfilesWithExpiringCards.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

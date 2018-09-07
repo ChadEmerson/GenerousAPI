@@ -145,10 +145,31 @@ namespace GenerousAPI.Controllers
         [HttpGet]
         public List<ContactDetailsDTO> GetExpiringCreditCardInfoForOrganisation(DonorAndOrganisation donorAndOrganisation)
         {
+            // Always get last month so it doesn't matter when this is checked
+            var expired = DateTime.Now.AddMonths(-1);
+
             // Get expiring credit cards for an organisation based on id
             _IPaymentProfileBS = new PaymentProfileBS();
 
-            return _IPaymentProfileBS.GetExpiringCreditCardInfoForOrganisation(donorAndOrganisation.OrganisationId);
+            if (donorAndOrganisation.ExpiryMonth == null && donorAndOrganisation.ExpiryYear == null)
+            {
+                return _IPaymentProfileBS.GetExpiringCreditCardInfoForOrganisation(donorAndOrganisation.OrganisationId);
+            }
+            else
+            {
+                // Create expiry based on date passed in
+                var expirydate = new DateTime(Convert.ToInt32(donorAndOrganisation.ExpiryYear), Convert.ToInt32(donorAndOrganisation.ExpiryMonth), 1);
+
+                // Expiry date passed in is the same as expired, or prior
+                if (expirydate <= expired)
+                {
+                    return _IPaymentProfileBS.GetExpiringCreditCardInfoForOrganisation(donorAndOrganisation.OrganisationId, expired.Month, expired.Year);
+                }
+                else
+                {                    
+                    return _IPaymentProfileBS.GetExpiringCreditCardInfoForOrganisation(donorAndOrganisation.OrganisationId, expirydate.Month, expirydate.Year);
+                }
+            }
         }
 
 
