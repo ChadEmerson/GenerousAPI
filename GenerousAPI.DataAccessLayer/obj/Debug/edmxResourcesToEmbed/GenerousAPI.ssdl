@@ -54,7 +54,7 @@
     </Key>
     <Property Name="FeeProcessingId" Type="uniqueidentifier" Nullable="false" />
     <Property Name="OrganisationId" Type="float" />
-    <Property Name="VisaFee" Type="int" />
+    <Property Name="VisaFee" Type="float" />
     <Property Name="VisaMinAmount" Type="decimal" Precision="2" Scale="2" />
     <Property Name="InternationalFee" Type="float" />
     <Property Name="InternationalMinAmount" Type="decimal" Precision="2" Scale="2" />
@@ -70,34 +70,34 @@
     <Property Name="FeeProcessingId" Type="uniqueidentifier" Nullable="false" />
     <Property Name="OrganisationId" Type="int" />
     <Property Name="VisaFee" Type="float" />
-    <Property Name="VisaMinAmount" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="VisaMinAmount" Type="decimal" Precision="6" Scale="2" />
     <Property Name="InternationalFee" Type="float" />
-    <Property Name="InternationalMinAmount" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="InternationalMinAmount" Type="decimal" Precision="6" Scale="2" />
     <Property Name="AmexFee" Type="float" />
-    <Property Name="AmexMinAmount" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="AmexMinAmount" Type="decimal" Precision="6" Scale="2" />
     <Property Name="DirectDebitFee" Type="float" />
-    <Property Name="DirectDebitMin" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="TextToGiveFee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="SmsReminderFee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventTicketBracket1" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventTicketBracket2" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventTicketBracket3" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventTicketBracket4" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventTicketBracket5" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="RefundFee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="ChargebackFee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="GivingModuleFee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="PaymentModuleFee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="CampaignPortalModuleFee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventModuleFee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="SocialMediaModuleFee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="ChurchManSystemModuleFee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="TransactionFeeAmount" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventTicketBracket1Fee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventTicketBracket2Fee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventTicketBracket3Fee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventTicketBracket4Fee" Type="decimal" Precision="2" Scale="2" />
-    <Property Name="EventTicketBracket5Fee" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="DirectDebitMin" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="TextToGiveFee" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="SmsReminderFee" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="EventTicketBracket1" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="EventTicketBracket2" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="EventTicketBracket3" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="EventTicketBracket4" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="EventTicketBracket5" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="RefundFee" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="ChargebackFee" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="GivingModuleFee" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="PaymentModuleFee" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="CampaignPortalModuleFee" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="EventModuleFee" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="SocialMediaModuleFee" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="ChurchManSystemModuleFee" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="TransactionFeeAmount" Type="decimal" Precision="6" Scale="2" />
+    <Property Name="EventTicketBracket1Fee" Type="decimal" Precision="12" Scale="2" />
+    <Property Name="EventTicketBracket2Fee" Type="decimal" Precision="12" Scale="2" />
+    <Property Name="EventTicketBracket3Fee" Type="decimal" Precision="12" Scale="2" />
+    <Property Name="EventTicketBracket4Fee" Type="decimal" Precision="12" Scale="2" />
+    <Property Name="EventTicketBracket5Fee" Type="decimal" Precision="12" Scale="2" />
   </EntityType>
   <EntityType Name="PaymentGatewayConfig">
     <Key>

@@ -24,6 +24,7 @@ namespace GenerousAPI.Controllers
         private ITransactionDetailsBS _ITransactionDetailsBS = null;
         private IPaymentProfileBinInfoBS _IPaymentProfileBinInfoBS = null;
         private IPaymentToOrganisationBS _IPaymentToOrganisationBS = null;
+        private IOrganisationFeeProcessingBS _IOrganisationFeeProcessingBS = null;
 
         public const string CardAccessMerchantId = "2004";
         public const string CardAccessPassword = "password1234";
@@ -172,6 +173,94 @@ namespace GenerousAPI.Controllers
             }
         }
 
+        [AcceptVerbs("POST")]
+        [HttpGet]
+        public OrganisationFeesDTO GetOrganisationFees(HttpRequestMessage request)
+        {
+            int organisationId = Convert.ToInt32(request.Content.ReadAsStringAsync().Result);
+            _IOrganisationFeeProcessingBS = new OrganisationFeeProcessingBS();
+
+            var orgFeesDetail = new OrganisationFeesDTO();
+
+            // Get organisation standard and promo fees
+            var orgFeesDetailCollection = _IOrganisationFeeProcessingBS.GetOrganisationFeeProcesingWithRelatedData(organisationId);
+
+            try
+            {
+                orgFeesDetail = DataTransformOrgFees(orgFeesDetailCollection, organisationId);
+
+                orgFeesDetail.OrganisationId = organisationId;
+                orgFeesDetail.CurrencyCode = orgFeesDetailCollection.OrganisationToProcess.CurrencyCode;
+
+                return orgFeesDetail;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        [AcceptVerbs("POST")]
+        [HttpGet]
+        public ProcessorResponse SetOrganisationFees(OrganisationFeesDTO orgFees)
+        {
+            int organisationId = orgFees.OrganisationId;
+            _IOrganisationFeeProcessingBS = new OrganisationFeeProcessingBS();
+            var response = new ProcessorResponse();
+
+            try
+            {
+                // Create promo billing
+                var promoBilling = CreatePromoBilling(orgFees, orgFees.OrganisationId);
+
+                // Create standing billing
+                var standardBilling = CreateStandardBilling(orgFees, orgFees.OrganisationId);
+
+                // create fee process
+                var feeProcess = CreateFeeProcessing(orgFees, orgFees.OrganisationId);
+
+                // Check if creating new or updating existing
+                try
+                {
+                    var orgFeesDetailCollection = _IOrganisationFeeProcessingBS.GetOrganisationFeeProcesingWithRelatedData(organisationId);
+
+                    if (orgFeesDetailCollection == null)
+                    {
+                        // New ones
+                        _IOrganisationFeeProcessingBS.CreateOrganisationPromoFees(promoBilling);
+                        _IOrganisationFeeProcessingBS.CreateOrganisationStandardFees(standardBilling);
+                        _IOrganisationFeeProcessingBS.CreateOrganisationFeeProces(feeProcess);
+                    }
+                    else
+                    {
+                        // Existing
+                        promoBilling.FeeProcessingId = orgFeesDetailCollection.OrganisationPromoFees.FeeProcessingId;
+                        standardBilling.FeeProcessingId = orgFeesDetailCollection.OrganisationStandardFees.FeeProcessingId;
+                        feeProcess.Id = orgFeesDetailCollection.OrganisationToProcess.Id;
+
+                        _IOrganisationFeeProcessingBS.UpdateOrganisationFeePromoPrices(promoBilling);
+                        _IOrganisationFeeProcessingBS.UpdateOrganisationFeeStandardPrices(standardBilling);
+                        _IOrganisationFeeProcessingBS.UpdateOrganisationFeeProces(feeProcess);
+                    }
+                }
+                catch (Exception)
+                {
+                    _IOrganisationFeeProcessingBS.CreateOrganisationPromoFees(promoBilling);
+                    _IOrganisationFeeProcessingBS.CreateOrganisationStandardFees(standardBilling);
+                    _IOrganisationFeeProcessingBS.CreateOrganisationFeeProces(feeProcess);
+                }
+                
+                response.IsSuccess = true;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
 
         [AcceptVerbs("POST")]
         [HttpGet]
@@ -889,6 +978,186 @@ namespace GenerousAPI.Controllers
             };
 
             return transactionDetail;
+        }
+
+        /// <summary>
+        /// Create CreateFeeProcessing
+        /// </summary>
+        /// <param name="organisationFeeDetails">Fee Details</param>
+        /// <param name="organisationId">Organisation id</param>
+        /// <returns></returns>
+        private DataAccessLayer.OrganisationFeeProcessing CreateFeeProcessing(OrganisationFeesDTO organisationFeeDetails, int organisationId)
+        {
+            try
+            {
+                var feeprocessing = new DataAccessLayer.OrganisationFeeProcessing
+                {
+                    Id = Guid.NewGuid(),
+                    OrganisationId = organisationId,
+                    IsPromoBilling = organisationFeeDetails.IsPromoBilling,
+                    PromoBillingExpiresOn = organisationFeeDetails.PromoBillingExpiresOn,
+                    CurrencyCode = organisationFeeDetails.CurrencyCode,
+                    IsActive = organisationFeeDetails.IsActive,
+                    NextRunDate = organisationFeeDetails.NextRunDate,
+                    LastRunDate = organisationFeeDetails.LastRunDate,
+                    OrganisationBillDate = organisationFeeDetails.BillDate
+                };
+
+                return feeprocessing;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Create Promo Fees
+        /// </summary>
+        /// <param name="organisationFeeDetails">Fee Details</param>
+        /// <param name="organisationId">Organisation id</param>
+        /// <returns></returns>
+        private DataAccessLayer.OrganisationPromoFee CreatePromoBilling(OrganisationFeesDTO organisationFeeDetails, int organisationId)
+        {
+            try
+            {
+                var promoFees = new DataAccessLayer.OrganisationPromoFee
+                {
+                    FeeProcessingId = Guid.NewGuid(),
+                    OrganisationId = organisationId,
+                    VisaFee = organisationFeeDetails.VisaFeePromo,
+                    VisaMinAmount = organisationFeeDetails.VisaMinAmountPromo,
+                    InternationalFee = organisationFeeDetails.InternationalFeePromo,
+                    InternationalMinAmount = organisationFeeDetails.InternationalMinAmountPromo,
+                    AmexFee = organisationFeeDetails.AmexFeePromo,
+                    AmexMinAmount = organisationFeeDetails.AmexMinAmountPromo,
+                    DirectDebitFee = organisationFeeDetails.DirectDebitFee,
+                    DirectDebitMin = organisationFeeDetails.DirectDebitMin
+                };
+
+                return promoFees;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Create Standard Fees
+        /// </summary>
+        /// <param name="organisationFeeDetails">Fee Details</param>
+        /// <param name="organisationId">Organisation id</param>
+        /// <returns></returns>
+        private DataAccessLayer.OrganisationStandardFee CreateStandardBilling(OrganisationFeesDTO organisationFeeDetails, int organisationId)
+        {
+            try
+            {
+                var standardFees = new DataAccessLayer.OrganisationStandardFee
+                {
+                    FeeProcessingId = Guid.NewGuid(),
+                    OrganisationId = organisationId,
+                    VisaFee = organisationFeeDetails.VisaFee,
+                    VisaMinAmount = organisationFeeDetails.VisaMinAmount,
+                    InternationalFee = organisationFeeDetails.InternationalFee,
+                    InternationalMinAmount = organisationFeeDetails.InternationalMinAmount,
+                    AmexFee = organisationFeeDetails.AmexFee,
+                    AmexMinAmount = organisationFeeDetails.AmexMinAmount,
+                    DirectDebitFee = organisationFeeDetails.DirectDebitFee,
+                    DirectDebitMin = organisationFeeDetails.DirectDebitMin,
+                    TextToGiveFee = organisationFeeDetails.TextToGiveFee,
+                    SmsReminderFee = organisationFeeDetails.SmsReminderFee,
+                    EventTicketBracket1 = organisationFeeDetails.EventTicketBracket1,
+                    EventTicketBracket2 = organisationFeeDetails.EventTicketBracket2,
+                    EventTicketBracket3 = organisationFeeDetails.EventTicketBracket3,
+                    EventTicketBracket4 = organisationFeeDetails.EventTicketBracket4,
+                    EventTicketBracket5 = organisationFeeDetails.EventTicketBracket5,
+                    RefundFee = organisationFeeDetails.RefundFee,
+                    ChargebackFee = organisationFeeDetails.ChargebackFee,
+                    GivingModuleFee = organisationFeeDetails.GivingModuleFee,
+                    PaymentModuleFee = organisationFeeDetails.PaymentModuleFee,
+                    CampaignPortalModuleFee = organisationFeeDetails.CampaignPortalModuleFee,
+                    EventModuleFee = organisationFeeDetails.EventModuleFee,
+                    SocialMediaModuleFee = organisationFeeDetails.SocialMediaModuleFee,
+                    ChurchManSystemModuleFee = organisationFeeDetails.ChurchManSystemModuleFee,
+                    TransactionFeeAmount = organisationFeeDetails.TransactionFeeAmount,
+                    EventTicketBracket1Fee = organisationFeeDetails.EventTicketBracket1Fee,
+                    EventTicketBracket2Fee = organisationFeeDetails.EventTicketBracket2Fee,
+                    EventTicketBracket3Fee = organisationFeeDetails.EventTicketBracket3Fee,
+                    EventTicketBracket4Fee = organisationFeeDetails.EventTicketBracket4Fee,
+                    EventTicketBracket5Fee = organisationFeeDetails.EventTicketBracket5Fee
+                };
+
+                return standardFees;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Data transform organisation fees with the data from the database
+        /// </summary>
+        /// <param name="orgFeesWithRelatedData">Organisation fees collection</param>
+        /// <param name="organisationId">Organisation Id</param>
+        /// <returns>DTO of organisation fees</returns>
+        private OrganisationFeesDTO DataTransformOrgFees(GenerousAPI.DataAccessLayer.OrganisationFeeProcesingWithRelatedData orgFeesWithRelatedData, int organisationId)
+        {
+            try
+            {
+                var organisationFeesDetail = new OrganisationFeesDTO
+                {
+                    TextToGiveFee = orgFeesWithRelatedData.OrganisationStandardFees.TextToGiveFee,
+                    SmsReminderFee = orgFeesWithRelatedData.OrganisationStandardFees.SmsReminderFee,
+                    EventTicketBracket1 = orgFeesWithRelatedData.OrganisationStandardFees.EventTicketBracket1,
+                    EventTicketBracket2 = orgFeesWithRelatedData.OrganisationStandardFees.EventTicketBracket2,
+                    EventTicketBracket3 = orgFeesWithRelatedData.OrganisationStandardFees.EventTicketBracket3,
+                    EventTicketBracket4 = orgFeesWithRelatedData.OrganisationStandardFees.EventTicketBracket4,
+                    EventTicketBracket5 = orgFeesWithRelatedData.OrganisationStandardFees.EventTicketBracket5,
+                    RefundFee = orgFeesWithRelatedData.OrganisationStandardFees.RefundFee,
+                    ChargebackFee = orgFeesWithRelatedData.OrganisationStandardFees.ChargebackFee,
+                    GivingModuleFee = orgFeesWithRelatedData.OrganisationStandardFees.GivingModuleFee,
+                    PaymentModuleFee = orgFeesWithRelatedData.OrganisationStandardFees.PaymentModuleFee,
+                    CampaignPortalModuleFee = orgFeesWithRelatedData.OrganisationStandardFees.CampaignPortalModuleFee,
+                    EventModuleFee = orgFeesWithRelatedData.OrganisationStandardFees.EventModuleFee,
+                    SocialMediaModuleFee = orgFeesWithRelatedData.OrganisationStandardFees.SocialMediaModuleFee,
+                    ChurchManSystemModuleFee = orgFeesWithRelatedData.OrganisationStandardFees.ChurchManSystemModuleFee,
+                    TransactionFeeAmount = orgFeesWithRelatedData.OrganisationStandardFees.TransactionFeeAmount,
+                    EventTicketBracket1Fee = orgFeesWithRelatedData.OrganisationStandardFees.EventTicketBracket1Fee,
+                    EventTicketBracket2Fee = orgFeesWithRelatedData.OrganisationStandardFees.EventTicketBracket2Fee,
+                    EventTicketBracket3Fee = orgFeesWithRelatedData.OrganisationStandardFees.EventTicketBracket3Fee,
+                    EventTicketBracket4Fee = orgFeesWithRelatedData.OrganisationStandardFees.EventTicketBracket4Fee,
+                    EventTicketBracket5Fee = orgFeesWithRelatedData.OrganisationStandardFees.EventTicketBracket5Fee,
+                    VisaFeePromo = orgFeesWithRelatedData.OrganisationPromoFees.VisaFee,
+                    VisaMinAmountPromo = orgFeesWithRelatedData.OrganisationPromoFees.VisaMinAmount,
+                    InternationalFeePromo = orgFeesWithRelatedData.OrganisationPromoFees.InternationalFee,
+                    InternationalMinAmountPromo = orgFeesWithRelatedData.OrganisationPromoFees.InternationalMinAmount,
+                    AmexFeePromo = orgFeesWithRelatedData.OrganisationPromoFees.AmexFee,
+                    AmexMinAmountPromo = orgFeesWithRelatedData.OrganisationPromoFees.AmexMinAmount,
+                    VisaFee = orgFeesWithRelatedData.OrganisationStandardFees.VisaFee,
+                    VisaMinAmount = orgFeesWithRelatedData.OrganisationStandardFees.VisaMinAmount,
+                    InternationalFee = orgFeesWithRelatedData.OrganisationStandardFees.InternationalFee,
+                    InternationalMinAmount = orgFeesWithRelatedData.OrganisationStandardFees.InternationalMinAmount,
+                    AmexFee = orgFeesWithRelatedData.OrganisationStandardFees.AmexFee,
+                    AmexMinAmount = orgFeesWithRelatedData.OrganisationStandardFees.AmexMinAmount,
+                    DirectDebitFee = orgFeesWithRelatedData.OrganisationStandardFees.DirectDebitFee,
+                    DirectDebitMin = orgFeesWithRelatedData.OrganisationStandardFees.DirectDebitMin,
+                    IsPromoBilling = orgFeesWithRelatedData.OrganisationToProcess.IsPromoBilling.Value,
+                    PromoBillingExpiresOn = orgFeesWithRelatedData.OrganisationToProcess.PromoBillingExpiresOn,
+                    CurrencyCode = orgFeesWithRelatedData.OrganisationToProcess.CurrencyCode,
+                    IsActive = orgFeesWithRelatedData.OrganisationToProcess.IsActive.Value,
+                    NextRunDate = orgFeesWithRelatedData.OrganisationToProcess.NextRunDate.Value,
+                    LastRunDate = orgFeesWithRelatedData.OrganisationToProcess.LastRunDate == null ? DateTime.MinValue : orgFeesWithRelatedData.OrganisationToProcess.LastRunDate.Value,
+                    BillDate = orgFeesWithRelatedData.OrganisationToProcess.OrganisationBillDate.Value
+                };
+
+                return organisationFeesDetail;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
     }

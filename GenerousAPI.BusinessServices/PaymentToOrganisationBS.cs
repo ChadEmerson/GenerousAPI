@@ -742,10 +742,18 @@ namespace GenerousAPI.BusinessServices
         /// <returns>Direct Credit file</returns>
         private string GenerateDirectCreditFile(List<PaymentToOrganisationBatchLineItem> batchLineItems)
         {
-            String ABAFileName = String.Format("{0}-{1}.txt", "DC", DateTime.Now.ToString("yyyyMMddHHmm"));
-            ABAGeneration.NAB_ABAFileGenerator NAB_ABAFileGen = new ABAGeneration.NAB_ABAFileGenerator(ABAMode.DirectCredit);
-            NAB_ABAFileGen.GenerateABAFile(batchLineItems, ABAGeneration.AbaConfig.ABAPaymentCollectionFilePath, ABAFileName);   //TODO: Exception handling if invalid data etc. 
-            return ABAFileName;
+            try
+            {
+                String ABAFileName = String.Format("{0}-{1}.txt", "DC", DateTime.Now.ToString("yyyyMMddHHmm"));
+                ABAGeneration.NAB_ABAFileGenerator NAB_ABAFileGen = new ABAGeneration.NAB_ABAFileGenerator(ABAMode.DirectCredit);
+                NAB_ABAFileGen.GenerateABAFile(batchLineItems, ABAGeneration.AbaConfig.ABAPaymentCollectionFilePath, ABAFileName);   //TODO: Exception handling if invalid data etc. 
+                return ABAFileName;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+           
         }
         
         private void ProcessLineItemFee(DonationTransactionWithRelatedData donationTransaction, OrganisationFeeProcesingWithRelatedData organisationFeeProcessingSettings)

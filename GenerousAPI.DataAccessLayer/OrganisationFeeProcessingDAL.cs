@@ -45,7 +45,7 @@ namespace GenerousAPI.DataAccessLayer
         }
 
         /// <summary>
-        /// Get a list of org fee processing reecords with related data
+        /// Get a list of org fee processing records with related data
         /// </summary>
         /// <returns>list of fee processing records</returns>
         public OrganisationFeeProcesingWithRelatedData GetOrganisationFeeProcesingWithRelatedData(int organisationId)

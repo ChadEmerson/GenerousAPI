@@ -16,7 +16,7 @@ namespace GenerousAPI.DataAccessLayer
     {
         public System.Guid FeeProcessingId { get; set; }
         public Nullable<double> OrganisationId { get; set; }
-        public Nullable<int> VisaFee { get; set; }
+        public Nullable<double> VisaFee { get; set; }
         public Nullable<decimal> VisaMinAmount { get; set; }
         public Nullable<double> InternationalFee { get; set; }
         public Nullable<decimal> InternationalMinAmount { get; set; }

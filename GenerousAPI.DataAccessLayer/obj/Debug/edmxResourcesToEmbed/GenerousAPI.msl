@@ -237,6 +237,36 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="ExpiringCreditCardsForOrganisations">
+      <EntityTypeMapping TypeName="GenerousAPIModel.ExpiringCreditCardsForOrganisation">
+        <MappingFragment StoreEntitySet="ExpiringCreditCardsForOrganisation">
+          <ScalarProperty Name="CardTokenId" ColumnName="CardTokenId" />
+          <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
+          <ScalarProperty Name="CustomerLastName" ColumnName="CustomerLastName" />
+          <ScalarProperty Name="CustomerFirstName" ColumnName="CustomerFirstName" />
+          <ScalarProperty Name="CardNumberMask" ColumnName="CardNumberMask" />
+          <ScalarProperty Name="ExpiryYear" ColumnName="ExpiryYear" />
+          <ScalarProperty Name="ExpiryMonth" ColumnName="ExpiryMonth" />
+          <ScalarProperty Name="ExpiringCCId" ColumnName="ExpiringCCId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="OrganisationPromoFees">
+      <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationPromoFee">
+        <MappingFragment StoreEntitySet="OrganisationPromoFee">
+          <ScalarProperty Name="DirectDebitMin" ColumnName="DirectDebitMin" />
+          <ScalarProperty Name="DirectDebitFee" ColumnName="DirectDebitFee" />
+          <ScalarProperty Name="AmexMinAmount" ColumnName="AmexMinAmount" />
+          <ScalarProperty Name="AmexFee" ColumnName="AmexFee" />
+          <ScalarProperty Name="InternationalMinAmount" ColumnName="InternationalMinAmount" />
+          <ScalarProperty Name="InternationalFee" ColumnName="InternationalFee" />
+          <ScalarProperty Name="VisaMinAmount" ColumnName="VisaMinAmount" />
+          <ScalarProperty Name="VisaFee" ColumnName="VisaFee" />
+          <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
+          <ScalarProperty Name="FeeProcessingId" ColumnName="FeeProcessingId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="OrganisationStandardFees">
       <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationStandardFee">
         <MappingFragment StoreEntitySet="OrganisationStandardFee">
@@ -271,36 +301,6 @@
           <ScalarProperty Name="VisaFee" ColumnName="VisaFee" />
           <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
           <ScalarProperty Name="FeeProcessingId" ColumnName="FeeProcessingId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="OrganisationPromoFees">
-      <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationPromoFee">
-        <MappingFragment StoreEntitySet="OrganisationPromoFee">
-          <ScalarProperty Name="DirectDebitMin" ColumnName="DirectDebitMin" />
-          <ScalarProperty Name="DirectDebitFee" ColumnName="DirectDebitFee" />
-          <ScalarProperty Name="AmexMinAmount" ColumnName="AmexMinAmount" />
-          <ScalarProperty Name="AmexFee" ColumnName="AmexFee" />
-          <ScalarProperty Name="InternationalMinAmount" ColumnName="InternationalMinAmount" />
-          <ScalarProperty Name="InternationalFee" ColumnName="InternationalFee" />
-          <ScalarProperty Name="VisaMinAmount" ColumnName="VisaMinAmount" />
-          <ScalarProperty Name="VisaFee" ColumnName="VisaFee" />
-          <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
-          <ScalarProperty Name="FeeProcessingId" ColumnName="FeeProcessingId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="ExpiringCreditCardsForOrganisations">
-      <EntityTypeMapping TypeName="GenerousAPIModel.ExpiringCreditCardsForOrganisation">
-        <MappingFragment StoreEntitySet="ExpiringCreditCardsForOrganisation">
-          <ScalarProperty Name="CardTokenId" ColumnName="CardTokenId" />
-          <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />
-          <ScalarProperty Name="CustomerLastName" ColumnName="CustomerLastName" />
-          <ScalarProperty Name="CustomerFirstName" ColumnName="CustomerFirstName" />
-          <ScalarProperty Name="CardNumberMask" ColumnName="CardNumberMask" />
-          <ScalarProperty Name="ExpiryYear" ColumnName="ExpiryYear" />
-          <ScalarProperty Name="ExpiryMonth" ColumnName="ExpiryMonth" />
-          <ScalarProperty Name="ExpiringCCId" ColumnName="ExpiringCCId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
