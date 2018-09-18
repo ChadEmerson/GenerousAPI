@@ -113,11 +113,11 @@ namespace GenerousAPI.BusinessServices.ABAGeneration
             foreach (DataAccessLayer.DonationTransactionWithRelatedData transWithRelatedData in donationTransactions)
             {
                 try
-                {
+                {                   
                     ABAFileDetailItem detailLineItem = new ABAFileDetailItem();
                     detailLineItem.Amount = transWithRelatedData.TransactionDetail.Amount;
-                    detailLineItem.RecepientBSBNumber = transWithRelatedData.DonorPaymentProfile.BSBNumber;
-                    detailLineItem.RecepientAccountNumber = transWithRelatedData.DonorPaymentProfile.BankAccountNumber;
+                    detailLineItem.RecepientBSBNumber = BusinessEntities.EncryptionService.Decrypt(transWithRelatedData.DonorPaymentProfile.BSBNumber);
+                    detailLineItem.RecepientAccountNumber = BusinessEntities.EncryptionService.Decrypt(transWithRelatedData.DonorPaymentProfile.BankAccountNumber);
                     detailLineItem.RecepientAccountName = transWithRelatedData.DonorPaymentProfile.BankAccountName;
                     detailLineItem.LodgementReference = transWithRelatedData.TransactionDetail.CustomerReference;
 

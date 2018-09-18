@@ -97,6 +97,41 @@ namespace GenerousAPI.DataAccessLayer
         }
 
         /// <summary>
+        /// Update the Transaction List with the donation details
+        /// </summary>
+        /// <param name="donationTransList">Donation Transaction List</param>
+        public void UpdateDonationTransactionList(IEnumerable<TransactionDetail> donationTransList)
+        {
+            try
+            {
+                using (var db = new GenerousAPIEntities())
+                {
+                    foreach (TransactionDetail trans in donationTransList)
+                    {
+                        try
+                        {
+                            db.Entry(trans).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        catch (Exception ex)
+                        {
+                            //Common.Helper.LogException(ex);
+                        }
+                    }
+
+                    db.SaveChanges(); //batching multiple updates
+                }
+
+                //create log entries for multiple transactions
+                //CreateTransactionLogEntries(donationTransList);
+            }
+            catch (Exception ex)
+            {
+                //Common.Helper.LogException(ex);
+            }
+
+        }
+
+        /// <summary>
         /// Get collection of transactions
         /// </summary>
         /// <param name="bankAccountTokenId">Bank Account token Id</param>
@@ -125,6 +160,27 @@ namespace GenerousAPI.DataAccessLayer
 
         }
 
+        public List<DonationTransactionWithRelatedData> GetDonationTransaction_WithRelatedData(List<Guid> donationTransactionIds)
+        {
+            using (var db = new GenerousAPIEntities())
+            {
+                var transQuery = from trans in db.TransactionDetails
+                                 join status in db.PaymentProcessStatus on trans.ProcessStatusId equals status.Id
+                                 join PaymentMethod in db.PaymentMethods on trans.PaymentMethodId equals PaymentMethod.Id
+                                 join paymentProfile in db.PaymentProfiles on trans.PaymentProfileTokenId equals paymentProfile.TokenId
+                                 where donationTransactionIds.Contains(trans.Id)
+                                 select new DonationTransactionWithRelatedData()
+                                 {
+                                     TransactionDetail = trans,
+                                     DonationTransaction_ProcessStatus = status.Status,
+                                     DonationTransaction_PaymentMethod = PaymentMethod.Method,
+                                     DonorPaymentProfile = paymentProfile
+                                 };
+
+                return transQuery.ToList<DonationTransactionWithRelatedData>();
+            }
+        }
+
         /// <summary>
         /// Get collection of donations with related data
         /// </summary>
@@ -146,6 +202,33 @@ namespace GenerousAPI.DataAccessLayer
                                  };
 
                 return transQuery.ToList<DonationTransactionWithRelatedData>();
+            }
+        }
+
+        /// <summary>
+        /// Get a collection of donation transactions 
+        /// </summary>
+        /// <param name="dateTimeToBeProcessed">Date/time when transaction is being processed</param>
+        /// <param name="paymentProcessStatus">Enum process status</param>
+        /// <param name="paymentMethod">Enum of payment type (credit card, direct debit)</param>
+        /// <returns>Collection of donation transaction details</returns>
+        public IEnumerable<TransactionDetail> GetDonationTransactionsByStatus_ForProcessing(DateTime dateTimeToBeProcessed, PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus status, PaymentGatewayProcessing.Helpers.Enums.PaymentMethod method)
+        {
+            byte statusValue = (byte)status;
+            byte methodValue = (byte)method;
+
+            using (var db = new GenerousAPIEntities())
+            {
+                var donationTransactionList = from trans in db.TransactionDetails
+                                              where
+                                                 trans.ProcessDateTime <= dateTimeToBeProcessed &&
+                                                 trans.ProcessStatusId == statusValue &&
+                                                 trans.PaymentMethodId == methodValue &&
+                                                 trans.DoNotProcess == false
+
+                                              select trans;
+
+                return donationTransactionList.ToList<TransactionDetail>();
             }
         }
     }

@@ -20,5 +20,9 @@ namespace GenerousAPI.Models
         public int OrganisationId { get; set; }
 
         public int NumberOfEventTickets { get; set; }
+
+        public byte PaymentMethodId { get; set; }
+
+        public int ProcessRetryCounter { get; set; }
     }
 }

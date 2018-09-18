@@ -839,7 +839,7 @@ namespace GenerousAPI.BusinessServices
         {
             decimal feeAmount = 0;
 
-            // Determine if Fee (for events) 
+            // Determine Fee (for events) 
 
            
             // Determine for the transaction if it was direct debit or credit card

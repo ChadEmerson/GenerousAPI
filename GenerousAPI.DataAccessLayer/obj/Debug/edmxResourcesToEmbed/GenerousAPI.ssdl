@@ -256,6 +256,14 @@
     <Property Name="OrganisationId" Type="int" />
     <Property Name="NumberOfEventTickets" Type="int" />
     <Property Name="TicketFeeAmount" Type="decimal" Precision="12" Scale="2" />
+    <Property Name="DoNotProcess" Type="bit" />
+    <Property Name="Processed_DonationFinalisedDateTime" Type="datetime" />
+    <Property Name="Processed_DonationSubmittedDateTime" Type="datetime" />
+    <Property Name="ProcessRetryCounter" Type="int" />
+    <Property Name="LastModifiedBy" Type="nvarchar" MaxLength="100" />
+    <Property Name="LastModifiedDateTime" Type="datetime" />
+    <Property Name="LastProcessedDateTime" Type="datetime" />
+    <Property Name="HasProcessStatusChanged" Type="bit" />
   </EntityType>
   <EntityType Name="TransactionHistory">
     <Key>

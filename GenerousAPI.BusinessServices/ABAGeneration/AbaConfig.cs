@@ -9,6 +9,14 @@ namespace GenerousAPI.BusinessServices.ABAGeneration
     public class AbaConfig
     {
         /// <summary>
+        /// Name of the batch process that runs for processing transactions
+        /// </summary>
+        public static string TransactionProcessBatchName
+        {
+            get { return (System.Configuration.ConfigurationManager.AppSettings["TransactionProcessBatchName"] != null ? System.Configuration.ConfigurationManager.AppSettings["TransactionProcessBatchName"] : string.Empty); }
+        }
+
+        /// <summary>
         /// Adds the specified number of blank spaces to a string
         /// </summary>
         /// <param name="count">Number of blank spaces to add</param>

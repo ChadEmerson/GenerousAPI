@@ -50,7 +50,9 @@
     <Compile Include="ABAGeneration\ABAFileGenerator.cs" />
     <Compile Include="ABAGeneration\NAB_ABAFileGenerator.cs" />
     <Compile Include="BankAccountBS.cs" />
+    <Compile Include="DonationProcessingBS.cs" />
     <Compile Include="Interfaces\IBankAccountBS.cs" />
+    <Compile Include="Interfaces\IDonationProcessingBS.cs" />
     <Compile Include="Interfaces\IOrganisationFeeProcessingBS.cs" />
     <Compile Include="Interfaces\IPaymentGatewayBS.cs" />
     <Compile Include="Interfaces\IPaymentProfileBinInfoBS.cs" />

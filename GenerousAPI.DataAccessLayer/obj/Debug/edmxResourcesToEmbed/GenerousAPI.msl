@@ -99,6 +99,14 @@
     <EntitySetMapping Name="TransactionDetails">
       <EntityTypeMapping TypeName="GenerousAPIModel.TransactionDetail">
         <MappingFragment StoreEntitySet="TransactionDetails">
+          <ScalarProperty Name="HasProcessStatusChanged" ColumnName="HasProcessStatusChanged" />
+          <ScalarProperty Name="LastProcessedDateTime" ColumnName="LastProcessedDateTime" />
+          <ScalarProperty Name="LastModifiedDateTime" ColumnName="LastModifiedDateTime" />
+          <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+          <ScalarProperty Name="ProcessRetryCounter" ColumnName="ProcessRetryCounter" />
+          <ScalarProperty Name="Processed_DonationSubmittedDateTime" ColumnName="Processed_DonationSubmittedDateTime" />
+          <ScalarProperty Name="Processed_DonationFinalisedDateTime" ColumnName="Processed_DonationFinalisedDateTime" />
+          <ScalarProperty Name="DoNotProcess" ColumnName="DoNotProcess" />
           <ScalarProperty Name="TicketFeeAmount" ColumnName="TicketFeeAmount" />
           <ScalarProperty Name="NumberOfEventTickets" ColumnName="NumberOfEventTickets" />
           <ScalarProperty Name="OrganisationId" ColumnName="OrganisationId" />

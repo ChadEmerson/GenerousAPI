@@ -33,8 +33,8 @@ namespace GenerousAPI.Helpers
             /// </summary>
             [Description("Direct Debit")]
             DirectDebit = 2,
-
+        }   
+        
             
-        }       
     }
 }

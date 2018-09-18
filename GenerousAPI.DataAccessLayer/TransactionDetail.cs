@@ -35,6 +35,14 @@ namespace GenerousAPI.DataAccessLayer
         public Nullable<int> OrganisationId { get; set; }
         public Nullable<int> NumberOfEventTickets { get; set; }
         public Nullable<decimal> TicketFeeAmount { get; set; }
+        public Nullable<bool> DoNotProcess { get; set; }
+        public Nullable<System.DateTime> Processed_DonationFinalisedDateTime { get; set; }
+        public Nullable<System.DateTime> Processed_DonationSubmittedDateTime { get; set; }
+        public Nullable<int> ProcessRetryCounter { get; set; }
+        public string LastModifiedBy { get; set; }
+        public Nullable<System.DateTime> LastModifiedDateTime { get; set; }
+        public Nullable<System.DateTime> LastProcessedDateTime { get; set; }
+        public Nullable<bool> HasProcessStatusChanged { get; set; }
     
         public virtual TransactionType TransactionType { get; set; }
     }
