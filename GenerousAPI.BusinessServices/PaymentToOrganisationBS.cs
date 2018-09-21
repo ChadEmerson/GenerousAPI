@@ -778,7 +778,7 @@ namespace GenerousAPI.BusinessServices
 
                 calcAmount += organisationFeeProcessingSettings.OrganisationStandardFees.TransactionFeeAmount.Value;
 
-
+                // If there are tickets for the transasction
                 if (donationTransaction.TransactionDetail.NumberOfEventTickets > 0)
                 {
                     // Calculate price of tickets
@@ -839,9 +839,6 @@ namespace GenerousAPI.BusinessServices
         {
             decimal feeAmount = 0;
 
-            // Determine Fee (for events) 
-
-           
             // Determine for the transaction if it was direct debit or credit card
             if (donationTransaction.TransactionDetail.PaymentMethodId == (byte)BusinessEntities.TransactionMode.Credit)
             {

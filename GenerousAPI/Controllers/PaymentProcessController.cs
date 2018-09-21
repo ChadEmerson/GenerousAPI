@@ -104,14 +104,14 @@ namespace GenerousAPI.Controllers
 
         [AcceptVerbs("POST")]
         [HttpPost]
-        public BankAccountDTO GetBankAccountDetails(HttpRequestMessage request)
+        public BankAccountDTO GetBankAccountDetails([FromBody] string token)
         {
             try
             {
                 _IBankAccountBS = new BankAccountBS();
 
                 // Now pull out the body from the request 
-                string token = request.Content.ReadAsStringAsync().Result;
+                //string token = request.Content.ReadAsStringAsync().Result;
 
                 // Get the bank account
                 var bankAccount = _IBankAccountBS.GetBankAccount(token);
@@ -122,6 +122,35 @@ namespace GenerousAPI.Controllers
 
                 // Return response
                 return bankAccount;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        [AcceptVerbs("POST")]
+        [HttpPost]
+        public ProcessorResponse UpdateBankAccount([FromBody]BankAccountDTO bankAccountDTO)
+        {
+            try
+            {
+                var token = bankAccountDTO.BankAccountTokenId;
+                
+                _IBankAccountBS = new BankAccountBS();
+
+                var bankAccountToUpdate = _IBankAccountBS.GetBankAccount(token);
+
+                // Create Data Access object 
+                var bankAccount = DataTransformBankAccountDTO(bankAccountToUpdate, false);
+                bankAccount.BankAccountTokenId = token;
+                bankAccount.Active = bankAccountDTO.IsActive;
+
+                // Save the bank account
+                var updateResponse = _IBankAccountBS.UpdateBankAccount(bankAccount);
+
+                // Return a token id
+                return updateResponse;
             }
             catch (Exception)
             {
@@ -349,17 +378,17 @@ namespace GenerousAPI.Controllers
         
         [AcceptVerbs("POST")]
         [HttpPost]
-        public ProcessorResponse DeletePaymentProfile(HttpRequestMessage request)
+        public ProcessorResponse DeletePaymentProfile([FromBody] string authToken)
         {
             try
             {
                 _IPaymentProfileBS = new PaymentProfileBS();
 
                 // Now pull out the body from the request
-                string token = request.Content.ReadAsStringAsync().Result;
+                //string token = request.Content.ReadAsStringAsync().Result;
 
                 // Delete the payment profile
-                var response = _IPaymentProfileBS.DeletePaymentProfile(token);
+                var response = _IPaymentProfileBS.DeletePaymentProfile(authToken);
 
                 // Return response
                 return response;
@@ -373,14 +402,14 @@ namespace GenerousAPI.Controllers
 
         [AcceptVerbs("POST")]
         [HttpPost]
-        public ProcessorResponse DeleteBankAccount(HttpRequestMessage request)
+        public ProcessorResponse DeleteBankAccount([FromBody] string token)
         {
             try
             {
                 _IBankAccountBS = new BankAccountBS();
 
                 // Now pull out the body from the request 
-                string token = request.Content.ReadAsStringAsync().Result;
+                //string token = request.Content.ReadAsStringAsync().Result;
 
                 // Delete the bank account
                 var response = _IBankAccountBS.DeleteBankAccount(token);
@@ -398,14 +427,14 @@ namespace GenerousAPI.Controllers
 
         [AcceptVerbs("POST")]
         [HttpPost]
-        public TransactionDetailsDTO GetTransactionDetails(HttpRequestMessage request)
+        public TransactionDetailsDTO GetTransactionDetails([FromBody] string token)
         {
             try
             {
                 _ITransactionDetailsBS = new TransactionDetailsBS();
 
                 // Now pull out the body from the request 
-                string token = request.Content.ReadAsStringAsync().Result;
+                //string token = request.Content.ReadAsStringAsync().Result;
 
                 // Get the transaction details
                 var transactionDetails = _ITransactionDetailsBS.GetTransactionDetails(Guid.Parse(token));
@@ -421,14 +450,14 @@ namespace GenerousAPI.Controllers
 
         [AcceptVerbs("POST")]
         [HttpPost]
-        public IEnumerable<TransactionDetailsDTO> GetTransactionDetailsForBankAccount(HttpRequestMessage request)
+        public IEnumerable<TransactionDetailsDTO> GetTransactionDetailsForBankAccount([FromBody] string token)
         {
             try
             {
                 _ITransactionDetailsBS = new TransactionDetailsBS();
 
                 // Now pull out the body from the request 
-                string token = request.Content.ReadAsStringAsync().Result;
+                //string token = request.Content.ReadAsStringAsync().Result;
 
                 // Get the transaction details
                 var transactionDetails = _ITransactionDetailsBS.GetTransactionDetailsForBankAccount(token);
@@ -463,7 +492,7 @@ namespace GenerousAPI.Controllers
         /// <returns></returns>
         [AcceptVerbs("POST")]
         [HttpPost]
-        public PaymentResponse ProcessRefund(HttpRequestMessage request)
+        public PaymentResponse ProcessRefund([FromBody] string token)
         {
             var refundResponse = new PaymentResponse();
 
@@ -475,11 +504,11 @@ namespace GenerousAPI.Controllers
             {
                 PaymentGatewayProcessing.Helpers.RefundRequest cardAccessRefundRequest = new PaymentGatewayProcessing.Helpers.RefundRequest();
 
-
+                Guid transactionGroupId = Guid.NewGuid();
                 _ITransactionDetailsBS = new TransactionDetailsBS();
 
                 // Now pull out the body from the request 
-                string token = request.Content.ReadAsStringAsync().Result;
+                //string token = request.Content.ReadAsStringAsync().Result;
 
                 // Get the transaction details
                 var transactionDetails = _ITransactionDetailsBS.GetTransactionDetails(Guid.Parse(token));
@@ -499,7 +528,7 @@ namespace GenerousAPI.Controllers
 
                 var transactionDetail = DataTransformTransactionDetailsDTO(transactionDetails);
 
-                var transactionInformation = CreateTransactionDetailsObject(transactionDetail, refundResponse, TransactionMode.Refund, cardAccessResponse.ResponseCode);
+                var transactionInformation = CreateTransactionDetailsObject(transactionDetail, refundResponse, TransactionMode.Refund, cardAccessResponse.ResponseCode, transactionGroupId);
 
                 transactionInformation.CustomerReference = transactionDetails.CustomerReference;
                 transactionInformation.AuditNumber = cardAccessResponse.ResponseAuditNumber;
@@ -529,20 +558,21 @@ namespace GenerousAPI.Controllers
 
             try
             {
-                foreach (var transactionToProcess in transactionDetails)
-                {
-                    paymentResponses.Add(ProcessCardAccessCreditCardPayment(transactionToProcess));
-                }
+                paymentResponses.Add(ProcessCardAccessCreditCardPayment(transactionDetails.ToList()));
+
 
                 // Also get any to retry
                 var transactionsToRetry = transactionDetailsBS.GetDonationTransactionsByStatus_ForProcessing(DateTime.Now, PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.ReProcess, PaymentGatewayProcessing.Helpers.Enums.PaymentMethod.CreditCard);
 
+                List<TransactionDetails> transactionTransformed = new List<TransactionDetails>();
+
                 foreach (var transactionToProcess in transactionsToRetry)
                 {
-                    // Convert to Transaction Details object
-                    var transactionTransformed = DataTransformTransactionDetailsObject(transactionToProcess);
-                    paymentResponses.Add(ProcessCardAccessCreditCardPayment(transactionTransformed));
+                    transactionTransformed.Add(DataTransformTransactionDetailsObject(transactionToProcess));
                 }
+
+                paymentResponses.Add(ProcessCardAccessCreditCardPayment(transactionTransformed));
+
 
             }
             catch (Exception ex)
@@ -595,7 +625,7 @@ namespace GenerousAPI.Controllers
             {
                 // Get unprocessed DD transactions
                 var transactionDetails = transactionDetailsBS.GetDonationTransactionsByStatus_ForProcessing(DateTime.Now, PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.Unprocessed, PaymentGatewayProcessing.Helpers.Enums.PaymentMethod.DirectDebit);
-
+                
                 // Get transactions to retry
                 var transactionsToRetry = transactionDetailsBS.GetDonationTransactionsByStatus_ForProcessing(DateTime.Now, PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.ReProcess, PaymentGatewayProcessing.Helpers.Enums.PaymentMethod.DirectDebit);
                                 
@@ -631,12 +661,10 @@ namespace GenerousAPI.Controllers
             
             var paymentResponses = new List<PaymentResponse>();
 
-            // Get payment profile details for each transaction and process           
-            foreach (var transaction in transactionDetails)
-            {
+            
                 try
                 {
-                    if (transaction.IsTest)
+                    if (transactionDetails.FirstOrDefault().IsTest)
                     {
                         PaymentGatewayProcessing.PaymentGatewayProcessing paymentGatewayProcessing = null;
                         NameValueCollection collection = PaymentGatewayConfigXMLParser.ParseConfigXML(GetGenerousPaymentGatewayDetails((byte)Enums.PaymentGatewayType.GENEROUS).GatewayConfig);
@@ -650,10 +678,10 @@ namespace GenerousAPI.Controllers
                         var paymentGateway = new ProcessCardAccessPayment(targetUrl, CardAccessMerchantId, authentication);
 
                         var auditId = paymentGateway.GetAudit();
-                        paymentGateway.IsTest = transaction.IsTest;
+                        paymentGateway.IsTest = transactionDetails.FirstOrDefault().IsTest;
 
                         // Convert to cents
-                        cardAccessRequest.Amount = Convert.ToInt64(transaction.Amount * 100);                        
+                        cardAccessRequest.Amount = Convert.ToInt64(transactionDetails.Sum(x => x.Amount * 100));                        
                         cardAccessRequest.AccountNumber = "001030230";
                         cardAccessRequest.AccountName = "Card Access Services";
                         cardAccessRequest.BsbNumber = "123456";
@@ -666,25 +694,29 @@ namespace GenerousAPI.Controllers
                             var paymentResponse = new PaymentResponse();
                             paymentResponse.IsSuccess = true;
                             paymentResponse.Message = "Test successful";
-                            paymentResponse.Amount = transaction.Amount;
+                            paymentResponse.Amount = Convert.ToInt64(transactionDetails.Sum(x => x.Amount * 100));
 
                             paymentResponses.Add(paymentResponse);
                         }
                     }
                     else
-                    {
-                        // First time transaction taking place - set retry counter to 0
-                        transaction.ProcessRetryCounter = 0;
-
-                        if (transaction.PaymentMethodId == (byte)Enums.PaymentMethod.CreditCard)
+                    {                        
+                        if (transactionDetails.FirstOrDefault().PaymentMethodId == (byte)Enums.PaymentMethod.CreditCard)
                         {
-                            paymentResponses.Add(ProcessCardAccessCreditCardPayment(transaction));
+                            paymentResponses.Add(ProcessCardAccessCreditCardPayment(transactionDetails.ToList()));
                         }
                         else
                         {
                             // Queue up for Direct Debit
                             _IDonationProcessingBS = new DonationProcessingBS();
-                            _IDonationProcessingBS.QueueUpRegularDonations(CreateTransactionDetailsObject(transaction, Enums.PaymentMethod.DirectDebit));
+                            Guid transactionGroupId = Guid.NewGuid();
+                            foreach (var transaction in transactionDetails)
+                            {
+                                var paymentResponseEmpty = new PaymentResponse();
+                                var paymentProfile = GetPaymentProfileDetails(transaction.PaymentProfileTokenId);
+
+                                _IDonationProcessingBS.QueueUpRegularDonations(CreateTransactionDetailsObject(transaction, Enums.PaymentMethod.DirectDebit, transactionGroupId));                               
+                            }
                         }
                     }                    
                 }
@@ -693,21 +725,101 @@ namespace GenerousAPI.Controllers
                     var paymentResponse = new PaymentResponse();
                     paymentResponse.IsSuccess = false;
                     paymentResponse.Message = ex.Message;
-                    paymentResponse.Amount = transaction.Amount;
+                    paymentResponse.Amount = Convert.ToInt64(transactionDetails.Sum(x => x.Amount * 100));
 
                     paymentResponses.Add(paymentResponse);
                 }
-            }
+            
 
             return paymentResponses;
         }
       
-        private PaymentResponse ProcessCardAccessCreditCardPayment(TransactionDetails transaction)
+        private PaymentResponse ProcessCardAccessCreditCardPayment(List<TransactionDetails> transactionDetails)
+        {
+            // Create collection of transaction objects
+            List<DataAccessLayer.TransactionDetail> transactionList = new List<DataAccessLayer.TransactionDetail>();
+            decimal amount = 0;
+            Guid transactionGroupId = Guid.NewGuid();
+
+            foreach(var transaction in transactionDetails)
+            {
+                var paymentResponseEmpty = new PaymentResponse();
+                var paymentProfile = GetPaymentProfileDetails(transaction.PaymentProfileTokenId);
+
+                var transactionInformation = CreateTransactionDetailsObject(transaction, paymentResponseEmpty, paymentProfile.TransactionMode, string.Empty, transactionGroupId);
+                amount += transaction.Amount;
+                transactionList.Add(transactionInformation);
+            }
+
+            var transactionToProcess = new TransactionDetails();
+            transactionToProcess.PaymentProfileTokenId = transactionList.FirstOrDefault().PaymentProfileTokenId;
+            transactionToProcess.Amount = amount;
+            transactionToProcess.TransactionReferenceNumber = transactionList.FirstOrDefault().CustomerReference;
+
+            var paymentResponse = ProcessCreditCardViaCardAccess(transactionToProcess);
+
+            foreach (var transaction in transactionList)
+            {
+                if (paymentResponse.IsSuccess)
+                {
+                    transaction.ProcessStatusId = (byte)PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.Approved;
+
+                }
+                else
+                {
+                    transaction.ProcessStatusId = (byte)PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.Failed;
+                    if (transaction.ProcessRetryCounter.HasValue)
+                    {
+                        transaction.ProcessRetryCounter += 1;
+                    }
+                    else
+                    {
+                        transaction.ProcessRetryCounter = 1;
+                    }
+                }
+
+                transaction.CustomerReference = transactionToProcess.TransactionReferenceNumber;
+                transaction.AuditNumber = paymentResponse.ResponseAuditNumber;
+                CreateTransactionRecord(transaction);
+
+                if (!paymentResponse.IsSuccess)
+                {
+                    IDonationProcessingBS donationProcessingBS = new DonationProcessingBS();
+
+
+
+                    if ((transaction.ProcessRetryCounter ?? 0) < BusinessServices.ABAGeneration.AbaConfig.MaxRetries)
+                    {
+                        //mark them reprocess status if max retries hasn't reached, otherwise mark them as 'stop processing' status                
+                        donationProcessingBS.SetDonationTransactionsStatus(transaction,
+                                PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.ReProcess,
+                                DateTime.Now,
+                                BusinessServices.ABAGeneration.AbaConfig.TransactionProcessBatchName);
+                    }
+                    else
+                    {
+                        donationProcessingBS.SetDonationTransactionsStatus(transaction,
+                                PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.DoNotProcess,
+                                DateTime.Now,
+                                BusinessServices.ABAGeneration.AbaConfig.TransactionProcessBatchName);
+                    }
+                }
+            }
+
+            
+            paymentResponse.TransactionId = transactionGroupId;           
+
+            return paymentResponse;
+        }
+
+
+        private PaymentResponse ProcessCreditCardViaCardAccess(TransactionDetails transaction)
         {
             PaymentGatewayProcessing.PaymentGatewayProcessing paymentGatewayProcessing = null;
             NameValueCollection collection = PaymentGatewayConfigXMLParser.ParseConfigXML(GetGenerousPaymentGatewayDetails((byte)Enums.PaymentGatewayType.GENEROUS).GatewayConfig);
             paymentGatewayProcessing = new ProcessCardAccessPayment(collection);
             PaymentGatewayProcessing.Helpers.PaymentRequestDetails cardAccessRequest = new PaymentGatewayProcessing.Helpers.PaymentRequestDetails();
+
 
             var paymentProfile = GetPaymentProfileDetails(transaction.PaymentProfileTokenId);
 
@@ -727,52 +839,7 @@ namespace GenerousAPI.Controllers
             paymentResponse.IsSuccess = cardAccessResponse.TransactionSuccessful;
             paymentResponse.Message = cardAccessResponse.ResponseMessage + " " + cardAccessResponse.ResponseText;
             paymentResponse.Amount = transaction.Amount;
-
-            var transactionInformation = CreateTransactionDetailsObject(transaction, paymentResponse, paymentProfile.TransactionMode, cardAccessResponse.ResponseCode);
-
-            if (paymentResponse.IsSuccess)
-            {
-                transactionInformation.ProcessStatusId = (byte)PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.Approved;
-            }
-            else
-            {
-                transactionInformation.ProcessStatusId = (byte)PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.Failed;
-                if (transactionInformation.ProcessRetryCounter.HasValue)
-                {
-                    transactionInformation.ProcessRetryCounter += 1;
-                }
-                else
-                {
-                    transactionInformation.ProcessRetryCounter = 1;
-                }
-            }
-
-            transactionInformation.CustomerReference = transaction.TransactionReferenceNumber;
-            transactionInformation.AuditNumber = cardAccessResponse.ResponseAuditNumber;
-            CreateTransactionRecord(transactionInformation);
-            paymentResponse.TransactionId = transactionInformation.Id;
-
-            if (!paymentResponse.IsSuccess)
-            {
-                IDonationProcessingBS donationProcessingBS = new DonationProcessingBS();
-
-                if ((transactionInformation.ProcessRetryCounter ?? 0) < BusinessServices.ABAGeneration.AbaConfig.MaxRetries)
-                {
-                    //mark them reprocess status if max retries hasn't reached, otherwise mark them as 'stop processing' status                
-                    donationProcessingBS.SetDonationTransactionsStatus(transactionInformation,
-                            PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.ReProcess,
-                            DateTime.Now,
-                            BusinessServices.ABAGeneration.AbaConfig.TransactionProcessBatchName);
-                }
-                else
-                {                         
-                    donationProcessingBS.SetDonationTransactionsStatus(transactionInformation,
-                            PaymentGatewayProcessing.Helpers.Enums.PaymentProcessStatus.DoNotProcess,
-                            DateTime.Now,
-                            BusinessServices.ABAGeneration.AbaConfig.TransactionProcessBatchName);
-                }
-            }
-
+            paymentResponse.ResponseAuditNumber = cardAccessResponse.ResponseAuditNumber;
             return paymentResponse;
         }
 
@@ -1123,7 +1190,8 @@ namespace GenerousAPI.Controllers
                     BankAccountBSB = bankAccountDTO.BankAccountBSB,
                     BankAccountId = bankAccountDTO.BankAccountId,
                     BankAcountName = bankAccountDTO.BankAcountName,
-                    BankAccountTokenId = bankAccountDTO.BankAccountTokenId
+                    BankAccountTokenId = bankAccountDTO.BankAccountTokenId,
+                    BankVerificationAmounts = bankAccountDTO.BankVerificationAmounts
                 };
 
                 return bankAccount;
@@ -1175,7 +1243,7 @@ namespace GenerousAPI.Controllers
         /// </summary>
         /// <param name="paymentProfileDTO">DTO of the payment profile</param>
         /// <returns>Payment Profile object for DAL</returns>
-        private DataAccessLayer.TransactionDetail CreateTransactionDetailsObject(TransactionDetails transactionDetails, PaymentResponse paymentResponse, TransactionMode transactionMode, string responseCode)
+        private DataAccessLayer.TransactionDetail CreateTransactionDetailsObject(TransactionDetails transactionDetails, PaymentResponse paymentResponse, TransactionMode transactionMode, string responseCode, Guid transactionGroupId)
         {
             var transactionDetail = new DataAccessLayer.TransactionDetail
             {
@@ -1188,7 +1256,8 @@ namespace GenerousAPI.Controllers
                 ResponseCode = string.IsNullOrEmpty(responseCode) ? "99" : responseCode,
                 Id = Guid.NewGuid(),
                 OrganisationId = transactionDetails.OrganisationId,
-                NumberOfEventTickets = transactionDetails.NumberOfEventTickets
+                NumberOfEventTickets = transactionDetails.NumberOfEventTickets,
+                TransactionGroupId = transactionGroupId
             };
 
             return transactionDetail;
@@ -1199,7 +1268,7 @@ namespace GenerousAPI.Controllers
         /// </summary>
         /// <param name="paymentProfileDTO">DTO of the payment profile</param>
         /// <returns>Payment Profile object for DAL</returns>
-        private DataAccessLayer.TransactionDetail CreateTransactionDetailsObject(TransactionDetails transactionDetails, Enums.PaymentMethod paymentMethod)
+        private DataAccessLayer.TransactionDetail CreateTransactionDetailsObject(TransactionDetails transactionDetails, Enums.PaymentMethod paymentMethod, Guid transactionGroupId)
         {
             var transactionDetail = new DataAccessLayer.TransactionDetail
             {

@@ -264,6 +264,7 @@
     <Property Name="LastModifiedDateTime" Type="datetime" />
     <Property Name="LastProcessedDateTime" Type="datetime" />
     <Property Name="HasProcessStatusChanged" Type="bit" />
+    <Property Name="TransactionGroupId" Type="uniqueidentifier" />
   </EntityType>
   <EntityType Name="TransactionHistory">
     <Key>

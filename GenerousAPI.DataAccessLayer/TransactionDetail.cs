@@ -43,6 +43,7 @@ namespace GenerousAPI.DataAccessLayer
         public Nullable<System.DateTime> LastModifiedDateTime { get; set; }
         public Nullable<System.DateTime> LastProcessedDateTime { get; set; }
         public Nullable<bool> HasProcessStatusChanged { get; set; }
+        public Nullable<System.Guid> TransactionGroupId { get; set; }
     
         public virtual TransactionType TransactionType { get; set; }
     }

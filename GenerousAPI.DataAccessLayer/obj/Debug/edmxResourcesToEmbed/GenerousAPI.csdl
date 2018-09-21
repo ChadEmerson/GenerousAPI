@@ -244,6 +244,7 @@
     <Property Name="LastModifiedDateTime" Type="DateTime" Precision="3" />
     <Property Name="LastProcessedDateTime" Type="DateTime" Precision="3" />
     <Property Name="HasProcessStatusChanged" Type="Boolean" />
+    <Property Name="TransactionGroupId" Type="Guid" />
   </EntityType>
   <EntityType Name="PaymentProfileBinInfo">
     <Key>

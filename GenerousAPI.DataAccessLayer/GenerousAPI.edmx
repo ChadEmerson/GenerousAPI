@@ -269,6 +269,7 @@
           <Property Name="LastModifiedDateTime" Type="datetime" />
           <Property Name="LastProcessedDateTime" Type="datetime" />
           <Property Name="HasProcessStatusChanged" Type="bit" />
+          <Property Name="TransactionGroupId" Type="uniqueidentifier" />
         </EntityType>
         <EntityType Name="TransactionHistory">
           <Key>
@@ -717,6 +718,7 @@
           <Property Name="LastModifiedDateTime" Type="DateTime" Precision="3" />
           <Property Name="LastProcessedDateTime" Type="DateTime" Precision="3" />
           <Property Name="HasProcessStatusChanged" Type="Boolean" />
+          <Property Name="TransactionGroupId" Type="Guid" />
         </EntityType>
         <EntityType Name="PaymentProfileBinInfo">
           <Key>
@@ -1059,6 +1061,7 @@
           <EntitySetMapping Name="TransactionDetails">
             <EntityTypeMapping TypeName="GenerousAPIModel.TransactionDetail">
               <MappingFragment StoreEntitySet="TransactionDetails">
+                <ScalarProperty Name="TransactionGroupId" ColumnName="TransactionGroupId" />
                 <ScalarProperty Name="HasProcessStatusChanged" ColumnName="HasProcessStatusChanged" />
                 <ScalarProperty Name="LastProcessedDateTime" ColumnName="LastProcessedDateTime" />
                 <ScalarProperty Name="LastModifiedDateTime" ColumnName="LastModifiedDateTime" />

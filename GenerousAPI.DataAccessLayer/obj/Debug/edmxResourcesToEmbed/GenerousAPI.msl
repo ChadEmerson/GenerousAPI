@@ -99,6 +99,7 @@
     <EntitySetMapping Name="TransactionDetails">
       <EntityTypeMapping TypeName="GenerousAPIModel.TransactionDetail">
         <MappingFragment StoreEntitySet="TransactionDetails">
+          <ScalarProperty Name="TransactionGroupId" ColumnName="TransactionGroupId" />
           <ScalarProperty Name="HasProcessStatusChanged" ColumnName="HasProcessStatusChanged" />
           <ScalarProperty Name="LastProcessedDateTime" ColumnName="LastProcessedDateTime" />
           <ScalarProperty Name="LastModifiedDateTime" ColumnName="LastModifiedDateTime" />

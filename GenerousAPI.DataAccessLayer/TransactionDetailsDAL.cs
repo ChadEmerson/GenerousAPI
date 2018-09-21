@@ -224,8 +224,7 @@ namespace GenerousAPI.DataAccessLayer
                                                  trans.ProcessDateTime <= dateTimeToBeProcessed &&
                                                  trans.ProcessStatusId == statusValue &&
                                                  trans.PaymentMethodId == methodValue &&
-                                                 trans.DoNotProcess == false
-
+                                                 trans.DoNotProcess == false                                                 
                                               select trans;
 
                 return donationTransactionList.ToList<TransactionDetail>();

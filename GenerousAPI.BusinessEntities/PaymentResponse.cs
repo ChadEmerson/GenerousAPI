@@ -18,5 +18,7 @@ namespace GenerousAPI.BusinessEntities
         public string Message { get; set; }
         public decimal Amount { get; set; }
         public Guid TransactionId { get; set; }
+
+        public string ResponseAuditNumber { get; set; }
     }
 }

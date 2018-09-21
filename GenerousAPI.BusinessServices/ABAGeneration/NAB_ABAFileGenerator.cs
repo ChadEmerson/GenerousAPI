@@ -11,6 +11,7 @@ namespace GenerousAPI.BusinessServices.ABAGeneration
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using static BusinessEntities.Common;
 
@@ -108,27 +109,17 @@ namespace GenerousAPI.BusinessServices.ABAGeneration
         /// <returns>generated details for the line</returns>
         protected override String GenerateDetails(List<DataAccessLayer.DonationTransactionWithRelatedData> donationTransactions)
         {
-
             List<ABAFileDetailItem> detailLineItemList = new List<ABAFileDetailItem>();
             foreach (DataAccessLayer.DonationTransactionWithRelatedData transWithRelatedData in donationTransactions)
             {
                 try
-                {                   
+                {                    
                     ABAFileDetailItem detailLineItem = new ABAFileDetailItem();
                     detailLineItem.Amount = transWithRelatedData.TransactionDetail.Amount;
                     detailLineItem.RecepientBSBNumber = BusinessEntities.EncryptionService.Decrypt(transWithRelatedData.DonorPaymentProfile.BSBNumber);
                     detailLineItem.RecepientAccountNumber = BusinessEntities.EncryptionService.Decrypt(transWithRelatedData.DonorPaymentProfile.BankAccountNumber);
                     detailLineItem.RecepientAccountName = transWithRelatedData.DonorPaymentProfile.BankAccountName;
-                    detailLineItem.LodgementReference = transWithRelatedData.TransactionDetail.CustomerReference;
-
-                    //var OrgAndCampaignTrimmedString = string.Empty;
-                    //var orgNameTrim = (transWithRelatedData.Organisation.NameInDonorStatement.Length >= 5) ? 
-                    //    transWithRelatedData.Organisation.NameInDonorStatement.Substring(0, 5) : transWithRelatedData.Organisation.NameInDonorStatement;
-                    //var campaignTrim = (transWithRelatedData.Project.CustomerCampaignId.Length >= 6) ? 
-                    //    transWithRelatedData.Project.CustomerCampaignId.Substring(0, 6) : transWithRelatedData.Project.CustomerCampaignId;
-
-                    //OrgAndCampaignTrimmedString = orgNameTrim + " " + campaignTrim + transWithRelatedData.DonationTransaction.TransactionReferenceNumber;
-                    //detailLineItem.LodgementReference = OrgAndCampaignTrimmedString;
+                    detailLineItem.LodgementReference = transWithRelatedData.TransactionDetail.CustomerReference;                                       
 
                     detailLineItem.RemitterName = AbaConfig.NAB_Remitter;
 
@@ -141,7 +132,25 @@ namespace GenerousAPI.BusinessServices.ABAGeneration
                 }
             }
 
-            return GenerateDetailLines(detailLineItemList);
+            // Combine Line items into by the total 
+            var combinedListDetail = detailLineItemList.GroupBy(x => 
+            new {
+                x.RecepientAccountNumber,
+                x.RecepientAccountName,
+                x.LodgementReference,
+                x.RecepientBSBNumber,
+                x.RemitterName })
+                .Select(x => new ABAFileDetailItem
+            {
+                Amount = x.Sum(item => item.Amount),
+                RecepientBSBNumber = x.Key.RecepientBSBNumber,
+                RecepientAccountNumber = x.Key.RecepientAccountNumber,
+                RecepientAccountName = x.Key.RecepientAccountName,
+                LodgementReference = x.Key.LodgementReference,
+                RemitterName = x.Key.RemitterName
+            }).ToList();
+
+            return GenerateDetailLines(combinedListDetail);
         }
 
         /// <summary>

@@ -250,6 +250,7 @@ namespace GenerousAPI.BusinessServices
 
             try
             {
+                // Get group ids for this transaction so that we can then get 
                 donationTransactionsWithDetails = _transactionDetailsBS.GetDonationTransaction_WithRelatedData(transactionIds);
             }
             catch (Exception ex)

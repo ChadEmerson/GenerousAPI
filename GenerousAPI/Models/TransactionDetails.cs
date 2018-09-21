@@ -19,10 +19,22 @@ namespace GenerousAPI.Models
 
         public int OrganisationId { get; set; }
 
-        public int NumberOfEventTickets { get; set; }
+        //public List<EventTicketsWithPrice> EventTickets { get; set; }
 
         public byte PaymentMethodId { get; set; }
 
         public int ProcessRetryCounter { get; set; }
+
+        public int NumberOfEventTickets { get; set; }
+
     }
+
+
+    //public class EventTicketsWithPrice
+    //{
+    //    public int eventTicket { get; set; }
+
+    //    public decimal TicketPriceAmount { get; set; }
+    //}
+
 }
