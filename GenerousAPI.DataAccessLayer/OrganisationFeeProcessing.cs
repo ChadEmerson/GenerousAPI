@@ -23,5 +23,6 @@ namespace GenerousAPI.DataAccessLayer
         public Nullable<System.DateTime> NextRunDate { get; set; }
         public Nullable<System.DateTime> LastRunDate { get; set; }
         public Nullable<System.DateTime> OrganisationBillDate { get; set; }
+        public Nullable<bool> SystemDefault { get; set; }
     }
 }

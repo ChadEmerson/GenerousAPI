@@ -52,6 +52,7 @@
           <Property Name="NextRunDate" Type="datetime" />
           <Property Name="LastRunDate" Type="datetime" />
           <Property Name="OrganisationBillDate" Type="datetime" />
+          <Property Name="SystemDefault" Type="bit" />
         </EntityType>
         <EntityType Name="OrganisationPromoFee">
           <Key>
@@ -67,6 +68,7 @@
           <Property Name="AmexMinAmount" Type="decimal" Precision="2" Scale="2" />
           <Property Name="DirectDebitFee" Type="float" />
           <Property Name="DirectDebitMin" Type="decimal" Precision="2" Scale="2" />
+          <Property Name="SystemDefault" Type="bit" />
         </EntityType>
         <EntityType Name="OrganisationStandardFee">
           <Key>
@@ -103,6 +105,7 @@
           <Property Name="EventTicketBracket3Fee" Type="decimal" Precision="12" Scale="2" />
           <Property Name="EventTicketBracket4Fee" Type="decimal" Precision="12" Scale="2" />
           <Property Name="EventTicketBracket5Fee" Type="decimal" Precision="12" Scale="2" />
+          <Property Name="SystemDefault" Type="bit" />
         </EntityType>
         <EntityType Name="PaymentGatewayConfig">
           <Key>
@@ -880,6 +883,7 @@
           <Property Name="NextRunDate" Type="DateTime" Precision="3" />
           <Property Name="LastRunDate" Type="DateTime" Precision="3" />
           <Property Name="OrganisationBillDate" Type="DateTime" Precision="3" />
+          <Property Name="SystemDefault" Type="Boolean" />
         </EntityType>
         <Association Name="FK_TransactionDetails_TransactionType">
           <End Type="GenerousAPIModel.TransactionType" Role="TransactionType" Multiplicity="0..1" />
@@ -920,6 +924,7 @@
           <Property Name="AmexMinAmount" Type="Decimal" Precision="2" Scale="2" />
           <Property Name="DirectDebitFee" Type="Double" />
           <Property Name="DirectDebitMin" Type="Decimal" Precision="2" Scale="2" />
+          <Property Name="SystemDefault" Type="Boolean" />
         </EntityType>
         <EntityType Name="OrganisationStandardFee">
           <Key>
@@ -956,6 +961,7 @@
           <Property Name="EventTicketBracket3Fee" Type="Decimal" Precision="12" Scale="2" />
           <Property Name="EventTicketBracket4Fee" Type="Decimal" Precision="12" Scale="2" />
           <Property Name="EventTicketBracket5Fee" Type="Decimal" Precision="12" Scale="2" />
+          <Property Name="SystemDefault" Type="Boolean" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -1196,6 +1202,7 @@
           <EntitySetMapping Name="OrganisationFeeProcessings">
             <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationFeeProcessing">
               <MappingFragment StoreEntitySet="OrganisationFeeProcessing">
+                <ScalarProperty Name="SystemDefault" ColumnName="SystemDefault" />
                 <ScalarProperty Name="OrganisationBillDate" ColumnName="OrganisationBillDate" />
                 <ScalarProperty Name="LastRunDate" ColumnName="LastRunDate" />
                 <ScalarProperty Name="NextRunDate" ColumnName="NextRunDate" />
@@ -1225,6 +1232,7 @@
           <EntitySetMapping Name="OrganisationPromoFees">
             <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationPromoFee">
               <MappingFragment StoreEntitySet="OrganisationPromoFee">
+                <ScalarProperty Name="SystemDefault" ColumnName="SystemDefault" />
                 <ScalarProperty Name="DirectDebitMin" ColumnName="DirectDebitMin" />
                 <ScalarProperty Name="DirectDebitFee" ColumnName="DirectDebitFee" />
                 <ScalarProperty Name="AmexMinAmount" ColumnName="AmexMinAmount" />
@@ -1241,6 +1249,7 @@
           <EntitySetMapping Name="OrganisationStandardFees">
             <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationStandardFee">
               <MappingFragment StoreEntitySet="OrganisationStandardFee">
+                <ScalarProperty Name="SystemDefault" ColumnName="SystemDefault" />
                 <ScalarProperty Name="EventTicketBracket5Fee" ColumnName="EventTicketBracket5Fee" />
                 <ScalarProperty Name="EventTicketBracket4Fee" ColumnName="EventTicketBracket4Fee" />
                 <ScalarProperty Name="EventTicketBracket3Fee" ColumnName="EventTicketBracket3Fee" />

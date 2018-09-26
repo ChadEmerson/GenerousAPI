@@ -35,6 +35,11 @@ namespace GenerousAPI.BusinessServices
             return _organisationFeeProcessingDAL.GetOrganisationFeeProcesingWithRelatedData(organisationId);
         }
 
+        public OrganisationFeeProcesingWithRelatedData GetDefaultOrganisationFeeProcesingWithRelatedData()
+        {
+            return _organisationFeeProcessingDAL.GetDefaultOrganisationFeeProcesingWithRelatedData();
+        }
+
         public void UpdateOrganisationFeeProces(OrganisationFeeProcessing processedFee)
         {
             _organisationFeeProcessingDAL.UpdateOrganisationFeeProces(processedFee);

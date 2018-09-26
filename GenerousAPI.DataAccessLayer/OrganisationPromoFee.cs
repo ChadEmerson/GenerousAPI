@@ -24,5 +24,6 @@ namespace GenerousAPI.DataAccessLayer
         public Nullable<decimal> AmexMinAmount { get; set; }
         public Nullable<double> DirectDebitFee { get; set; }
         public Nullable<decimal> DirectDebitMin { get; set; }
+        public Nullable<bool> SystemDefault { get; set; }
     }
 }

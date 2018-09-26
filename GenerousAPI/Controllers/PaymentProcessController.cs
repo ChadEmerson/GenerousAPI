@@ -231,6 +231,33 @@ namespace GenerousAPI.Controllers
 
         [AcceptVerbs("POST")]
         [HttpGet]
+        public OrganisationFeesDTO GetDefaultOrganisationFees(HttpRequestMessage request)
+        {
+            int organisationId = Convert.ToInt32(request.Content.ReadAsStringAsync().Result);
+            _IOrganisationFeeProcessingBS = new OrganisationFeeProcessingBS();
+
+            var orgFeesDetail = new OrganisationFeesDTO();
+
+            // Get organisation standard and promo fees
+            var orgFeesDetailCollection = _IOrganisationFeeProcessingBS.GetDefaultOrganisationFeeProcesingWithRelatedData();
+
+            try
+            {
+                orgFeesDetail = DataTransformOrgFees(orgFeesDetailCollection, organisationId);
+
+                orgFeesDetail.OrganisationId = organisationId;
+                orgFeesDetail.CurrencyCode = orgFeesDetailCollection.OrganisationToProcess.CurrencyCode;
+
+                return orgFeesDetail;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        [AcceptVerbs("POST")]
+        [HttpGet]
         public OrganisationFeesDTO GetOrganisationFees(HttpRequestMessage request)
         {
             int organisationId = Convert.ToInt32(request.Content.ReadAsStringAsync().Result);
@@ -266,48 +293,53 @@ namespace GenerousAPI.Controllers
 
             try
             {
-                // Create promo billing
-                var promoBilling = CreatePromoBilling(orgFees, orgFees.OrganisationId);
-
-                // Create standing billing
-                var standardBilling = CreateStandardBilling(orgFees, orgFees.OrganisationId);
-
-                // create fee process
-                var feeProcess = CreateFeeProcessing(orgFees, orgFees.OrganisationId);
-
-                // Check if creating new or updating existing
-                try
+                if (orgFees.OrganisationId != 0 || orgFees.OrganisationId != -1)
                 {
-                    var orgFeesDetailCollection = _IOrganisationFeeProcessingBS.GetOrganisationFeeProcesingWithRelatedData(organisationId);
+                    // Create promo billing
+                    var promoBilling = CreatePromoBilling(orgFees, orgFees.OrganisationId);
 
-                    if (orgFeesDetailCollection == null)
+                    // Create standing billing
+                    var standardBilling = CreateStandardBilling(orgFees, orgFees.OrganisationId);
+
+                    // create fee process
+                    var feeProcess = CreateFeeProcessing(orgFees, orgFees.OrganisationId);
+
+                    // Check if creating new or updating existing
+                    try
                     {
-                        // New ones
+                        var orgFeesDetailCollection = _IOrganisationFeeProcessingBS.GetOrganisationFeeProcesingWithRelatedData(organisationId);
+
+                        if (orgFeesDetailCollection == null)
+                        {
+                            // New ones
+                            _IOrganisationFeeProcessingBS.CreateOrganisationPromoFees(promoBilling);
+                            _IOrganisationFeeProcessingBS.CreateOrganisationStandardFees(standardBilling);
+                            _IOrganisationFeeProcessingBS.CreateOrganisationFeeProces(feeProcess);
+                        }
+                        else
+                        {
+                            // Existing
+                            promoBilling.FeeProcessingId = orgFeesDetailCollection.OrganisationPromoFees.FeeProcessingId;
+                            standardBilling.FeeProcessingId = orgFeesDetailCollection.OrganisationStandardFees.FeeProcessingId;
+                            feeProcess.Id = orgFeesDetailCollection.OrganisationToProcess.Id;
+
+                            _IOrganisationFeeProcessingBS.UpdateOrganisationFeePromoPrices(promoBilling);
+                            _IOrganisationFeeProcessingBS.UpdateOrganisationFeeStandardPrices(standardBilling);
+                            _IOrganisationFeeProcessingBS.UpdateOrganisationFeeProces(feeProcess);
+                        }
+                    }
+                    catch (Exception)
+                    {
                         _IOrganisationFeeProcessingBS.CreateOrganisationPromoFees(promoBilling);
                         _IOrganisationFeeProcessingBS.CreateOrganisationStandardFees(standardBilling);
                         _IOrganisationFeeProcessingBS.CreateOrganisationFeeProces(feeProcess);
                     }
-                    else
-                    {
-                        // Existing
-                        promoBilling.FeeProcessingId = orgFeesDetailCollection.OrganisationPromoFees.FeeProcessingId;
-                        standardBilling.FeeProcessingId = orgFeesDetailCollection.OrganisationStandardFees.FeeProcessingId;
-                        feeProcess.Id = orgFeesDetailCollection.OrganisationToProcess.Id;
 
-                        _IOrganisationFeeProcessingBS.UpdateOrganisationFeePromoPrices(promoBilling);
-                        _IOrganisationFeeProcessingBS.UpdateOrganisationFeeStandardPrices(standardBilling);
-                        _IOrganisationFeeProcessingBS.UpdateOrganisationFeeProces(feeProcess);
-                    }
+                    response.IsSuccess = true;
                 }
-                catch (Exception)
-                {
-                    _IOrganisationFeeProcessingBS.CreateOrganisationPromoFees(promoBilling);
-                    _IOrganisationFeeProcessingBS.CreateOrganisationStandardFees(standardBilling);
-                    _IOrganisationFeeProcessingBS.CreateOrganisationFeeProces(feeProcess);
-                }
-                
-                response.IsSuccess = true;
 
+                response.IsSuccess = false;
+                response.Message = "Organisation ID not created";
             }
             catch (Exception ex)
             {

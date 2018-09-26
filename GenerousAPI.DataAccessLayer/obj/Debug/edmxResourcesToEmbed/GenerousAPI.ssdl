@@ -47,6 +47,7 @@
     <Property Name="NextRunDate" Type="datetime" />
     <Property Name="LastRunDate" Type="datetime" />
     <Property Name="OrganisationBillDate" Type="datetime" />
+    <Property Name="SystemDefault" Type="bit" />
   </EntityType>
   <EntityType Name="OrganisationPromoFee">
     <Key>
@@ -62,6 +63,7 @@
     <Property Name="AmexMinAmount" Type="decimal" Precision="2" Scale="2" />
     <Property Name="DirectDebitFee" Type="float" />
     <Property Name="DirectDebitMin" Type="decimal" Precision="2" Scale="2" />
+    <Property Name="SystemDefault" Type="bit" />
   </EntityType>
   <EntityType Name="OrganisationStandardFee">
     <Key>
@@ -98,6 +100,7 @@
     <Property Name="EventTicketBracket3Fee" Type="decimal" Precision="12" Scale="2" />
     <Property Name="EventTicketBracket4Fee" Type="decimal" Precision="12" Scale="2" />
     <Property Name="EventTicketBracket5Fee" Type="decimal" Precision="12" Scale="2" />
+    <Property Name="SystemDefault" Type="bit" />
   </EntityType>
   <EntityType Name="PaymentGatewayConfig">
     <Key>

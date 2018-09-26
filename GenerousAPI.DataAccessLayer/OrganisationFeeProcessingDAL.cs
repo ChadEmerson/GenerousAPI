@@ -45,6 +45,29 @@ namespace GenerousAPI.DataAccessLayer
         }
 
         /// <summary>
+        /// Get default fees 
+        /// </summary>
+        /// <returns>Default fees</returns>
+        public OrganisationFeeProcesingWithRelatedData GetDefaultOrganisationFeeProcesingWithRelatedData()
+        {
+            using (var db = new GenerousAPIEntities())
+            {
+                var orgFeeProcessing = from orgFee in db.OrganisationFeeProcessings
+                                       where orgFee.OrganisationId == 0 && orgFee.SystemDefault == true 
+                                       join promofees in db.OrganisationPromoFees on orgFee.OrganisationId equals promofees.OrganisationId
+                                       join standardfees in db.OrganisationStandardFees on orgFee.OrganisationId equals standardfees.OrganisationId
+                                       select new OrganisationFeeProcesingWithRelatedData()
+                                       {
+                                           OrganisationToProcess = orgFee,
+                                           OrganisationPromoFees = promofees,
+                                           OrganisationStandardFees = standardfees
+                                       };
+
+                return orgFeeProcessing.SingleOrDefault();
+            }
+        }
+
+        /// <summary>
         /// Get a list of org fee processing records with related data
         /// </summary>
         /// <returns>list of fee processing records</returns>

@@ -15,6 +15,8 @@ namespace GenerousAPI.BusinessServices
 
         OrganisationFeeProcesingWithRelatedData GetOrganisationFeeProcesingWithRelatedData(int organisationId);
 
+        OrganisationFeeProcesingWithRelatedData GetDefaultOrganisationFeeProcesingWithRelatedData();
+
         void UpdateOrganisationFeeProces(OrganisationFeeProcessing processedFee);
 
         void UpdateOrganisationFeePromoPrices(OrganisationPromoFee promoFees);

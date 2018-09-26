@@ -406,6 +406,7 @@
     <Property Name="NextRunDate" Type="DateTime" Precision="3" />
     <Property Name="LastRunDate" Type="DateTime" Precision="3" />
     <Property Name="OrganisationBillDate" Type="DateTime" Precision="3" />
+    <Property Name="SystemDefault" Type="Boolean" />
   </EntityType>
   <Association Name="FK_TransactionDetails_TransactionType">
     <End Type="GenerousAPIModel.TransactionType" Role="TransactionType" Multiplicity="0..1" />
@@ -446,6 +447,7 @@
     <Property Name="AmexMinAmount" Type="Decimal" Precision="2" Scale="2" />
     <Property Name="DirectDebitFee" Type="Double" />
     <Property Name="DirectDebitMin" Type="Decimal" Precision="2" Scale="2" />
+    <Property Name="SystemDefault" Type="Boolean" />
   </EntityType>
   <EntityType Name="OrganisationStandardFee">
     <Key>
@@ -482,5 +484,6 @@
     <Property Name="EventTicketBracket3Fee" Type="Decimal" Precision="12" Scale="2" />
     <Property Name="EventTicketBracket4Fee" Type="Decimal" Precision="12" Scale="2" />
     <Property Name="EventTicketBracket5Fee" Type="Decimal" Precision="12" Scale="2" />
+    <Property Name="SystemDefault" Type="Boolean" />
   </EntityType>
 </Schema>

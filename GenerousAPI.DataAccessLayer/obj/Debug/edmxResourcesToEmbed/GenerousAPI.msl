@@ -234,6 +234,7 @@
     <EntitySetMapping Name="OrganisationFeeProcessings">
       <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationFeeProcessing">
         <MappingFragment StoreEntitySet="OrganisationFeeProcessing">
+          <ScalarProperty Name="SystemDefault" ColumnName="SystemDefault" />
           <ScalarProperty Name="OrganisationBillDate" ColumnName="OrganisationBillDate" />
           <ScalarProperty Name="LastRunDate" ColumnName="LastRunDate" />
           <ScalarProperty Name="NextRunDate" ColumnName="NextRunDate" />
@@ -263,6 +264,7 @@
     <EntitySetMapping Name="OrganisationPromoFees">
       <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationPromoFee">
         <MappingFragment StoreEntitySet="OrganisationPromoFee">
+          <ScalarProperty Name="SystemDefault" ColumnName="SystemDefault" />
           <ScalarProperty Name="DirectDebitMin" ColumnName="DirectDebitMin" />
           <ScalarProperty Name="DirectDebitFee" ColumnName="DirectDebitFee" />
           <ScalarProperty Name="AmexMinAmount" ColumnName="AmexMinAmount" />
@@ -279,6 +281,7 @@
     <EntitySetMapping Name="OrganisationStandardFees">
       <EntityTypeMapping TypeName="GenerousAPIModel.OrganisationStandardFee">
         <MappingFragment StoreEntitySet="OrganisationStandardFee">
+          <ScalarProperty Name="SystemDefault" ColumnName="SystemDefault" />
           <ScalarProperty Name="EventTicketBracket5Fee" ColumnName="EventTicketBracket5Fee" />
           <ScalarProperty Name="EventTicketBracket4Fee" ColumnName="EventTicketBracket4Fee" />
           <ScalarProperty Name="EventTicketBracket3Fee" ColumnName="EventTicketBracket3Fee" />

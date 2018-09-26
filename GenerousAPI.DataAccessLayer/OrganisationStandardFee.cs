@@ -45,5 +45,6 @@ namespace GenerousAPI.DataAccessLayer
         public Nullable<decimal> EventTicketBracket3Fee { get; set; }
         public Nullable<decimal> EventTicketBracket4Fee { get; set; }
         public Nullable<decimal> EventTicketBracket5Fee { get; set; }
+        public Nullable<bool> SystemDefault { get; set; }
     }
 }
